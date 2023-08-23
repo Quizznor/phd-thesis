@@ -55,8 +55,7 @@ thresholds = range(1,351)
 #WCD_rates_m1 = np.zeros_like(thresholds)
 #WCD_rates_m2 = np.zeros_like(thresholds)
 #WCD_rates_m3 = np.zeros_like(thresholds)
-#SSD_rates = np.zeros_like(thresholds)
-histo = []
+SSD_rates = np.zeros_like(thresholds)
 
 # Subtract baseline and perform rate calculation
 for step, (SSD, WCD) in enumerate(zip(SSD_data, WCD_data)):
@@ -65,8 +64,11 @@ for step, (SSD, WCD) in enumerate(zip(SSD_data, WCD_data)):
     SSD = SSD[1:] - SSD[0]
     WCD = [pmt[1:] - pmt[0] for pmt in WCD]
 
-    if single_bin_trigger(SSD, SB_THRESHOLD):
-        histo.append(max(SSD))
+    for t in thresholds:
+        SSD_rates[t-1] = single_bin_trigger(SSD, t)
+
+    #if single_bin_trigger(SSD, SB_THRESHOLD):
+    #histo.append(max(SSD))
 
     #WCD_rates_m1[i-1] += single_bin_trigger(WCD, i, multiplicity=1)
     #WCD_rates_m2[i-1] += single_bin_trigger(WCD, i, multiplicity=2)
@@ -75,4 +77,4 @@ for step, (SSD, WCD) in enumerate(zip(SSD_data, WCD_data)):
 #np.savetxt("WCD_rates_m1", WCD_rates_m1)
 #np.savetxt("WCD_rates_m2", WCD_rates_m2)
 #np.savetxt("WCD_rates_m3", WCD_rates_m3)
-np.savetxt(f"/cr/tempdata01/filip/SSDCalib/Histogram/{SB_THRESHOLD}/histo_{int(sys.argv[1]) +1:04d}.dat", np.array(histo))
+np.savetxt(f"/cr/tempdata01/filip/SSDCalib/Rates/RadioCut/SSD_rates_{int(sys.argv[1]) +1:04d}.dat", SSD_rates)
