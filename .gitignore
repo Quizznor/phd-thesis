@@ -1,0 +1,41 @@
+# dotfiles
+.expires
+.kshrc
+.lesshst
+.plan
+.profile
+.python_history
+.selected_editor
+.wget-hsts
+.Xauthority
+.bash_history
+.apt
+.cache
+.cmake
+.conda
+.condor
+.dircolors
+.dotnet
+.gnupg
+.ipython
+.irods
+.kde
+.keras
+.local
+.mozilla
+.singularity
+.ssh
+.subversion
+.vim
+.vscode-server-insiders
+.config
+.bash_logout
+
+# unimportant
+bin/history.pickle
+anaconda3
+Masters
+People
+
+# Condor
+*.err
