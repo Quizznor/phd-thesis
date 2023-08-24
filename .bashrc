@@ -8,13 +8,9 @@ trap - DEBUG
 
 export USERNAME=filip
 
-# force python3 usage
-# alias python='python3'
-# alias pip='pip3'
-
 # workflow
 alias "re"="screen -Dr"
-alias "exit"="$HOME/bin/exit.sh && exit"
+alias "exit"="$HOME/bin/kill_ssh.sh && exit"
 alias "alert"="source $HOME/bin/alert.sh"
 
 # set environment for ssh, some other stuff\
@@ -25,8 +21,8 @@ export PATH="/cr/data01/filip/Offline/v4r0p1/ape-auger-v4r0p1-icrc2023-prod1/bin
 # condor submitting etc.
 alias "cq"="condor_q"
 alias "qq"="condor_q -hold"
-alias "crm"="condor_rm"
-alias "cs"="condor_submit"
+alias "crm"="$HOME/bin/condor_remove.sh"
+alias "cs"="$HOME/bin/condor_submit.sh"
 
 # keep stats on what commands are being run
 function keep_stats() {

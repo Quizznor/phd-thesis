@@ -1,7 +1,6 @@
 JobBatchName    = calculate_histograms
-Executable      = /cr/users/filip/Projects/SSDOnlineCalib/CalibHisto/CalcHisto/calculate_histograms.py
+Executable      = /cr/users/filip/Projects/SSDOnlineCalib/OfflineCalib/calculate_histograms.py
 
-# error           = /cr/users/filip/Projects/SSDOnlineCalib/CalibHisto/CalcHisto/condor.err
 
 arguments       = $(Process)
 request_memory  = 2G

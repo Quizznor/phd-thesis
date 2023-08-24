@@ -43,8 +43,6 @@ def threshold_trigger(trace : list, threshold : float = 1.75) -> int :
 
 file=f"/cr/tempdata01/filip/SSDCalib/RadioCut/randoms{int(sys.argv[1]) + 1:04d}"
 
-SB_THRESHOLD = 10
-
 # Load data and split into appropriate structure
 WCD_data = np.loadtxt(f"{file}_WCD.dat", dtype=int)
 WCD_data = np.split(WCD_data, len(WCD_data) // 3)
@@ -52,9 +50,7 @@ WCD_data = np.split(WCD_data, len(WCD_data) // 3)
 SSD_data = np.loadtxt(f"{file}_SSD.dat", dtype=int)
 
 thresholds = range(1,351)
-#WCD_rates_m1 = np.zeros_like(thresholds)
-#WCD_rates_m2 = np.zeros_like(thresholds)
-#WCD_rates_m3 = np.zeros_like(thresholds)
+SSD_rates_T1 = np.zeros_like(thresholds)
 SSD_rates = np.zeros_like(thresholds)
 
 # Subtract baseline and perform rate calculation
@@ -64,17 +60,12 @@ for step, (SSD, WCD) in enumerate(zip(SSD_data, WCD_data)):
     SSD = SSD[1:] - SSD[0]
     WCD = [pmt[1:] - pmt[0] for pmt in WCD]
 
+    is_T1 = threshold_trigger(WCD)
+
     for t in thresholds:
-        SSD_rates[t-1] = single_bin_trigger(SSD, t)
+        is_SB = single_bin_trigger(SSD, t)
+        SSD_rates_T1[t-1] += (is_SB and is_T1)
+        SSD_rates[t-1] += is_SB
 
-    #if single_bin_trigger(SSD, SB_THRESHOLD):
-    #histo.append(max(SSD))
-
-    #WCD_rates_m1[i-1] += single_bin_trigger(WCD, i, multiplicity=1)
-    #WCD_rates_m2[i-1] += single_bin_trigger(WCD, i, multiplicity=2)
-    #WCD_rates_m3[i-1] += single_bin_trigger(WCD, i, multiplicity=3)
-
-#np.savetxt("WCD_rates_m1", WCD_rates_m1)
-#np.savetxt("WCD_rates_m2", WCD_rates_m2)
-#np.savetxt("WCD_rates_m3", WCD_rates_m3)
-np.savetxt(f"/cr/tempdata01/filip/SSDCalib/Rates/RadioCut/SSD_rates_{int(sys.argv[1]) +1:04d}.dat", SSD_rates)
+np.savetxt(f"/cr/tempdata01/filip/SSDCalib/Rates/with_T1/randoms_{int(sys.argv[1]) +1:04d}.dat", SSD_rates_T1)
+np.savetxt(f"/cr/tempdata01/filip/SSDCalib/Rates/without_T1/randoms_{int(sys.argv[1]) +1:04d}.dat", SSD_rates)
