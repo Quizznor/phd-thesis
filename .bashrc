@@ -12,6 +12,8 @@ export USERNAME=filip
 alias "re"="screen -Dr"
 alias "exit"="$HOME/bin/kill_ssh.sh && exit"
 alias "alert"="source $HOME/bin/alert.sh"
+alias "goodbye"="exit"
+
 
 # set environment for ssh, some other stuff\
 export TERM=xterm

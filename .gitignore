@@ -31,13 +31,15 @@
 .config
 .bash_logout
 .viminfo
+.java
+.Xilinx
 
 # unimportant
 bin/history.pickle
 anaconda3
 Masters
 People
-Projects/StationSoftware/Compiler/Xilinx_SDK_2019.1_0524_1430_Lin64.bin
+Projects/StationSoftware/Compiler/Xilinx_SDK_2015.4_1118_2_Lin64.bin
 
 # git repositories
 Projects/StationSoftware/DAQ/
