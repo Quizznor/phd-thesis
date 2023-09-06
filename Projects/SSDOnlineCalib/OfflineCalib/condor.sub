@@ -1,11 +1,8 @@
-JobBatchName    = calculate_histograms
+JobBatchName    = calculate_histograms_for_offline_calibration
 Executable      = /cr/users/filip/Projects/SSDOnlineCalib/OfflineCalib/calculate_histograms.py
 
-
-arguments       = $(Process)
+arguments       = "NuriaJr $(Process)"
 request_memory  = 2G
 max_idle        = 150
                                                 
-should_transfer_files = YES
-
 queue 800

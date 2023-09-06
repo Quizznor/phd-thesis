@@ -1,5 +1,7 @@
 #!/bin/python3
 
+# CHECK FILE PATHS BEFORE RUNNING THIS
+
 import os, sys
 import numpy as np
 
@@ -76,10 +78,6 @@ with open(working_dir + file,"rb") as binary_file:
 
             baseline = Baseline[2*i+1 if not Saturated[2*i] else 2*i]
             pmt = high_gain[i] if not Saturated[2*i] else low_gain[i]
-            # pmt -= Baseline[2*i+1 if not Saturated[2*i] else 2*i]         # perform Online baseline estimation
-
-            # baselines_wcd[i].append(Baseline[2*i+1 if not Saturated[2*i] else 2*i])
-            # first_bins_wcd[i].append(pmt[0])
 
             with open(f"/cr/tempdata01/filip/SSDCalib/RadioCut/{file.replace('.dat','_WCD')}.dat", "a") as WCD:
                 WCD.write(f"{int(baseline)} " + " ".join([str(int(_)) for _ in pmt[:RADIO_CUTOFF]]) + "\n")

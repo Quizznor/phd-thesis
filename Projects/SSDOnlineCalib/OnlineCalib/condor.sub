@@ -1,0 +1,10 @@
+JobBatchName    = check_skip_bias
+Executable      = /cr/users/filip/Projects/SSDOnlineCalib/OnlineCalib/OnlineAlgorithm
+
+
+arguments       = $(SKIP)
+request_memory  = 200M
+max_idle        = 150
+
+# I already tested skip_bias of 10, so no need to redo        
+queue SKIP in 0, 1, 2, 5, 10, 15, 20, 30, 40, 60, 90, 120

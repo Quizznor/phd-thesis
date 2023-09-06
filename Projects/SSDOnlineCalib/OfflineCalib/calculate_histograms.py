@@ -1,6 +1,6 @@
 #!/bin/python3
 
-import sys
+import sys, os
 import numpy as np
 
 def single_bin_trigger(trace, threshold : int, multiplicity : int = 1) -> int :
@@ -41,13 +41,14 @@ def threshold_trigger(trace : list, threshold : float = 1.75) -> int :
     
     return False
 
-file=f"/cr/tempdata01/filip/SSDCalib/RadioCut/randoms{int(sys.argv[1]) + 1:04d}"
+file=f"/cr/tempdata01/filip/iRODS/UubRandoms/converted/{sys.argv[1]}/randoms{int(sys.argv[2]) + 1:04d}"
+os.system(f"mkdir /cr/tempdata01/filip/SSDCalib/UubRates/{sys.argv[1]}/")
 
 # Load data and split into appropriate structure
-WCD_data = np.loadtxt(f"{file}_WCD.dat", dtype=int)
-WCD_data = np.split(WCD_data, len(WCD_data) // 3)
-
 SSD_data = np.loadtxt(f"{file}_SSD.dat", dtype=int)
+#WCD_data = np.split(WCD_data, len(WCD_data) // 3)
+#WCD_data = np.loadtxt(f"{file}_WCD.dat", dtype=int)
+WCD_data = np.zeros_like(SSD_data)
 
 thresholds = range(1,351)
 SSD_rates_T1 = np.zeros_like(thresholds)
@@ -57,15 +58,15 @@ SSD_rates = np.zeros_like(thresholds)
 for step, (SSD, WCD) in enumerate(zip(SSD_data, WCD_data)):
 
     #print(f"{step}/5000", end = "\r")
+    #WCD = [pmt[1:] - pmt[0] for pmt in WCD]
     SSD = SSD[1:] - SSD[0]
-    WCD = [pmt[1:] - pmt[0] for pmt in WCD]
 
-    is_T1 = threshold_trigger(WCD)
+    #is_T1 = threshold_trigger(WCD)
 
     for t in thresholds:
         is_SB = single_bin_trigger(SSD, t)
-        SSD_rates_T1[t-1] += (is_SB and is_T1)
+        #SSD_rates_T1[t-1] += (is_SB and is_T1)
         SSD_rates[t-1] += is_SB
 
-np.savetxt(f"/cr/tempdata01/filip/SSDCalib/Rates/with_T1/randoms_{int(sys.argv[1]) +1:04d}.dat", SSD_rates_T1)
-np.savetxt(f"/cr/tempdata01/filip/SSDCalib/Rates/without_T1/randoms_{int(sys.argv[1]) +1:04d}.dat", SSD_rates)
+#np.savetxt(f"/cr/tempdata01/filip/SSDCalib/Rates/with_T1/randoms_{int(sys.argv[1]) +1:04d}.dat", SSD_rates_T1)
+np.savetxt(f"/cr/tempdata01/filip/SSDCalib/UubRates/{sys.argv[1]}/randoms{int(sys.argv[2]) +1:04d}.dat", SSD_rates)

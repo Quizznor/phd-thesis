@@ -1,10 +1,10 @@
 JobBatchName    = extract_random_traces
-Executable      = /cr/users/filip/Projects/SSDOnlineCalib/CalibHisto/ExtractTraces/radio_cutoff.py
+Executable      = /cr/users/filip/Projects/SSDOnlineCalib/ExtractTraces/extract_wcd_and_ssd.py
 
-error           = /cr/users/filip/Projects/SSDOnlineCalib/CalibHisto/ExtractTraces/condor.err
+error           = /cr/users/filip/Projects/SSDOnlineCalib/ExtractTraces/condor.err
 
-arguments       = $(Process)
-request_memory  = 2G
+arguments       = "Peru $(Process)"
+request_memory  = 3G
 max_idle        = 150
                                                 
 queue 800

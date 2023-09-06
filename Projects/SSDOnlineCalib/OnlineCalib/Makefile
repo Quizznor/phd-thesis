@@ -1,2 +1,2 @@
-OnlineAlgorithm: algorithm.cc
-	g++ algorithm.cc -g -std=c++17 -o OnlineAlgorithm
+OnlineAlgorithm: algorithm.cxx
+	g++ algorithm.cxx -g -std=c++17 -o OnlineAlgorithm

@@ -3,14 +3,24 @@
 import os, sys
 import numpy as np
 
+write_timestamps = True
+write_WCD = False
+write_SSD = True
+
 # only loop through one file
-working_dir = "/cr/tempdata01/filip/iRODS/raw/Nuria/"
-file = os.listdir(working_dir)[int(sys.argv[1])]
+working_dir = "/cr/tempdata01/filip/iRODS/UubRandoms/raw/Nov2022/" + sys.argv[1] + "/"
+file = os.listdir(working_dir)[int(sys.argv[2])]
+timestamps = []
+
+os.system(f"mkdir /cr/tempdata01/filip/iRODS/UubRandoms/converted/{sys.argv[1]}")
+wcd_file = f"/cr/tempdata01/filip/iRODS/UubRandoms/converted/{sys.argv[1]}/{file.replace('.dat','_WCD')}.dat"
+ssd_file = f"/cr/tempdata01/filip/iRODS/UubRandoms/converted/{sys.argv[1]}/{file.replace('.dat','_SSD')}.dat"
+timestamp_file = f"/cr/tempdata01/filip/iRODS/UubRandoms/converted/timestamps/{sys.argv[1]}.dat"
 
 with open(working_dir + file,"rb") as binary_file:
 
-    with open(f"/cr/data01/filip/SSDCalib/{file.replace('.dat','_WCD')}.dat", "x") as _: pass
-    with open(f"/cr/data01/filip/SSDCalib/{file.replace('.dat','_SSD')}.dat", "x") as _: pass 
+    if write_WCD:
+        with open(wcd_file, "w+") as _: pass
     
     block_size, endianness = 4, "little"
     read_to_int = lambda : int.from_bytes(binary_file.read(block_size), endianness)
@@ -29,6 +39,8 @@ with open(working_dir + file,"rb") as binary_file:
         # stop when reaching the end of the file
         if not time_delta != 0:
             break
+
+        timestamps.append(time_stamp)
 
         # read trace metadata
         n_metadata  = 10                                    # 2 (LG, HG) * number of PMTs in station, 3 WCD, etc.
@@ -69,40 +81,23 @@ with open(working_dir + file,"rb") as binary_file:
         all_ssd_traces.append(ssd_buffer)
 
         # save WCD traces
-        for i in range(len(low_gain)):
+        if write_WCD:
+            for i in range(len(low_gain)):
 
-            baseline = Baseline[2*i+1 if not Saturated[2*i] else 2*i]
-            pmt = high_gain[i] if not Saturated[2*i] else low_gain[i]
-            # pmt -= Baseline[2*i+1 if not Saturated[2*i] else 2*i]         # perform Online baseline estimation
+                baseline = Baseline[2*i+1 if not Saturated[2*i] else 2*i]
+                pmt = high_gain[i] if not Saturated[2*i] else low_gain[i]
 
-            # baselines_wcd[i].append(Baseline[2*i+1 if not Saturated[2*i] else 2*i])
-            # first_bins_wcd[i].append(pmt[0])
-
-            with open(f"/cr/data01/filip/SSDCalib/{file.replace('.dat','_WCD')}.dat", "a") as WCD:
-                WCD.write(f"{int(baseline)} " + " ".join([str(int(_)) for _ in pmt]) + "\n")
+                with open(wcd_file, "a") as WCD:
+                    WCD.write(f"{int(baseline)} " + " ".join([str(int(_)) for _ in pmt]) + "\n")
 
     # save SSD traces
-    with open(f"/cr/data01/filip/SSDCalib/{file.replace('.dat','_SSD')}.dat", "a") as SSD:
-        ssd_baseline = int(np.floor(np.mean(first_bins_ssd)))
-        for trace in all_ssd_traces:
-            SSD.write(f"{ssd_baseline} " + " ".join([str(int(_)) for _ in trace]) + "\n")
+    if write_SSD:
+        with open(ssd_file, "w+") as SSD:
+            ssd_baseline = int(np.floor(np.mean(first_bins_ssd)))
+            for trace in all_ssd_traces:
+                SSD.write(f"{ssd_baseline} " + " ".join([str(int(_)) for _ in trace]) + "\n")
 
-
-'''
-c = ["steelblue", "orange", "red"]
-bins = np.linspace(150, 280, 130)
-
-for i in range(3):
-    plt.hist(baselines_wcd[i], histtype="step", color=c[i], bins=bins)
-    plt.hist(first_bins_wcd[i], histtype="step", color=c[i], ls="--", bins=bins)
-    plt.axvline(np.mean(first_bins_wcd[i]), color=c[i], ls="--", lw=2)
-    plt.axvline(np.mean(baselines_wcd[i]), color=c[i], lw=2)
-
-plt.title(file)
-plt.hist([], ls="--", color="k", label="first bins in random trace", histtype="step")
-plt.hist([], ls="solid", color="k", label="online baseline estimate", histtype="step")
-plt.legend()
-
-plt.xlim(220, 280)
-plt.savefig("test")
-'''
+    # save timestamps
+    if write_timestamps:
+        with open(timestamp_file, "a") as f:
+            f.write(f"{file.split('/')[-1]} {min(timestamps)} {max(timestamps)}\n")
