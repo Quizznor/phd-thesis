@@ -1,9 +1,11 @@
-JobBatchName    = extract_random_traces
+JobBatchName    = extract_random_traces_$(STATION)
 Executable      = /cr/users/filip/Projects/SSDOnlineCalib/ExtractTraces/extract_wcd_and_ssd.py
 
-error           = /cr/users/filip/Projects/SSDOnlineCalib/ExtractTraces/condor.err
+error           = /cr/users/filip/Projects/SSDOnlineCalib/ExtractTraces/condor-$(STATION).err
 
-arguments       = "Peru $(Process)"
+STATION         = Jaco
+
+arguments       = "$(STATION) $(Process)"
 request_memory  = 3G
 max_idle        = 150
                                                 

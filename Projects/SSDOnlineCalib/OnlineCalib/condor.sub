@@ -1,10 +1,15 @@
-JobBatchName    = check_skip_bias
+JobBatchName    = online_rates_#(STATION)_$(RATE)
 Executable      = /cr/users/filip/Projects/SSDOnlineCalib/OnlineCalib/OnlineAlgorithm
 
+output          = /cr/users/filip/Projects/SSDOnlineCalib/OnlineCalib/output.out
+error           = /cr/users/filip/Projects/SSDOnlineCalib/OnlineCalib/error.err
 
-arguments       = $(SKIP)
-request_memory  = 200M
+STATION         = "Peru"
+RATE            = "70"
+GUESS           = "120"
+
+arguments       = "$(STATION) $(RATE) $(GUESS)"
+request_memory  = 1G
 max_idle        = 150
 
-# I already tested skip_bias of 10, so no need to redo        
-queue SKIP in 0, 1, 2, 5, 10, 15, 20, 30, 40, 60, 90, 120
+queue 1

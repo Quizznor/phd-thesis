@@ -1,7 +1,9 @@
-JobBatchName    = calculate_histograms_for_offline_calibration
+JobBatchName    = calculate_histograms_$(STATION)
 Executable      = /cr/users/filip/Projects/SSDOnlineCalib/OfflineCalib/calculate_histograms.py
 
-arguments       = "NuriaJr $(Process)"
+STATION         = Peru
+
+arguments       = "$(STATION) $(Process)"
 request_memory  = 2G
 max_idle        = 150
                                                 

@@ -7,18 +7,21 @@
 #include <string>
 #include <cmath>
 
-const std::filesystem::path Data("/cr/tempdata01/filip/SSDCalib/RawNoCut");
 
 int main(int argc, char **argv) {
 
-    // rate based macro-variables
-    const float desired_rate = 100;
-    const float tolerance = 0.01;
+    const std::string station(argv[1]);
+    const float desired_rate = atof(argv[2]);       // target rate for available data in Hertz
+    int threshold = atoi(argv[3]);                  // first guess for SB trigger threshold
 
-    const int skip = std::atof(argv[1]);            // how many bins to skip after one trigger
-    int threshold = 95;                             // first guess for SB trigger threshold
+    const std::filesystem::path Data("/cr/tempdata01/filip/iRODS/UubRandoms/converted/" + station + "/");
+    
+    // rate based macro-variables
+    const float tolerance = 0.01;                   // fraction by which current rate can differ
+    const int skip = 30;                            // how many bins to skip after one trigger
     float current_rate = 0;                         // ensure algorithm runs AT LEAST once
     int increment;
+
     float best_rate;
     int best_threshold;
     std::vector<int> past_guesses;
@@ -32,10 +35,11 @@ int main(int argc, char **argv) {
     {
         nanoseconds = 0;
         triggers = 0;
-        
+
+
         for (const auto& file : std::filesystem::directory_iterator(Data))
         {
-            if (file.path().string().compare(50, 57, "_SSD.dat") != 0){continue;};
+            if (file.path().string().find("_SSD.dat") == std::string::npos){continue;};
             // std::cout << "reading " << file.path().string().substr(39,57) << "...";
 
             // create file stream
@@ -79,7 +83,7 @@ int main(int argc, char **argv) {
             best_rate = current_rate;
         }
 
-        // std::cout << "Examined " << nanoseconds * 1e-9 << " s : rate is " << current_rate << " Hz (" << triggers << " triggers) : threshold was " << threshold << std::endl;
+        std::cout << "Examined " << nanoseconds * 1e-9 << " s : rate is " << current_rate << " Hz (" << triggers << " triggers) : threshold was " << threshold << std::endl;
 
         const int sign = ((current_rate - desired_rate) > 0) - ((current_rate - desired_rate) < 0);
         past_guesses.push_back(threshold);
@@ -100,12 +104,12 @@ int main(int argc, char **argv) {
         if (std::find(past_guesses.begin(), past_guesses.end(), threshold) != std::end(past_guesses)){break;}
     }
 
-    // std::cout << "Best threshold for desired rate of " << desired_rate << " Hz is: " << best_threshold << " (" << best_rate << " Hz)" << std::endl;
+    std::cout << "Best threshold for desired rate of " << desired_rate << " Hz is: " << best_threshold << " (" << best_rate << " Hz)" << std::endl;
 
-    std::string save_path = "/cr/tempdata01/filip/SSDCalib/OnlineCalib/skip_bias_raw.dat";
+    std::string save_path = "/cr/tempdata01/filip/SSDCalib/OnlineCalib/OnlineThresholds/" + station + ".dat";
     std::ofstream saveFile(save_path, std::ios_base::app);
 
-    saveFile << skip << " " << best_threshold << " " << triggers << " " << nanoseconds * 1e-9 << std::endl;
+    saveFile << desired_rate << " " << best_rate << " " << best_threshold << " " << triggers << " " << nanoseconds * 1e-9 << std::endl;
 
     return 0;
 }

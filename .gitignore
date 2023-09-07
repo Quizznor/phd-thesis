@@ -34,8 +34,11 @@
 .viminfo
 .java
 .Xilinx
+*.out
+*.err
 
 # unimportant
+filip.code-workspace
 bin/history.pickle
 anaconda3
 Masters
