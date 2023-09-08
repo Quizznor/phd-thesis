@@ -1,7 +1,7 @@
 JobBatchName    = calculate_histograms_$(STATION)
-Executable      = /cr/users/filip/Projects/SSDOnlineCalib/OfflineCalib/calculate_histograms.py
+Executable      = /cr/users/filip/Projects/SSDOnlineCalib/OfflineCalib/OfflineAlgorithm
 
-STATION         = Peru
+STATION         = RukaMalen
 
 arguments       = "$(STATION) $(Process)"
 request_memory  = 2G

@@ -35,15 +35,8 @@ int main(int argc, char **argv) {
 
     }
         
-    // works =)
-    int step = 1;
-
-    for (const auto& bin : rates)
-    {
-        std::cout << step << " " << bin << std::endl;
-        step += 1;
-    }
-
-    std::cout << "reading " << full_path << std::endl;
+    std::ofstream saveFile("/cr/tempdata01/filip/SSDCalib/UubRates/"+station+"/randoms"+random_file+".dat", std::ios_base::app);
+    for (const auto& bin : rates){saveFile << bin << "\n";}
+    
     return 0;
 }

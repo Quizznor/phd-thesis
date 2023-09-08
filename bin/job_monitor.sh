@@ -7,6 +7,8 @@ for pid in $(pidof -x job_monitor.sh); do
     fi
 done
 
+sleep 10
+
 # Monitor jobs indefinitely (or until all jobs have completed)
 while true; do
     TIMEOUT=600
