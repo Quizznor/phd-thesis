@@ -7,3 +7,4 @@
 2. OfflineCalib/ - code related to the histogram-based estimation of the MIP peak
 3. OnlineCalib/ - code related to the rate-based estimation of the MIP peak
 4. SSDTraceCharacteristics/ - scriplets to get a feel for SSD trace characteristics
+5. Monitoring/ - code to read event data/monitoring data from the SD array

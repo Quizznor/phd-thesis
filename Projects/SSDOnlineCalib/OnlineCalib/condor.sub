@@ -7,9 +7,9 @@ Executable      = /cr/users/filip/Projects/SSDOnlineCalib/OnlineCalib/OnlineAlgo
 # target_rate   = 100 <-> 99   initial_guess
 # target_rate   =  70 <-> 112  initial_guess
 
-STATION         = RukaMalen
-RATE            = 100
-GUESS           = 99
+STATION         = Svenja
+RATE            = 70
+GUESS           = 112
 
 arguments       = "$(STATION) $(RATE) $(GUESS)"
 request_memory  = 1G

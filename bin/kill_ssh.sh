@@ -9,7 +9,7 @@ if ! [[ -z "$(ps -ef | grep '^filip.*node [^\$]*$')" ]]; then
 fi
 
 # kill system monitor
-if ! [[ -z "$(ps -ef | grep '^filip.*htop$')" ]]; then 
+if ! [[ -z "$(ps -ef | grep '^filip.*htop --user filip$')" ]]; then 
     killall --user filip htop
 fi
 
