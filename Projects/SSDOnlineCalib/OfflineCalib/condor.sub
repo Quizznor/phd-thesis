@@ -1,9 +1,10 @@
 JobBatchName    = calculate_histograms_$(STATION)
 Executable      = /cr/users/filip/Projects/SSDOnlineCalib/OfflineCalib/OfflineAlgorithm
 
-STATION         = Svenja
+STATION         = Peru
+analyze_T1s     = 1
 
-arguments       = "$(STATION) $(Process)"
+arguments       = "$(STATION) $(Process) $(analyze_T1s)"
 request_memory  = 2G
 max_idle        = 150
                                                 

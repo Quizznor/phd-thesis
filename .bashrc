@@ -12,12 +12,12 @@ export USERNAME=filip
 alias "re"="screen -Dr"
 alias "exit"="$HOME/bin/kill_ssh.sh && exit"
 alias "alert"="source $HOME/bin/alert.sh"
-alias "goodbye"="exit"
+alias "bye"="exit"
 
 # set environment for ssh, some other stuff
 export TERM=xterm
 export PATH="/cr/users/filip/:$PATH"
-export PATH="/cr/data01/filip/Offline/v4r0p1/ape-auger-v4r0p1-icrc2023-prod1/binutils/usr/:$PATH"
+#export PATH="/cr/data01/filip/Offline/v4r0p1/ape-auger-v4r0p1-icrc2023-prod1/binutils/usr/:$PATH"
 export OFFLINE="/lsdf/auger/containers/offline/app/offline/install/bin/this-auger-offline.sh"
 
 # condor submitting etc.
@@ -165,4 +165,4 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 
-trap keep_stats DEBUG
+#trap keep_stats DEBUG

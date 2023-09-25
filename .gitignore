@@ -47,10 +47,16 @@ Projects/StationSoftware/Compiler/Xilinx_SDK_2015.4_1118_2_Lin64.bin
 .bashrc
 .screenrc
 .vimrc
+.byobu
+.vscode
 
 # git repositories
 Projects/StationSoftware/DAQ/
 Projects/XYScanner/xy-calibration/
+Projects/ONNXNetwork/onnxruntime/
+Projects/ONNXNetwork/cmake-3.26.1/
+Projects/XYScanner/S4A
+Projects/ONNXNetwork/neuralnetworkpredictor
 
 # Condor
 *.err

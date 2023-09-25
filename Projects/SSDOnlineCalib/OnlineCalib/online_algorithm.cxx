@@ -13,9 +13,10 @@ int main(int argc, char **argv) {
     const std::string station(argv[1]);
     const float desired_rate = atof(argv[2]);       // target rate for available data in Hertz
     int threshold = atoi(argv[3]);                  // first guess for SB trigger threshold
+    const std::string analyze_T1s(argv[4]);         // take T1 information from WCDs into account
 
-    const std::filesystem::path Data("/cr/tempdata01/filip/iRODS/UubRandoms/converted/" + station + "/");
-    
+    const std::filesystem::path Data("/cr/tempdata01/filip/iRODS/UubRandoms/converted/" + station + "/");    
+
     // rate based macro-variables
     const float tolerance = 0.01;                   // fraction by which current rate can differ
     const int skip = 30;                            // how many bins to skip after one trigger
@@ -36,37 +37,51 @@ int main(int argc, char **argv) {
         nanoseconds = 0;
         triggers = 0;
 
-
         for (const auto& file : std::filesystem::directory_iterator(Data))
         {
             if (file.path().string().find("_SSD.dat") == std::string::npos){continue;};
+
+            // CHANGE THIS
+            std::string t1_path = file.path().string().replace(21, 26, "T1_info").replace(49, 49, "WCD.dat");
+            std::cout << t1_path << std::endl;
+
             // std::cout << "reading " << file.path().string().substr(39,57) << "...";
 
             // create file stream
             std::ifstream ifs(file.path().string());
             std::string line;
+            std::ifstream t1(t1_path);
+            std::string is_t1;
 
             // iterate over file line by line
             while (std::getline(ifs, line))
             {
-                int baseline = stoi(line.substr(0, 3));
+                if (analyze_T1s == "1"){std::getline(t1, is_t1);}
+                else {is_t1 = "1";}
 
-                for (int i = 4; i <= 8195; i+=4)
+                // std::cout << is_t1 << std::endl;
+                
+                if (is_t1 == "1")
                 {
-                    try
+
+                    int baseline = stoi(line.substr(0, 3));
+
+                    for (int i = 4; i <= 8195; i+=4)
                     {
-                        int temp = stoi(line.substr(i, i + 4));
-
-                        if (temp >= threshold + baseline)
+                        try
                         {
-                            triggers += 1;
-                            i += 4*skip;
+                            int temp = stoi(line.substr(i, i + 4));
+
+                            if (temp >= threshold + baseline)
+                            {
+                                triggers += 1;
+                                i += 4*skip;
+                            }
+
                         }
-
-                    }
-                    catch (const std::out_of_range& _){break;}
-                }    
-
+                        catch (const std::out_of_range& _){break;}
+                    }    
+                }
                 nanoseconds += 2*8533.33;             // easier to hardcode this
             }
 
@@ -104,12 +119,12 @@ int main(int argc, char **argv) {
         if (std::find(past_guesses.begin(), past_guesses.end(), threshold) != std::end(past_guesses)){break;}
     }
 
-    std::cout << "Best threshold for desired rate of " << desired_rate << " Hz is: " << best_threshold << " (" << best_rate << " Hz)" << std::endl;
+    //std::cout << "Best threshold for desired rate of " << desired_rate << " Hz is: " << best_threshold << " (" << best_rate << " Hz)" << std::endl;
 
-    std::string save_path = "/cr/tempdata01/filip/SSDCalib/OnlineCalib/OnlineThresholds/" + station + ".dat";
-    std::ofstream saveFile(save_path, std::ios_base::app);
+    //std::string save_path = "/cr/tempdata01/filip/SSDCalib/OnlineCalib/OnlineThresholds/" + station + ".dat";
+    //std::ofstream saveFile(save_path, std::ios_base::app);
 
-    saveFile << desired_rate << " " << best_rate << " " << best_threshold << " " << triggers << " " << nanoseconds * 1e-9 << std::endl;
+    //saveFile << desired_rate << " " << best_rate << " " << best_threshold << " " << triggers << " " << nanoseconds * 1e-9 << std::endl;
 
     return 0;
 }
