@@ -7,23 +7,36 @@
 #include <string>
 #include <future>
 
-template <typename T>
-std::vector<T> operator+(const std::vector<T>& a, const std::vector<T>& b)
+static std::mutex trigger_guard;
+std::vector<std::future<void>> results;
+
+std::vector<float> operator+(const std::vector<int>& a, const std::vector<float>& b)
 {
     // assert(a.size() == b.size());
 
-    std::vector<T> result;
+    std::vector<float> result;
     result.reserve(a.size());
 
     std::transform(a.begin(), a.end(), b.begin(), 
-                   std::back_inserter(result), std::plus<T>());
+                   std::back_inserter(result), std::plus<float>());
     return result;
 }
 
-template <typename T>
-std::vector<T> operator*(const std::vector<T>& a, const double factor)
+std::vector<float> operator+=(const std::vector<float>& a, const std::vector<float>& b)
 {
-    std::vector<T> result;
+    // assert(a.size() == b.size());
+
+    std::vector<float> result;
+    result.reserve(a.size());
+
+    std::transform(a.begin(), a.end(), b.begin(), 
+                   std::back_inserter(result), std::plus<float>());
+    return result;
+}
+
+std::vector<float> operator*(const std::vector<float>& a, const double factor)
+{
+    std::vector<float> result;
     result.reserve(a.size());
 
     for (const auto& x : a){result.push_back(factor * x);}
@@ -31,20 +44,18 @@ std::vector<T> operator*(const std::vector<T>& a, const double factor)
     return result;
 }
 
-template <typename T>
-std::vector<T> operator/(const std::vector<T>& a, const double factor)
+std::vector<float> operator/(const std::vector<float>& a, const double factor)
 {
-    std::vector<T> result;
+    std::vector<float> result;
 
     for (const auto& x : a){result.push_back(x / factor);}
 
     return result;
 }
 
-template <typename T>
-std::vector<T> operator-(const std::vector<T>& a, const T subtractor)
+std::vector<float> operator-(const std::vector<float>& a, const float subtractor)
 {
-    std::vector<T> result;
+    std::vector<float> result;
     result.reserve(a.size());
 
     for (const auto& x : a){result.push_back(x - subtractor);}    
@@ -83,7 +94,7 @@ std::vector<std::string> get_trace(std::ifstream& path)
 }
 */
 
-std::vector<float> qualifies_as_t1(const std::vector<std::string>& t, std::vector<float> thresholds)
+std::vector<float> qualifies_as_t1(const std::vector<std::string>& t, std::vector<float>& thresholds)
 {
     std::vector<float> result = {0., 0., 0.};
     const auto t1 = thresholds * 1.75;
@@ -129,15 +140,31 @@ std::vector<float> qualifies_as_t1(const std::vector<std::string>& t, std::vecto
     return result;
 }
 
+void calculate_triggers_in_file(std::ifstream& ifs, std::vector<float>& triggers, std::vector<float>& thresholds)
+{
+    std::vector<std::string> trace(3);
+    std::vector<float> triggers_this_file(3,0.0);
+
+    while (std::getline(ifs, trace[0]))
+    {
+        std::getline(ifs, trace[1]);
+        std::getline(ifs, trace[2]);
+        triggers_this_file += qualifies_as_t1(trace, thresholds);
+    }
+
+    std::lock_guard<std::mutex> lock(trigger_guard);
+    triggers += triggers_this_file;
+}
+
 int main(int argc, char **argv) {
 
     const std::string station(argv[1]);
     const std::filesystem::path Data("/cr/tempdata01/filip/iRODS/UubRandoms/converted/" + station + "/");    
 
-    std::vector<float> thresholds = {158.8, 133, 215};
+    std::vector<float> thresholds = {150, 150, 150};
     std::vector<float> increments(3, 1);
     std::vector<float> triggers;
-    float t_cal = 0.1;
+    float t_cal = 0.01;
     float nanoseconds;
 
     // variables as set in the Online/Offline calibration paper
@@ -153,22 +180,20 @@ int main(int argc, char **argv) {
         for (const auto& file : std::filesystem::directory_iterator(Data))
         {
             // create file stream
-            if (file.path().string().find("_WCD.dat") == std::string::npos){continue;};
+            if (file.path().string().find("_WCD.dat") == std::string::npos){continue;}
             std::ifstream ifs(file.path().string());
             // std::cout << "reading " << file.path().string() << "...";
 
-            std::vector<std::string> trace(3);
-
-            while (std::getline(ifs, trace[0]))
-            {
-                std::getline(ifs, trace[1]);
-                std::getline(ifs, trace[2]);
-                triggers = triggers + qualifies_as_t1(trace, thresholds);
-                nanoseconds += 8.33 * 2048;
-            }
-
             if (nanoseconds * 1e-9 >= t_cal){break;}
+            nanoseconds += 8.33 * 2048 * 5000;
+
+            results.push_back(std::async(std::launch::async, calculate_triggers_in_file, std::ref(ifs), std::ref(triggers), std::ref(thresholds)));
         }
+
+        for (auto& thread : results){
+            thread.wait();
+            std::cout << "waiting" << std::endl;}
+
         std::vector<float> rates = triggers / (nanoseconds * 1e-9);
 
         // diagnostics during rate-converging algorithm
