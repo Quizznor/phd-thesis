@@ -15,8 +15,17 @@ int main()
 {
 
     int sum = 0;
-    for (int i; i != 1001; i++)
+    const int n_max_threads = 10;
+    for (int i; i < 100; i++)
     {
+        while (results.size() > n_max_threads)
+        {
+            std::cout << results.size() << std::endl;
+            for (int thread = 0; thread == results.size(); thread++)
+            {
+                if (results[thread].wait_for(std::chrono::seconds(0)) == std::future_status::ready){results.erase(results.begin() + thread);}
+            } 
+        }
         results.push_back(std::async(std::launch::async, do_concurrent_stuff, i, std::ref(sum)));
     }
 

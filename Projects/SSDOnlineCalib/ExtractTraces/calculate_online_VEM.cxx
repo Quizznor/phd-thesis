@@ -6,11 +6,11 @@
 #include <cstdint>
 #include <string>
 #include <future>
+#include <chrono>
 
 static std::mutex trigger_guard;
-std::vector<std::future<void>> results;
 
-std::vector<float> operator+(const std::vector<int>& a, const std::vector<float>& b)
+std::vector<float> operator+(const std::vector<float>& a, const std::vector<float>& b)
 {
     // assert(a.size() == b.size());
 
@@ -22,15 +22,14 @@ std::vector<float> operator+(const std::vector<int>& a, const std::vector<float>
     return result;
 }
 
-std::vector<float> operator+=(const std::vector<float>& a, const std::vector<float>& b)
+std::vector<float> operator+=(std::vector<float>& a, const std::vector<float>& b)
 {
-    // assert(a.size() == b.size());
-
     std::vector<float> result;
     result.reserve(a.size());
 
     std::transform(a.begin(), a.end(), b.begin(), 
                    std::back_inserter(result), std::plus<float>());
+    
     return result;
 }
 
@@ -104,13 +103,13 @@ std::vector<float> qualifies_as_t1(const std::vector<std::string>& t, std::vecto
     const int b2 = stoi(t[1].substr(0, 3));
     const int b3 = stoi(t[2].substr(0, 3));
 
-    for (int n = 4; n < 8195; n++)
+    for (int n = 4; n < 8195; n += 4)
     {
         const int p1 = stoi(t[0].substr(n, n+4)) - b1;
         const int p2 = stoi(t[1].substr(n, n+4)) - b2;
         const int p3 = stoi(t[2].substr(n, n+4)) - b3;
 
-        if (not result[0] && p1 > t2[0])
+        if (not result[0] && (p1 > t2[0]))
         {
             if (p2 > t1[1] )
             {
@@ -118,7 +117,7 @@ std::vector<float> qualifies_as_t1(const std::vector<std::string>& t, std::vecto
             }
         }
 
-        if (not result[1] && p2 > t2[1])
+        if (not result[1] && (p2 > t2[1]))
         {
             if (p1 > t1[0])
             {
@@ -126,7 +125,7 @@ std::vector<float> qualifies_as_t1(const std::vector<std::string>& t, std::vecto
             }
         }
 
-        if (not result[2] && p3 > t2[3])
+        if (not result[2] && (p3 > t2[2]))
         {
             if (p1 > t1[0])
             {
@@ -140,8 +139,9 @@ std::vector<float> qualifies_as_t1(const std::vector<std::string>& t, std::vecto
     return result;
 }
 
-void calculate_triggers_in_file(std::ifstream& ifs, std::vector<float>& triggers, std::vector<float>& thresholds)
+void calculate_triggers_in_file(std::string* path, std::vector<float>& thresholds, std::vector<float>& triggers)
 {
+    std::ifstream ifs(*path);
     std::vector<std::string> trace(3);
     std::vector<float> triggers_this_file(3,0.0);
 
@@ -149,50 +149,70 @@ void calculate_triggers_in_file(std::ifstream& ifs, std::vector<float>& triggers
     {
         std::getline(ifs, trace[1]);
         std::getline(ifs, trace[2]);
-        triggers_this_file += qualifies_as_t1(trace, thresholds);
+        triggers_this_file = triggers_this_file + qualifies_as_t1(trace, thresholds);
     }
 
     std::lock_guard<std::mutex> lock(trigger_guard);
-    triggers += triggers_this_file;
+    triggers = triggers + triggers_this_file;
+    std::cout << "thread finished: (" << triggers_this_file[0] << ", " << triggers_this_file[1] << ", " << triggers_this_file[2] << ") triggers found in " << *path << std::endl;
+    delete path;
 }
 
 int main(int argc, char **argv) {
 
-    const std::string station(argv[1]);
-    const std::filesystem::path Data("/cr/tempdata01/filip/iRODS/UubRandoms/converted/" + station + "/");    
+    // const std::string station(argv[1]);
+    const std::string station("Jaco");
+    const std::filesystem::path Data("/cr/tempdata01/filip/iRODS/UubRandoms/converted/" + station + "/");
+    std::vector<std::string> active_files;
 
     std::vector<float> thresholds = {150, 150, 150};
     std::vector<float> increments(3, 1);
     std::vector<float> triggers;
-    float t_cal = 0.01;
     float nanoseconds;
 
+    float t_cal = 5.0;                                  // starting calibration window
+    float t_inc = 5.0;                                  // per-step increase of window
+    float t_max = 60.;                                  // maximum duration of calibration
+    float t_res = 10.;                                  // reset to this value if estimate is shit
+
     // variables as set in the Online/Offline calibration paper
-    // https://www.sciencedirect.com/science/article/pii/S0168900206013593
+    // https://www.sciencedirect.com/science/article/pii/S0168900206013593q
     // Online algorithm described on page 842 with calibration triggers
 
     // rate-converging algorithm    
-    while (t_cal < 60.0)
+    while (t_cal < t_max)
     {
+        std::vector<std::future<void>> results;
         triggers = {0., 0., 0.};
         nanoseconds = 0;
 
         for (const auto& file : std::filesystem::directory_iterator(Data))
         {
             // create file stream
-            if (file.path().string().find("_WCD.dat") == std::string::npos){continue;}
-            std::ifstream ifs(file.path().string());
-            // std::cout << "reading " << file.path().string() << "...";
+            std::string *path = new std::string(file.path().string());
+            if (path->find("_WCD.dat") == std::string::npos){continue;}
 
             if (nanoseconds * 1e-9 >= t_cal){break;}
             nanoseconds += 8.33 * 2048 * 5000;
 
-            results.push_back(std::async(std::launch::async, calculate_triggers_in_file, std::ref(ifs), std::ref(triggers), std::ref(thresholds)));
+            /* Concurrent version */
+            // // we should limit the number of threads here
+            while (results.size() > 30)
+            {
+                for (int i = 0; i < results.size(); i++)
+                {
+                    const auto response = results[i].wait_for(std::chrono::seconds(0));
+                    if (response == std::future_status::ready){results.erase(results.begin() + i);}
+                }
+            }
+
+            results.push_back(std::async(std::launch::async, calculate_triggers_in_file, path, std::ref(thresholds), std::ref(triggers)));
+
+            /* Non-concurrent version */
+            // calculate_triggers_in_file(path, thresholds, triggers);
         }
 
-        for (auto& thread : results){
-            thread.wait();
-            std::cout << "waiting" << std::endl;}
+        for (auto& thread : results){thread.wait();}
 
         std::vector<float> rates = triggers / (nanoseconds * 1e-9);
 
@@ -206,28 +226,31 @@ int main(int argc, char **argv) {
         std::cout << "}" << std::endl;
 
         std::vector<float> differences = rates - (float)70.0;
+        bool estimate_is_shit = false;
         bool estimate_is_bad = false;
         for (int i = 0; i < 3; i++)
         {
             if (-20 > differences[i])
             {
-                estimate_is_bad = true;
+                estimate_is_shit = true;
                 increments[i] = 1;
                 thresholds[i] -= 5;
             }
             else if (-2 > differences[i])
             {
                 thresholds[i] -= increments[i];
+                estimate_is_bad = true;
             }
             else if (differences[i] > 20)
             {
-                estimate_is_bad = true;
+                estimate_is_shit = true;
                 increments[i] = 1;
                 thresholds[i] += 5;
             }
             else if (differences[i] > 2)
             {
                 thresholds[i] += increments[i];
+                estimate_is_bad = true;
             }
             else
             {
@@ -235,16 +258,9 @@ int main(int argc, char **argv) {
             }
         }
 
-        if (estimate_is_bad){t_cal = 0.1;}
-        // else{t_cal += 5.0;}
+        if (estimate_is_shit){t_cal = t_res;}
+        else if (not estimate_is_bad){t_cal += t_inc;}
     }
-
-    //std::cout << "Best threshold for desired rate of " << desired_rate << " Hz is: " << best_threshold << " (" << best_rate << " Hz)" << std::endl;
-
-    //std::string save_path = "/cr/tempdata01/filip/SSDCalib/OnlineCalib/OnlineThresholds/" + station + ".dat";
-    //std::ofstream saveFile(save_path, std::ios_base::app);
-
-    //saveFile << desired_rate << " " << best_rate << " " << best_threshold << " " << triggers << " " << nanoseconds * 1e-9 << std::endl;
 
     return 0;
 }

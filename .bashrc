@@ -16,9 +16,13 @@ alias "bye"="exit"
 
 # set environment for ssh, some other stuff
 export TERM=xterm
-export PATH="/cr/users/filip/:$PATH"
-#export PATH="/cr/data01/filip/Offline/v4r0p1/ape-auger-v4r0p1-icrc2023-prod1/binutils/usr/:$PATH"
-export OFFLINE="/lsdf/auger/containers/offline/app/offline/install/bin/this-auger-offline.sh"
+export OFFLINE="/cr/data01/filip/Offline/18b2be65a/install/bin/this-auger-offline.sh"
+
+if [ -z "$LE_LIBRARY_PATH" ]; then
+	export LD_LIBRARY_PATH="/cr/users/filip/anaconda3/lib"
+else
+	export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/cr/users/filip/anaconda3/lib"
+fi
 
 # condor submitting etc.
 alias "cq"="condor_q"
