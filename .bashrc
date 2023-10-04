@@ -18,11 +18,11 @@ alias "bye"="exit"
 export TERM=xterm
 export OFFLINE="/cr/data01/filip/Offline/18b2be65a/install/bin/this-auger-offline.sh"
 
-if [ -z "$LE_LIBRARY_PATH" ]; then
-	export LD_LIBRARY_PATH="/cr/users/filip/anaconda3/lib"
-else
-	export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/cr/users/filip/anaconda3/lib"
-fi
+#if [ -z "$LE_LIBRARY_PATH" ]; then
+#	export LD_LIBRARY_PATH="/cr/users/filip/anaconda3/lib"
+#else
+#	export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/cr/users/filip/anaconda3/lib"
+#fi
 
 # condor submitting etc.
 alias "cq"="condor_q"

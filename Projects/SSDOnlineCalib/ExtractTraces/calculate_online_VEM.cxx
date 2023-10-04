@@ -154,14 +154,13 @@ void calculate_triggers_in_file(std::string* path, std::vector<float>& threshold
 
     std::lock_guard<std::mutex> lock(trigger_guard);
     triggers = triggers + triggers_this_file;
-    std::cout << "thread finished: (" << triggers_this_file[0] << ", " << triggers_this_file[1] << ", " << triggers_this_file[2] << ") triggers found in " << *path << std::endl;
+    // std::cout << "thread finished: (" << triggers_this_file[0] << ", " << triggers_this_file[1] << ", " << triggers_this_file[2] << ") triggers found in " << *path << std::endl;
     delete path;
 }
 
 int main(int argc, char **argv) {
 
-    // const std::string station(argv[1]);
-    const std::string station("Jaco");
+    const std::string station(argv[1]);
     const std::filesystem::path Data("/cr/tempdata01/filip/iRODS/UubRandoms/converted/" + station + "/");
     std::vector<std::string> active_files;
 
@@ -197,7 +196,7 @@ int main(int argc, char **argv) {
 
             /* Concurrent version */
             // // we should limit the number of threads here
-            while (results.size() > 30)
+            while (results.size() > 10)
             {
                 for (int i = 0; i < results.size(); i++)
                 {
