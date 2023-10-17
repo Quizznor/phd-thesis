@@ -17,6 +17,9 @@ alias "bye"="exit"
 # set environment for ssh, some other stuff
 export TERM=xterm
 export OFFLINE="/cr/data01/filip/Offline/18b2be65a/install/bin/this-auger-offline.sh"
+export ONNXPATH="/cr/data01/filip/ONNXNetwork/onnxruntime/"
+export ONNXLIBPATH="${ONNXPATH}/build/Linux/MinSizeRel"
+export ONNXINCPATH="${ONNXPATH}/include/onnxruntime/core/session"
 
 #if [ -z "$LE_LIBRARY_PATH" ]; then
 #	export LD_LIBRARY_PATH="/cr/users/filip/anaconda3/lib"

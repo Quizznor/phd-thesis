@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
 
     const auto random_file = std::string(4 - std::min((size_t)4, file.length()), '0') + file;
     const auto full_path = "/cr/tempdata01/filip/iRODS/UubRandoms/converted/"+station+"/randoms"+random_file+"_SSD.dat";
-    const auto t1_path = "/cr/tempdata01/filip/iRODS/UubRandoms/T1_info/"+station+"/randoms"+random_file+"_WCD.dat";
+    const auto t1_path = "/cr/tempdata01/filip/SSDCalib/WCDT1Calib/"+station+"/randoms"+random_file+"_WCD.dat";
 
     std::cout << "reading from " << full_path << std::endl;
     std::cout << "reading from " << t1_path << std::endl;

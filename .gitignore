@@ -37,6 +37,7 @@
 *.out
 *.err
 .airesrc
+.Xauthority-l
 
 # unimportant
 filip.code-workspace
@@ -55,7 +56,8 @@ Projects/StationSoftware/Compiler/Xilinx_SDK_2015.4_1118_2_Lin64.bin
 Projects/StationSoftware/DAQ/
 Projects/XYScanner/xy-calibration/
 Projects/XYScanner/S4A
-Projects/ONNXNetwork/neuralnetworkpredictor
+Projects/ONNXNetwork/
 
 # Condor
 *.err
+*.log

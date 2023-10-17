@@ -3,7 +3,7 @@
 import os, sys
 import numpy as np
 
-write_timestamps = True
+write_timestamps = False
 write_WCD = True
 write_SSD = False
 
@@ -18,8 +18,6 @@ ssd_file = f"/cr/tempdata01/filip/iRODS/UubRandoms/converted/{sys.argv[1]}/{file
 timestamp_file = f"/cr/tempdata01/filip/iRODS/UubRandoms/converted/timestamps/{sys.argv[1]}.dat"
 
 # implement check to scan for files that are alrady present
-
-
 with open(working_dir + file,"rb") as binary_file:
 
     if write_WCD:

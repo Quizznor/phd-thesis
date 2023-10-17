@@ -1,10 +1,13 @@
 JobBatchName    = extract_random_traces_$(STATION)
 Executable      = /cr/users/filip/Projects/SSDOnlineCalib/ExtractTraces/extract_wcd_and_ssd.py
 
-STATION         = Granada
+error           = /cr/users/filip/Projects/SSDOnlineCalib/ExtractTraces/error.log
+
+STATION         = LeQuiDon
 
 arguments       = "$(STATION) $(Process)"
 request_memory  = 2G
 max_idle        = 150
+max_materialize = 10
                                                 
 queue 800
