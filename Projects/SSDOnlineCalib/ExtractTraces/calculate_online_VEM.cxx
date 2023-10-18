@@ -7,6 +7,7 @@
 #include <string>
 #include <future>
 #include <chrono>
+#include <cstring>
 
 static std::mutex trigger_guard;
 
@@ -99,40 +100,26 @@ std::vector<float> qualifies_as_t1(std::vector<std::string>& t, std::vector<floa
     const auto t1 = thresholds * 1.75;
     const auto t2 = thresholds * 2.5;
 
-    // allocate memory pointers, find baseline
-    int temp1, temp2, temp3;
-    temp1 = t[0].find(' ');
-    temp2 = t[1].find(' ');
-    temp3 = t[2].find(' ');
+    int p1, p2, p3;
 
-    const int b1 = stoi(t[0].substr(0, temp1));
-    const int b2 = stoi(t[1].substr(0, temp2));
-    const int b3 = stoi(t[2].substr(0, temp3));
-
-    t[0] = t[0].substr(temp1 + 1, std::string::npos);
-    t[1] = t[1].substr(temp2 + 1, std::string::npos);
-    t[2] = t[2].substr(temp3 + 1, std::string::npos);
-
-    // skip baseline, receive 2048/682 values afterwards
-    // distinction is made on string length, not ideal...
-    int n_bins = t[0].size() > 5000 ? 2049 : 683;
-    for (int n = 0; n < n_bins; n++)
+    // UB/UUB distinction is made on string length, not ideal...
+    int n_bins = t[0].size() > 4000 ? 2049 : 683;
+    for (int n = 0; n < n_bins; n = n+2)
     {
         const auto temp1 = t[0].find(' ');
         const auto temp2 = t[1].find(' ');
         const auto temp3 = t[2].find(' ');
 
-        const int p1 = stoi(t[0].substr(0, temp1)) - b1;
-        const int p2 = stoi(t[1].substr(0, temp2)) - b2;
-        const int p3 = stoi(t[2].substr(0, temp3)) - b3;
+        const int p1 = stoi(t[0].substr(0, temp1));
+        const int p2 = stoi(t[1].substr(0, temp2));
+        const int p3 = stoi(t[2].substr(0, temp3));
+        t[0] = t[0].substr(temp1 +1, std::string::npos);
+        t[1] = t[1].substr(temp2 +1, std::string::npos);
+        t[2] = t[2].substr(temp3 +1, std::string::npos);
 
         if (not result[0] && (p1 > t2[0]) && (p2 > t1[1]) && (p3 > t1[2])){result[0] = 1;}
         if (not result[1] && (p2 > t2[1]) && (p1 > t1[0]) && (p3 > t1[2])){result[1] = 1;}
         if (not result[2] && (p3 > t2[2]) && (p1 > t1[0]) && (p2 > t1[1])){result[2] = 1;}
-
-        t[0] = t[0].substr(temp1 +1, std::string::npos);
-        t[1] = t[1].substr(temp2 +1, std::string::npos);
-        t[2] = t[2].substr(temp3 +1, std::string::npos);
 
         if (result[1] && result[2] && result[3]){break;}
     }
@@ -142,7 +129,7 @@ std::vector<float> qualifies_as_t1(std::vector<std::string>& t, std::vector<floa
 
 void calculate_triggers_in_file(std::string* path, std::vector<float>& thresholds, std::vector<float>& triggers)
 {
-    std::ifstream ifs(*path);
+    std::ifstream ifs(*path, std::ios::binary);
     std::vector<std::string> trace(3);
     std::vector<float> triggers_this_file(3,0.0);
 
@@ -162,21 +149,21 @@ void calculate_triggers_in_file(std::string* path, std::vector<float>& threshold
 
 int main(int argc, char **argv) {
 
-    const std::string station(argv[1]);
-    // const std::string station("LeQuiDon");
-    const std::filesystem::path Data("/cr/tempdata01/filip/iRODS/UubRandoms/converted/" + station + "/");
+    // const std::string station(argv[1]);
+    // const std::string date(argv[2]);
+    std::string station("PeruFilteredDownsampled");
+    std::string date("Nov2022");
+    const std::filesystem::path Data("/cr/tempdata01/filip/UubRandoms/" + date + "/converted/" + station + "/");
     std::vector<std::string> active_files;
     std::vector<float> thresholds;
 
     // use online means for faster convergense
-    if (station == "NuriaJr"){thresholds = {160.5, 173.0, 159.8};}
-    else if (station == "Peru"){thresholds = {153.7, 121.2, 152.4};}
-    else if (station == "Granada"){thresholds = {152.9, 145.8, 157.9};}
-    else if (station == "Jaco"){thresholds = {181.9, 154.7, 144.3};}
-    else if (station == "LeQuiDon"){thresholds = {89.6, 88.4, 166.6};}
-    else if (station == "Svenja"){thresholds = {141.3, 147.0, 146.5};}
-    else if (station == "SvenjaLate"){thresholds = {141.3, 147.0, 146.5};}
-    else if (station == "SvenjaDownsampled"){thresholds = {141.3, 147.0, 146.5};}
+    if (station.find("NuriaJr") != std::string::npos){thresholds = {160.5, 173.0, 159.8};}
+    else if (station.find("Peru") != std::string::npos){thresholds = {153.7, 121.2, 152.4};}
+    else if (station.find("Granada") != std::string::npos){thresholds = {152.9, 145.8, 157.9};}
+    else if (station.find("Jaco") != std::string::npos){thresholds = {181.9, 154.7, 144.3};}
+    else if (station.find("LeQuiDon") != std::string::npos){thresholds = {89.6, 88.4, 166.6};}
+    else if (station.find("Svenja") != std::string::npos){thresholds = {141.3, 147.0, 146.5};}
     else {thresholds = {150, 150, 150};}
 
     std::vector<float> increments(3, 1);

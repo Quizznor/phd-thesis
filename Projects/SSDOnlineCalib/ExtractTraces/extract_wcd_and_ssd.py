@@ -6,18 +6,52 @@ import numpy as np
 write_timestamps = False
 write_WCD = True
 write_SSD = False
-apply_filtering = True
-apply_downsampling = False
+do_filtering = True
+do_downsampling = True
+
+def apply_downsampling(pmt : np.ndarray) -> np.ndarray :
+    random_phase = np.random.randint(3)
+
+    return np.array([pmt[i] for i in range(random_phase, len(pmt), 3)])
+
+def apply_filtering(pmt : np.ndarray) -> np.ndarray :
+
+    # see Framework/SDetector/UUBDownsampleFilter.h in Offline main branch for more information
+    kFirCoefficients = [ 5, 0, 12, 22, 0, -61, -96, 0, 256, 551, 681, 551, 256, 0, -96, -61, 0, 22, 12, 0, 5 ]
+    buffer_length = int(0.5 * len(kFirCoefficients))
+    kFirNormalizationBitShift = 11
+
+    temp = np.zeros(len(pmt) + len(kFirCoefficients))
+    trace = np.zeros(len(pmt))
+
+    temp[0 : buffer_length] = pmt[:: -1][-buffer_length - 1 : -1]
+    temp[-buffer_length - 1: -1] = pmt[:: -1][0 : buffer_length]
+    temp[buffer_length : -buffer_length - 1] = pmt
+
+    # perform downsampling
+    for j, coeff in enumerate(kFirCoefficients):
+        trace += [temp[k + j] * coeff for k in range(0, len(pmt), 1)]
+
+    # clipping and bitshifting
+    trace = [int(adc) >> kFirNormalizationBitShift for adc in trace]
+
+    # Simulate saturation of PMTs at 4095 ADC counts ~ 19 VEM <- same for HG/LG? I doubt it
+    return np.array(trace)
+
+station, date, _id = sys.argv[1:]
 
 # only loop through one file
-working_dir = "/cr/tempdata01/filip/iRODS/UubRandoms/raw/Nov2022/" + sys.argv[1] + "/"
-file = os.listdir(working_dir)[int(sys.argv[2])]
+working_dir = f"/cr/tempdata01/filip/UubRandoms/{date}/raw/{station}/"
+file = os.listdir(working_dir)[int(_id)]
+
+if do_filtering: station += "Filtered"
+if do_downsampling: station += "Downsampled"
 timestamps = []
 
-os.system(f"mkdir /cr/tempdata01/filip/iRODS/UubRandoms/converted/{sys.argv[1]}")
-wcd_file = f"/cr/tempdata01/filip/iRODS/UubRandoms/converted/{sys.argv[1]}/{file.replace('.dat','_WCD')}.dat"
-ssd_file = f"/cr/tempdata01/filip/iRODS/UubRandoms/converted/{sys.argv[1]}/{file.replace('.dat','_SSD')}.dat"
-timestamp_file = f"/cr/tempdata01/filip/iRODS/UubRandoms/converted/timestamps/{sys.argv[1]}.dat"
+os.system(f"mkdir -p /cr/tempdata01/filip/UubRandoms/{date}/converted/{station}")
+wcd_file = f"/cr/tempdata01/filip/UubRandoms/{date}/converted/{station}/{file.replace('.dat','_WCD')}.dat"
+ssd_file = f"/cr/tempdata01/filip/UubRandoms/{date}/converted/{station}/{file.replace('.dat','_SSD')}.dat"
+timestamp_file = f"/cr/tempdata01/filip/UubRandoms/{date}/converted/timestamps/{station}.dat"
 
 # implement check to scan for files that are alrady present
 with open(working_dir + file,"rb") as binary_file:
@@ -90,8 +124,16 @@ with open(working_dir + file,"rb") as binary_file:
                 baseline = Baseline[2*i+1 if not Saturated[2*i] else 2*i]
                 pmt = high_gain[i] if not Saturated[2*i] else low_gain[i]
 
+                if do_filtering: pmt = apply_filtering(pmt)
+                if do_downsampling: pmt = apply_downsampling(pmt)
+
                 with open(wcd_file, "a") as WCD:
-                    WCD.write(f"{int(baseline)} " + " ".join([str(int(_)) for _ in pmt]) + "\n")
+                    # b = b''
+                    # for _bin in pmt:
+                    #     this_number = int(_bin) - int(baseline)
+                    #     b += this_number.to_bytes(2, 'little', signed = True)
+                    # b += os.linesep.encode('utf-8')
+                    WCD.write(" ".join([str(int(_bin - baseline)) for _bin in pmt]) + "\n")
 
     # save SSD traces
     if write_SSD:
