@@ -6,6 +6,8 @@ import numpy as np
 write_timestamps = False
 write_WCD = True
 write_SSD = False
+apply_filtering = True
+apply_downsampling = False
 
 # only loop through one file
 working_dir = "/cr/tempdata01/filip/iRODS/UubRandoms/raw/Nov2022/" + sys.argv[1] + "/"

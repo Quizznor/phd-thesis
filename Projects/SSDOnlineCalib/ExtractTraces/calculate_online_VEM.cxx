@@ -99,13 +99,24 @@ std::vector<float> qualifies_as_t1(std::vector<std::string>& t, std::vector<floa
     const auto t1 = thresholds * 1.75;
     const auto t2 = thresholds * 2.5;
 
-    // technically this fails if the baseline is above 999 ADC
-    const int b1 = stoi(t[0].substr(0, 3));
-    const int b2 = stoi(t[1].substr(0, 3));
-    const int b3 = stoi(t[2].substr(0, 3));
+    // allocate memory pointers, find baseline
+    int temp1, temp2, temp3;
+    temp1 = t[0].find(' ');
+    temp2 = t[1].find(' ');
+    temp3 = t[2].find(' ');
 
-    // skip baseline, receive 2048 values afterwards
-    for (int n = 1; n < 2049; n++)
+    const int b1 = stoi(t[0].substr(0, temp1));
+    const int b2 = stoi(t[1].substr(0, temp2));
+    const int b3 = stoi(t[2].substr(0, temp3));
+
+    t[0] = t[0].substr(temp1 + 1, std::string::npos);
+    t[1] = t[1].substr(temp2 + 1, std::string::npos);
+    t[2] = t[2].substr(temp3 + 1, std::string::npos);
+
+    // skip baseline, receive 2048/682 values afterwards
+    // distinction is made on string length, not ideal...
+    int n_bins = t[0].size() > 5000 ? 2049 : 683;
+    for (int n = 0; n < n_bins; n++)
     {
         const auto temp1 = t[0].find(' ');
         const auto temp2 = t[1].find(' ');
@@ -165,6 +176,7 @@ int main(int argc, char **argv) {
     else if (station == "LeQuiDon"){thresholds = {89.6, 88.4, 166.6};}
     else if (station == "Svenja"){thresholds = {141.3, 147.0, 146.5};}
     else if (station == "SvenjaLate"){thresholds = {141.3, 147.0, 146.5};}
+    else if (station == "SvenjaDownsampled"){thresholds = {141.3, 147.0, 146.5};}
     else {thresholds = {150, 150, 150};}
 
     std::vector<float> increments(3, 1);
@@ -211,7 +223,7 @@ int main(int argc, char **argv) {
 
             results.push_back(std::async(std::launch::async, calculate_triggers_in_file, path, std::ref(thresholds), std::ref(triggers)));
 
-            // /* Non-concurrent version */
+            // // /* Non-concurrent version */
             // calculate_triggers_in_file(path, thresholds, triggers);
         }
 

@@ -10,6 +10,7 @@ q_peak = {
     'Granada' : np.array([153.5, 160.6, 170]),
     'NuriaJr' : np.array([169.3, 176.9, 169.5]),
     'Svenja' : np.array([172.4, 187, 168.8]),
+    'SvenjaDownsampled': np.array([154.4, 165.9, 150.2]),
     
 }
 
