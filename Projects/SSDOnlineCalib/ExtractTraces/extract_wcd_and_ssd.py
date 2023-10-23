@@ -3,16 +3,15 @@
 import os, sys
 import numpy as np
 
-write_timestamps = False
+write_timestamps = True
 write_WCD = True
 write_SSD = False
-do_filtering = True
-do_downsampling = True
+do_filtering = False
+do_downsampling = False
 
 def apply_downsampling(pmt : np.ndarray) -> np.ndarray :
-    random_phase = np.random.randint(3)
-
-    return np.array([pmt[i] for i in range(random_phase, len(pmt), 3)])
+    random_phase = np.random.randint(1, 4)
+    return np.array([pmt[i] for i in range(random_phase, len(pmt)-1, 3)])
 
 def apply_filtering(pmt : np.ndarray) -> np.ndarray :
 

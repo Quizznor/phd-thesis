@@ -1,0 +1,14 @@
+JobBatchName    = extract_WCD_T1s_$(STATION)
+Executable      = /cr/users/filip/Projects/SSDOnlineCalib/ExtractTraces/get_T1s.py
+
+error           = /cr/users/filip/Projects/SSDOnlineCalib/ExtractTraces/error-get_T1s.log
+
+STATION         = NadiaEarlyOnline
+DATE            = Mar2023
+
+arguments       = "$(STATION) $(DATE) $(Process)"
+request_memory  = 2G
+max_idle        = 150
+max_materialize = 20
+                                                
+queue 631
