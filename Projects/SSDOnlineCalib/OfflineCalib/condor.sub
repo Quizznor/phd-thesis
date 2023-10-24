@@ -1,13 +1,15 @@
-JobBatchName    = calculate_histograms_$(STATION)
-Executable      = /cr/users/filip/Projects/SSDOnlineCalib/OfflineCalib/OfflineAlgorithm
+JobBatchName    = calculate_histograms_$(STATION)_$(analyze_T1s)
+Executable      = /cr/users/filip/Projects/SSDOnlineCalib/OfflineCalib/CalcHistos
 
-STATION         = Jaco
-analyze_T1s     = 1
+error           = /cr/users/filip/Projects/SSDOnlineCalib/OfflineCalib/error.log
 
-arguments       = "$(STATION) $(Process) $(analyze_T1s)"
+STATION         = PeruFiltered
+DATE            = Nov2022
+analyze_T1s     = 0
+
+arguments       = "$(STATION) $(DATE) $(Process) $(analyze_T1s)"
 request_memory  = 2G
 max_idle        = 150
-max_materialize = 10
-
-                                                
+max_materialize = 20
+                            
 queue 800

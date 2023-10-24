@@ -173,7 +173,7 @@ void calculate_triggers_in_file(std::string* path, std::vector<float>& threshold
         std::getline(ifs, trace[2]);
         // std::cout << trace[0].size() << ' ' << trace[1].size() << ' ' << trace[2].size() << std::endl;
         // triggers_this_file = triggers_this_file + is_calibration_trigger(trace, thresholds);
-        triggers_this_file = triggers_this_file + is_calibration_trigger(trace, thresholds);
+        triggers_this_file = triggers_this_file + is_t1_trigger(trace, thresholds);
     }
 
     std::lock_guard<std::mutex> lock(trigger_guard);
@@ -262,8 +262,8 @@ int main(int argc, char **argv) {
         std::cout << "}" << std::endl;
 
         // wait, you changed this!
-        // std::cout << "RUNNING WITH MODIFIED T1 TRIGGER FOR 100Hz !!!!" << std::endl;
-        std::vector<float> differences = rates - (float)70.0;
+        std::cout << "RUNNING WITH MODIFIED T1 TRIGGER FOR 100Hz !!!!" << std::endl;
+        std::vector<float> differences = rates - (float)100.0;
         bool estimate_is_shit = false;
         bool estimate_is_bad = false;
         for (int i = 0; i < 3; i++)

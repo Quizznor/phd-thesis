@@ -1,2 +1,2 @@
-OfflineAlgorithm: offline_algorithm.cxx
-	g++ offline_algorithm.cxx -g -std=c++17 -o OfflineAlgorithm -fsanitize=leak
+CalcHistos: calculate_histograms.cxx
+	g++ calculate_histograms.cxx -g -std=c++17 -o CalcHistos -fsanitize=leak

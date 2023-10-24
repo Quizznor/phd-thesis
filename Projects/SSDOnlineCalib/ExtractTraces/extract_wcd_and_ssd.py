@@ -3,10 +3,10 @@
 import os, sys
 import numpy as np
 
-write_timestamps = True
+write_timestamps = False
 write_WCD = True
-write_SSD = False
-do_filtering = False
+write_SSD = True
+do_filtering = True
 do_downsampling = False
 
 def apply_downsampling(pmt : np.ndarray) -> np.ndarray :
