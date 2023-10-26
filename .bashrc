@@ -172,4 +172,4 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 
-#trap keep_stats DEBUG
+trap keep_stats DEBUG

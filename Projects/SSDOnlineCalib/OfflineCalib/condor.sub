@@ -3,8 +3,8 @@ Executable      = /cr/users/filip/Projects/SSDOnlineCalib/OfflineCalib/CalcHisto
 
 error           = /cr/users/filip/Projects/SSDOnlineCalib/OfflineCalib/error.log
 
-STATION         = PeruFiltered
-DATE            = Nov2022
+STATION         = NadiaEarlyFilteredDownsampled
+DATE            = Mar2023
 analyze_T1s     = 0
 
 arguments       = "$(STATION) $(DATE) $(Process) $(analyze_T1s)"
