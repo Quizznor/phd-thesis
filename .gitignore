@@ -40,7 +40,7 @@
 .Xauthority-l
 
 # unimportant
-*/__pycache__
+bin/utils/*/__pycache__
 filip.code-workspace
 bin/history.pickle
 anaconda3
