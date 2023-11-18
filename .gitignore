@@ -36,11 +36,11 @@
 .Xilinx
 *.out
 *.err
+*.pyc
 .airesrc
 .Xauthority-l
 
 # unimportant
-bin/utils/*/__pycache__
 filip.code-workspace
 bin/history.pickle
 anaconda3

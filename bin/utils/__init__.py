@@ -11,11 +11,3 @@ def setup() -> None :
 
     for submodule in submodules:                                    # this gets the relevant modules in
         sys.modules[f'{__name__}.{submodule}'].setup()              # the appropriate (global) namespace
-
-    # if isinstance(modules, list[str]):
-    #     for module in modules:
-    #         setup(module)
-    # if isinstance(modules, str):
-    #     print(modules)    
-    # else:
-    #     sys.exit(f"Attempting to import {modules} failed")
