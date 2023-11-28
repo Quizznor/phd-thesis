@@ -5,8 +5,8 @@ import numpy as np
 
 write_timestamps = False
 write_WCD = True
-write_SSD = True
-do_filtering = True
+write_SSD = False
+do_filtering = False
 do_downsampling = False
 
 def apply_downsampling(pmt : np.ndarray) -> np.ndarray :
@@ -27,7 +27,7 @@ def apply_filtering(pmt : np.ndarray) -> np.ndarray :
     temp[-buffer_length - 1: -1] = pmt[:: -1][0 : buffer_length]
     temp[buffer_length : -buffer_length - 1] = pmt
 
-    # perform downsampling
+    # perform filtering
     for j, coeff in enumerate(kFirCoefficients):
         trace += [temp[k + j] * coeff for k in range(0, len(pmt), 1)]
 

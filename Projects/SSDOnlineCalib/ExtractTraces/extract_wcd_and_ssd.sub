@@ -3,13 +3,12 @@ Executable      = /cr/users/filip/Projects/SSDOnlineCalib/ExtractTraces/extract_
 
 error           = /cr/users/filip/Projects/SSDOnlineCalib/ExtractTraces/trace_extraction-$(DATE)-$(STATION).log
 
-STATION         = Peru
+STATION         = NuriaJr
 DATE            = Nov2022
 
 arguments       = "$(STATION) $(DATE) $(Process)"
 request_memory  = 2G
 max_idle        = 150
 max_materialize = 20
-
                                           
-queue 632
+queue 800
