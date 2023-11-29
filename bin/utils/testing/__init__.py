@@ -67,10 +67,11 @@ class Formatter(colorlog.ColoredFormatter):
             secondary_log_colors={},
             style='{')
 
-def create_stream_logger(name : str) -> logging.Logger :
+def create_stream_logger(name : str, loglevel=logging.DEBUG) -> logging.Logger :
+	"""create a simple logger that streams to stdout"""
 
 	logger = logging.getLogger(name)
-	logger.setLevel(logging.DEBUG)
+	logger.setLevel(loglevel)
 	ch = logging.StreamHandler()
 	ch.setLevel(0)
 	ch.setFormatter(Formatter())
@@ -78,9 +79,9 @@ def create_stream_logger(name : str) -> logging.Logger :
 
 	return logger
 
-logger = create_stream_logger('utils.testing ')
-logger.info('import colorlog, logging')
-logger.info('import re')
-
-
-del logger
+testing_logger = create_stream_logger('utils.testing ')
+testing_logger.info('import colorlog, logging')
+testing_logger.info('import re')
+from . import tools as testing
+testing_logger.info('import testing.tools as testing')
+del tools
