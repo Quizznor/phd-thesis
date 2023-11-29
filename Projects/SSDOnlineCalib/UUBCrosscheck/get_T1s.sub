@@ -3,7 +3,7 @@ Executable      = /cr/users/filip/Projects/SSDOnlineCalib/UUBCrosscheck/get_T1s.
 
 error           = /cr/users/filip/Projects/SSDOnlineCalib/UUBCrosscheck/error.log
 
-STATION         = NuriaJrFiltered
+STATION         = NuriaJr
 DATE            = Nov2022
 
 arguments       = "$(STATION) $(DATE) $(Process)"

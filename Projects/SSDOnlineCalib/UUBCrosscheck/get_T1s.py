@@ -21,6 +21,7 @@ q_peak = {
     # 'NadiaLateOnline' :                 np.array([144.0, 149.7, 149.2]),
     # 'NadiaEarlyOnline' :                np.array([144.0, 149.7, 149.2]),
 
+    'NuriaJr' :                         np.array([156.50, 163.65, 162.70]),
     'NuriaJrFiltered' :                 np.array([156.50, 163.65, 162.70]),
     'NuriaJrFilteredDownsampled' :      np.array([156.50, 163.65, 162.70]),
     'PeruFilteredDownsampled' :         np.array([150.30, 117.50, 153.35]),

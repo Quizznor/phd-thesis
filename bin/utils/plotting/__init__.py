@@ -1,11 +1,12 @@
-import matplotlib.pyplot as plt
-import seaborn as sns
-import scienceplots
-import pandas as pd
-import numpy as np
+from ..testing import create_stream_logger
+import logging, colorlog
+
+logger = create_stream_logger("utils.plotting")
 
 def set_plt_style(style : str = 'notebook') -> None : 
-    
+    """Change the global plotting style based on performance/look"""
+    import scienceplots
+
     if style == 'script':
         plt.style.use(['science', 'ieee'])
         plt.rcParams['text.usetex'] = True
@@ -17,13 +18,28 @@ def set_plt_style(style : str = 'notebook') -> None :
     elif style == 'notebook':
         plt.style.use(['science', 'ieee', 'no-latex', 'high-vis'])
 
-    print(f'style has been set to {style}-style. You can execute `set_plt_style(<style>)` to change this.')
+    logger.debug(f'plotting style set to `{style}`.')
+    logger.debug('run set_plt_style() to change style')
 
-print('from utils.plotting import matplotlib.pyplot as plt      # Comprehensive library for creating beautiful visualizations')
-print('from utils.plotting import import seaborn as sns         # Statistical data visualization library based on matplotlib')
-print('from utils.plotting import import numpy as np            # The fundamental package for scientific computing with Python')
-print('from utils.plotting import pandas as pd                  # Easy to use open source data analysis and manipulation tool')
+# this check is useless
+try:
+    _ = np.__version__
+    _ = pd.__version__
+except NameError:
+    import numpy as np
+    logger.info('import numpy as np')
+    import pandas as pd
+    logger.info('import pandas as pd')
+
+import matplotlib.pyplot as plt
+logger.info('import matplotlib.pyplot as plt')
+import seaborn as sns
+logger.info('import seaborn as sns')
 
 set_plt_style()
 
+del create_stream_logger
 from . import tools as plotting
+logger.info('import plotting.tools as plotting')
+del logger
+del tools
