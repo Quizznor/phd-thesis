@@ -23,16 +23,19 @@ q_peak = {
 
     'NuriaJr' :                         np.array([156.50, 163.65, 162.70]),
     'NuriaJrFiltered' :                 np.array([156.50, 163.65, 162.70]),
+    'NuriaJrDownsampled' :              np.array([156.50, 163.65, 162.70]),
     'NuriaJrFilteredDownsampled' :      np.array([156.50, 163.65, 162.70]),
+    'PeruFiltered' :                    np.array([150.30, 117.50, 153.35]),
     'PeruFilteredDownsampled' :         np.array([150.30, 117.50, 153.35]),
     'NadiaEarlyFilteredDownsampled' :   np.array([148.90, 162.20, 151.75]),
     'NadiaLateFilteredDownsampled' :    np.array([148.90, 162.20, 151.75]),
 }
 
-def check_T1(trace : np.ndarray) -> int :
+def check_T1(trace : np.ndarray, station : str) -> int :
 
     # Maybe adjust thresholds instead of calibrating trace?
-    # likely faster and more reflective of actual algorithm 
+    # likely faster and more reflective of actual algorithm
+    threshold = 1.75 * q_peak[station]
 
     for i in range(trace.shape[1]):
         if trace[0][i] > threshold[0]:
@@ -49,11 +52,9 @@ wcd_file=f"/cr/tempdata01/filip/UubRandoms/{date}/converted/{station}/randoms{in
 
 traces = np.loadtxt(wcd_file)
 traces = np.split(traces, len(traces) // 3)
-
-threshold = q_peak[station]
 t1_info = []
 
 for i, trace in enumerate(traces):
-    t1_info.append(check_T1(trace))
+    t1_info.append(check_T1(trace, station))
 
 np.savetxt(wcd_file.replace(f"UubRandoms/{date}/converted", f"SSDCalib/UUBCrosscheck/{date}"), np.array(t1_info), fmt='%i')

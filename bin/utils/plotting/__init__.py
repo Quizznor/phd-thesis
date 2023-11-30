@@ -8,6 +8,8 @@ def set_plt_style(style : str = 'notebook') -> None :
     import scienceplots
 
     if style == 'script':
+        fontsize = 8
+        figuresize = [3.3, 2.5]
         plt.style.use(['science', 'ieee'])
         plt.rcParams['text.usetex'] = True
         plt.rcParams['text.latex.preamble'] = \
@@ -16,10 +18,17 @@ def set_plt_style(style : str = 'notebook') -> None :
             + r'\usepackage{upgreek}' \
             + r'\usepackage{siunitx}'
     elif style == 'notebook':
+        fontsize = 4
+        figuresize = [2.4, 1.2]
         plt.style.use(['science', 'ieee', 'no-latex', 'high-vis'])
-
+    
+    plt.rcParams['font.size'] = fontsize
+    plotting_logger.debug(f'font size set to {fontsize}')
+    plt.rcParams['figure.figsize'] = figuresize
+    plotting_logger.debug(f'figure size set to {figuresize}')
+    plt.rcParams['font.size'] = fontsize
     plotting_logger.debug(f'plotting style set to `{style}`.')
-    plotting_logger.debug('run set_plt_style() to change style')
+
 
 import numpy as np
 plotting_logger.info('import numpy as np')

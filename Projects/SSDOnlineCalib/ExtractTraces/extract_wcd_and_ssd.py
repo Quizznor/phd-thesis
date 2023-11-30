@@ -7,7 +7,7 @@ write_timestamps = False
 write_WCD = True
 write_SSD = False
 do_filtering = False
-do_downsampling = False
+do_downsampling = True
 
 def apply_downsampling(pmt : np.ndarray) -> np.ndarray :
     random_phase = np.random.randint(1, 4)

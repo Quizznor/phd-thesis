@@ -48,7 +48,7 @@ def box_series(x : Union[str, Iterable], y : Union[str, Iterable], data : Union[
 
     bins = kwargs.get('bins', 10)
     if isinstance(bins, int):
-        bins = np.linspace(min(scatter_x), max(scatter_x), bins)
+        bins = np.linspace(min(scatter_x), max(scatter_x), bins+1)
     positions = 0.5 * (bins[1:] + bins[:-1])
 
     # split the data into different boxes
@@ -57,11 +57,19 @@ def box_series(x : Union[str, Iterable], y : Union[str, Iterable], data : Union[
 
     # visualize results
     ax = kwargs.get('ax', plt.gca())
-    ax.boxplot(boxes, positions=positions, widths=np.diff(bins), showfliers=False, manage_ticks=False)
-    ax.scatter(scatter_x, scatter_y, 
-               edgecolors=next(ax._get_lines.prop_cycler)['color'],
-               label=kwargs.get('label', None),
-               s=kwargs.get('markersize', 0.2),
+    color = next(ax._get_lines.prop_cycler)['color']
+    ax.boxplot(boxes, 
+               positions=positions, 
+               widths=np.diff(bins), 
+               showfliers=False, 
+               manage_ticks=False,
+               medianprops={'color':color},
+    )
+    test = ax.scatter(scatter_x, scatter_y, 
+               label=kwargs.get('label', fr"$\bar{{y}}={np.mean(scatter_y):.2f}\pm{np.std(scatter_y):.2f}$"),
+               s=kwargs.get('markersize', 10),
+               edgecolors=color,
+               linewidths=0.2,
                facecolor='white', 
                alpha=0.4,
     )
