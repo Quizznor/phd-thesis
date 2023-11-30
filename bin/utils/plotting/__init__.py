@@ -1,5 +1,4 @@
 from ..testing import create_stream_logger
-import logging, colorlog
 
 plotting_logger = create_stream_logger("utils.plotting")
 

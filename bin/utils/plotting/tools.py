@@ -91,6 +91,20 @@ def box_series(x : Union[str, Iterable], y : Union[str, Iterable], data : Union[
                 label=fr"$\hat{{y}}\,\approx\,{popt[0]:.2f}\,$x$\,{'+' if popt[1]>0 else ''}{popt[1]:.2f}$")
         ax.fill_between(X, model(X)-error(X), model(X)+error(X), color=color, alpha = 0.3)
 
+def performance_plot(kernels : Iterable[callable], input : callable, n_range : Iterable[int], repeat : int = 10, skip_verification : bool = False) -> None :
+
+    from ..testing.tools import time_performance
+    results = time_performance(kernels, input, n_range, repeat, skip_verification)
+
+    plt.figure()
+    for fcn, runtimes in results.items():
+        plt.plot(n_range, runtimes, label=fcn)
+
+    plt.loglog()
+    plt.xlabel("Input size")
+    plt.ylabel("Runtime / ns")
+    plt.legend()
+
 
 def __test_box_series() -> None :
     fig = plt.figure()
@@ -98,7 +112,25 @@ def __test_box_series() -> None :
     y = np.random.normal(size=800)
     box_series(range(800), y)
 
-if __name__ == '__main__':
+def __test_performance_plot() -> None :
+    def c_(arr):
+        return np.c_[arr, arr]
 
-    __test_box_series(marksize=20)
-    plt.show()
+    def stack(arr):
+        return np.stack([arr, arr]).T
+
+    def vstack(arr):
+        return np.vstack([arr, arr]).T
+
+    def column_stack(arr):
+        return np.column_stack([arr, arr])
+
+    def concatenate(arr):
+        return np.concatenate([arr[:, None], arr[:, None]], axis=1)
+    
+    performance_plot([c_, stack, vstack, column_stack, concatenate], np.random.rand, [2**k for k in range(20)])
+
+
+if __name__ == '__main__':
+    __test_box_series()
+    __test_performance_plot()

@@ -1,7 +1,8 @@
-import colorlog, logging
+from colorlog import ColoredFormatter
+import logging
 import re
 
-class Formatter(colorlog.ColoredFormatter):
+class Formatter(ColoredFormatter):
 	"""Custom logging class to allow for stylized formatting, and runtime analysis"""
 
 	last_log = 0
@@ -80,8 +81,9 @@ def create_stream_logger(name : str, loglevel=logging.DEBUG) -> logging.Logger :
 	return logger
 
 testing_logger = create_stream_logger('utils.testing ')
-testing_logger.info('import colorlog, logging')
+testing_logger.info('import logging')
 testing_logger.info('import re')
 from . import tools as testing
 testing_logger.info('import testing.tools as testing')
+del ColoredFormatter
 del tools
