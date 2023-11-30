@@ -58,20 +58,20 @@ def box_series(x : Union[str, Iterable], y : Union[str, Iterable], data : Union[
     # visualize results
     ax = kwargs.get('ax', plt.gca())
     color = next(ax._get_lines.prop_cycler)['color']
-    ax.boxplot(boxes, 
+    ax.boxplot(boxes,
                positions=positions, 
                widths=np.diff(bins), 
                showfliers=False, 
                manage_ticks=False,
                medianprops={'color':color},
     )
-    test = ax.scatter(scatter_x, scatter_y, 
+    ax.scatter(scatter_x, scatter_y, 
                label=kwargs.get('label', fr"$\bar{{y}}={np.mean(scatter_y):.2f}\pm{np.std(scatter_y):.2f}$"),
                s=kwargs.get('markersize', 10),
                edgecolors=color,
                linewidths=0.2,
                facecolor='white', 
-               alpha=0.4,
+               alpha=0.6,
     )
 
 def __test_box_series() -> None :
