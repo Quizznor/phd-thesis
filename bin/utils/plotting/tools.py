@@ -34,10 +34,14 @@ def box_series(x : Union[str, Iterable], y : Union[str, Iterable], data : Union[
         * *data* (``pd.Dataframe``)         : the dataset for which the box plot is created
 
     Keywords:
-        * *bins* (``int | Iterable``)  = 10 : number of bins, or bin edges for the boxplots
-        * *ax* (``plt.Axes``)   = plt.gca() : the axis onto which the objects are drawn
-        * *markersize* (``int``)       = 20 : markersize for the accompanying scatterplot
-        * *label* (``str``)          = None : legend label for the accompanying scatterplot
+        * *bins* (``int | Iterable``)      = 10 : number of bins, or bin edges for the boxplots
+        * *ax* (``plt.Axes``)       = plt.gca() : the axis onto which the objects are drawn
+        * *markersize* (``int``)           = 20 : markersize for the accompanying scatterplot
+        * *label* (``str``)              = None : legend label for the accompanying scatterplot
+        * *analyze_drift* (``bool``)    = False : run a linear regression on the scatter data
+
+    Todo:
+        * Add x/y-unit for more beautiful formatting?
     """
 
     # get the full dataset and construct valid bins
@@ -71,8 +75,22 @@ def box_series(x : Union[str, Iterable], y : Union[str, Iterable], data : Union[
                edgecolors=color,
                linewidths=0.2,
                facecolor='white', 
-               alpha=0.6,
+               alpha=0.4,
     )
+
+    # run a linear regression, if desired
+    if kwargs.get('analyze_drift', False):
+        popt, pcov = np.polyfit(scatter_x, scatter_y, 1, cov=True)
+        gradient = lambda x : np.array([x, np.ones_like(x)])
+        
+        model = np.poly1d(popt)
+        error = lambda x : [np.sqrt( gradient(i).T @ pcov @ gradient(i) ) for i in x]
+
+        X = np.linspace(bins[0], bins[-1], 100)
+        ax.plot(X, model(X), color=color, lw=0.4,
+                label=fr"$\hat{{y}}\,\approx\,{popt[0]:.2f}\,$x$\,{'+' if popt[1]>0 else ''}{popt[1]:.2f}$")
+        ax.fill_between(X, model(X)-error(X), model(X)+error(X), color=color, alpha = 0.3)
+
 
 def __test_box_series() -> None :
     fig = plt.figure()
