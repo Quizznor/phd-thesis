@@ -1,8 +1,8 @@
 from typing import Union, Iterable
-import matplotlib.pyplot as plt
-import seaborn as sns
-import pandas as pd
-import numpy as np
+from . import plt
+from . import sns
+from . import pd
+from . import np
 
 def __dir__():
     """spoof dir function for a clean namespace"""
@@ -91,20 +91,24 @@ def box_series(x : Union[str, Iterable], y : Union[str, Iterable], data : Union[
                 label=fr"$\hat{{y}}\,\approx\,{popt[0]:.2f}\,$x$\,{'+' if popt[1]>0 else ''}{popt[1]:.2f}$")
         ax.fill_between(X, model(X)-error(X), model(X)+error(X), color=color, alpha = 0.3)
 
-def performance_plot(kernels : Iterable[callable], input : callable, n_range : Iterable[int], repeat : int = 10, skip_verification : bool = False) -> None :
+def performance_plot(kernels : Iterable[callable], input : callable, n_range : Iterable[int], repeat : int = 100, skip_verification : bool = False) -> None :
+    """visualize the results of a runtime performance test of various kernels over an input range defined by n_range"""
 
     from ..testing.tools import time_performance
-    results = time_performance(kernels, input, n_range, repeat, skip_verification)
+    results = time_performance(kernels, input, n_range, repeat=repeat, skip_verification=skip_verification)
 
-    plt.figure()
-    for fcn, runtimes in results.items():
-        plt.plot(n_range, runtimes, label=fcn)
-
+    plt.figure()    
+    plt.suptitle(f'Performance results, {repeat} runs avg., verify = {not skip_verification}')
     plt.loglog()
     plt.xlabel("Input size")
     plt.ylabel("Runtime / ns")
-    plt.legend()
 
+    for fcn, runtimes in results.items():
+        y, delta_y = np.mean(runtimes, axis=1) * 1e9, np.std(runtimes, axis=1) * 1e9
+        plt.fill_between(n_range, y-delta_y, y+delta_y, alpha=0.4)
+        plt.plot(n_range, y, label=fcn)
+
+    plt.legend()
 
 def __test_box_series() -> None :
     fig = plt.figure()
@@ -124,11 +128,8 @@ def __test_performance_plot() -> None :
 
     def column_stack(arr):
         return np.column_stack([arr, arr])
-
-    def concatenate(arr):
-        return np.concatenate([arr[:, None], arr[:, None]], axis=1)
     
-    performance_plot([c_, stack, vstack, column_stack, concatenate], np.random.rand, [2**k for k in range(20)])
+    performance_plot([c_, stack, vstack, column_stack], np.random.rand, [2**k for k in range(20)])
 
 
 if __name__ == '__main__':

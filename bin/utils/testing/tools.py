@@ -1,6 +1,7 @@
 from typing import Iterable
 from itertools import permutations
 from time import perf_counter_ns
+from . import timeit
 
 def __dir__():
     """spoof dir function for a clean namespace"""
@@ -9,35 +10,37 @@ def __dir__():
     del __globals['Iterable']
     del __globals['permutations']
     del __globals['perf_counter_ns']
+    # del __globals['timeit']
 
     return __globals
 
-def time_performance(kernels : Iterable[callable], input : callable, n_range : Iterable[int], repeat : int = 10, skip_verification : bool = False) -> dict : 
+def time_performance(kernels : Iterable[callable], input : callable, n_range : Iterable[int], repeat : int = 1000, skip_verification : bool = False) -> dict : 
     """return the runtime for different callables and different inputs, to analyze O(n) performance"""
 
-    performances = {str(kernel).split()[1] : [] for kernel in kernels}
-    for n in n_range:
+    performances = {str(kernel).split()[1] : [[] for _ in n_range] for kernel in kernels}
+    for i_n, n in enumerate(n_range):
         input_value = input(n)
         results = []
 
-        for kernel in kernels:
-            runtime = 0
-            for _ in range(repeat - 1):
-                start = perf_counter_ns()
-                kernel(input_value)
-                runtime += (perf_counter_ns() - start) / repeat
-            
-            start = perf_counter_ns()
-            result = kernel(input_value)
-            runtime += (perf_counter_ns() - start) / repeat
-            performances[str(kernel).split()[1]].append(runtime)
-            results.append(result)
+        for i_k, kernel in enumerate(kernels):
 
-        if not skip_verification:
-            for a, b in permutations(results, 2):
-                try:
-                    if a != b: raise ValueError('Kernels do not produce the same results')
-                except ValueError:
-                    if (a != b).all(): raise ValueError('Kernels do not produce the same results')
-        
+            t = timeit.Timer(lambda : kernel(input))
+            for _ in range(int(repeat ** 1/2)):
+                runtime, this_rv = t.timeit(number=int(repeat ** 1/2))
+                performances[str(kernel).split()[1]][i_n].append(runtime)
+
+                if not skip_verification:
+                    if i_k == 0:
+                        last_rv = this_rv
+                        continue
+
+                    error_string = f"Return values do not match for {str(kernel).split()[1]} and {str(input).split()[1]}({n})"
+
+                    try:
+                        assert last_rv == this_rv, error_string
+                    except ValueError:
+                        assert (last_rv == this_rv).all(), error_string
+                    
+                    last_rv = this_rv
+  
     return performances
