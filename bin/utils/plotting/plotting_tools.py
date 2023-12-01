@@ -1,29 +1,29 @@
 from typing import Union, Iterable
+from ..binaries import pd
+from ..binaries import np
 from . import plt
-from . import sns
-from . import pd
-from . import np
+from . import so
 
 def __dir__():
     """spoof dir function for a clean namespace"""
 
-    __globals = globals()
+    _globals = globals()
     private_functions = []
-    for __global in __globals:
-        if __global.startswith('__test'):
-            private_functions.append(__global)
+    for _global in _globals:
+        if _global.startswith('__test'):
+            private_functions.append(_global)
         
-    del __globals['Union']
-    del __globals['Iterable']
-    del __globals['plt']
-    del __globals['sns']
-    del __globals['pd']
-    del __globals['np']
+    del _globals['Union']
+    del _globals['Iterable']
+    del _globals['plt']
+    del _globals['sns']
+    del _globals['pd']
+    del _globals['np']
 
     for fcn in private_functions:
-        del __globals[fcn]
+        del _globals[fcn]
 
-    return __globals
+    return _globals
 
 def box_series(x : Union[str, Iterable], y : Union[str, Iterable], data : Union[pd.DataFrame, Iterable] = None, **kwargs) -> None :
     """draw a series of box plots for a sequential dataset
@@ -94,7 +94,7 @@ def box_series(x : Union[str, Iterable], y : Union[str, Iterable], data : Union[
 def performance_plot(kernels : Iterable[callable], input : callable, n_range : Iterable[int], repeat : int = 100, skip_verification : bool = False) -> None :
     """visualize the results of a runtime performance test of various kernels over an input range defined by n_range"""
 
-    from ..testing.tools import time_performance
+    from ..testing.testing_tools import time_performance
     results = time_performance(kernels, input, n_range, repeat=repeat, skip_verification=skip_verification)
 
     plt.figure()    
