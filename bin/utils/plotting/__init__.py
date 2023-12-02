@@ -1,11 +1,10 @@
-__all__ = ['plt', 'so', 'plotting_tools', 'set_plt_style']
+__all__ = ['plt', 'so', 'set_plt_style', 'plot']
 
 from .. import create_stream_logger
 plotting_logger = create_stream_logger("utils.plotting")
 del create_stream_logger
 
 def set_plt_style(style : str = 'notebook') -> None : 
-
     """Change the global plotting style based on performance/look"""
     import scienceplots
 
@@ -36,5 +35,5 @@ plotting_logger.info('import matplotlib.pyplot as plt')
 import seaborn as so
 plotting_logger.info('import seaborn as sns')
 set_plt_style()
-from . import plotting_tools
-plotting_logger.info('import plotting.tools as plotting_tools')
+from . import plotting_tools as plot
+plotting_logger.info('import plotting.tools as plot')

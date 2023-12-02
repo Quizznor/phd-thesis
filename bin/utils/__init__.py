@@ -1,8 +1,7 @@
-__all__ = ['binaries', 'plotting', 'testing']
+__all__ = ['binaries', 'plotting', 'testing', 'Auger']
 
 import logging
 from colorlog import ColoredFormatter
-from time import perf_counter
 import re
 
 class Formatter(ColoredFormatter):
@@ -19,7 +18,8 @@ class Formatter(ColoredFormatter):
     def format(self, record):
         delta_milliseconds = record.relativeCreated - Formatter.last_log
         Formatter.last_log = int(record.relativeCreated)
-        record.threadName = f'{f"+{int(delta_milliseconds)}ms" if self.last_log != 0 else f"!!!!": >8}'
+        record.threadName = f"+{int(delta_milliseconds)}ms" if delta_milliseconds < 99999 else f'<99999ms'
+        record.threadName = record.threadName.rjust(8)
         record.thread = f"{f'[{self.levels[record.levelname]}]': <6}"
         record.msg = self.format_message(record.msg)
 

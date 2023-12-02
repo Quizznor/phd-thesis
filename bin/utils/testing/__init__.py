@@ -1,6 +1,9 @@
-from .. import create_stream_logger
+__all__ = ['timeit', 'test']
 
+from .. import create_stream_logger
 testing_logger = create_stream_logger('utils.testing ')
+del create_stream_logger
+
 import timeit
 testing_logger.info('import timeit')
 
@@ -15,5 +18,5 @@ def inner(_it, _timer{init}):
 """
 testing_logger.debug('overwrite timeit.template to catch return values')
 
-from . import testing_tools as testing
+from . import testing_tools as test
 testing_logger.info('import testing.tools as testing')
