@@ -2,6 +2,13 @@ from typing import Iterable, Callable
 from . import sk_neighbors
 from . import np
 
+def __dir__() -> list[str] :
+    """spoof dir function for a clean namespace"""
+
+    _globals = globals()
+
+    return _globals
+
 def kd1d_estimate(samples : Iterable, **kwargs : dict) -> Callable :
     """approximate a pdf from an underlaying sample of datapoints
     

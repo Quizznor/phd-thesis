@@ -6,9 +6,7 @@ def __dir__():
 
     __globals = globals()        
     del __globals['Iterable']
-    del __globals['permutations']
     del __globals['perf_counter_ns']
-    # del __globals['timeit']
 
     return __globals
 

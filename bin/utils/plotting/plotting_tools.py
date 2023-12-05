@@ -4,7 +4,7 @@ from ..binaries import np
 from . import plt
 from . import so
 
-def __dir__():
+def __dir__() -> list[str] :
     """spoof dir function for a clean namespace"""
 
     _globals = globals()
@@ -16,7 +16,7 @@ def __dir__():
     del _globals['Union']
     del _globals['Iterable']
     del _globals['plt']
-    del _globals['sns']
+    del _globals['so']
     del _globals['pd']
     del _globals['np']
 
