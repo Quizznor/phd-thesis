@@ -1,5 +1,4 @@
 from typing import Iterable, Callable
-from . import sk_neighbors
 from . import np
 
 def __dir__() -> list[str] :
@@ -23,7 +22,10 @@ def kd1d_estimate(samples : Iterable, **kwargs : dict) -> Callable :
     Todo:
         * implement this in Nd-case?
     """
-    kernel_density = sk_neighbors.KernelDensity(
+    
+    from sklearn import neighbors
+
+    kernel_density = neighbors.KernelDensity(
         bandwidth=kwargs.get('bandwidth', 1.0), 
         algorithm=kwargs.get('algorithm', 'auto'), 
         kernel=kwargs.get('kernel', 'gaussian'),

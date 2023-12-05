@@ -46,7 +46,7 @@ def box_series(x : Union[str, Iterable], y : Union[str, Iterable], data : Union[
 
     # get the full dataset and construct valid bins
     if data is None:
-        scatter_x, scatter_y = x, y
+        scatter_x, scatter_y = np.array(x), np.array(y)
     else:
         scatter_x, scatter_y = data[x], data[y]
 

@@ -10,9 +10,8 @@ export USERNAME=filip
 
 # workflow
 alias "re"="screen -Dr"
-alias "exit"="$HOME/bin/kill_ssh.sh && exit"
 alias "alert"="source $HOME/bin/alert.sh"
-alias "bye"="exit"
+alias "bye"="$HOME/bin/kill_ssh.sh && exit"
 
 # set environment for ssh, some other stuff
 export TERM=xterm
