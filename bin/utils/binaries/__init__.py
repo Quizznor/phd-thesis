@@ -1,4 +1,4 @@
-__all__ = ['np', 'pd', 'sk_neighbors', 'tools']
+__all__ = ['np', 'pd', 'tools']
 
 from .. import create_stream_logger
 binaries_logger = create_stream_logger("utils.binaries")
