@@ -39,6 +39,9 @@
 *.pyc
 .airesrc
 .Xauthority-l
+.screenrc
+.byobu
+.vscode
 
 # unimportant
 filip.code-workspace
@@ -46,17 +49,14 @@ bin/history.pickle
 anaconda3
 Masters
 People
-Projects/StationSoftware/Compiler/Xilinx_SDK_2015.4_1118_2_Lin64.bin
-.screenrc
-.byobu
-.vscode
+projects/StationSoftware/Compiler/Xilinx_SDK_2015.4_1118_2_Lin64.bin
 Documents
 
 # git repositories
-Projects/StationSoftware/DAQ/
-Projects/XYScanner/xy-calibration/
-Projects/XYScanner/S4A
-Projects/ONNXNetwork/
+projects/StationSoftware/DAQ/
+projects/XYScanner/xy-calibration/
+projects/XYScanner/S4A
+projects/ONNXNetwork/
 
 
 
