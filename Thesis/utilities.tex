@@ -1,0 +1,190 @@
+\DeclareSIUnit\century{century}
+\DeclareSIUnit\year{yr}
+\DeclareSIUnit\VEM{VEM}
+\DeclareSIUnit[per-mode=reciprocal]\grammage{\gram\per\cm\squared}
+\DeclareSIUnit{\aperture}{\km\squared\year\steradian}
+
+\newcommand{\DX}{\Delta X\xspace}
+\newcommand{\exposuresym}{\mathcal{E}}
+
+% particle component abbreviations
+\newcommand{\cmu}{\ensuremath{\mu}\xspace}
+\newcommand{\ceg}{\ensuremath{e\gamma}\xspace}
+\newcommand{\cegmu}{\ensuremath{e\gamma(\mu)}\xspace}
+\newcommand{\ceghad}{\ensuremath{e\gamma(\mathrm{had})}\xspace}
+
+\newcommand{\Xmax}{X_\mathrm{max}\xspace}
+\newcommand{\Xmaxmu}{X_\mathrm{max}^\mu\xspace}
+\newcommand{\Xmaxp}{X_\mathrm{max}^\mathrm{p}\xspace}
+\newcommand{\XmaxFe}{X_\mathrm{max}^\mathrm{Fe}\xspace}
+\newcommand{\XmaxSd}{X_\mathrm{max}^\mathrm{SD}\xspace}
+\newcommand{\Xmaxuniv}{X_\mathrm{max}^\mathrm{Univ}\xspace}
+\newcommand{\XmaxFd}{X_\mathrm{max}^\mathrm{FD}\xspace}
+\newcommand{\XmaxMC}{X_\mathrm{max}^\mathrm{MC}\xspace}
+
+\newcommand{\Esd}{E_\mathrm{SD}\xspace}
+\newcommand{\Erec}{E_\mathrm{rec}\xspace}
+\newcommand{\Etrue}{E_\mathrm{true}\xspace}
+\newcommand{\Emc}{E_\mathrm{MC}\xspace}
+\newcommand{\Efd}{E_\mathrm{FD}\xspace}
+\newcommand{\Euniv}{E_\mathrm{Univ}\xspace}
+
+\newcommand{\Nmu}{R_\mu\xspace}
+\newcommand{\Nmup}{R_\mu^\mathrm{p}\xspace}
+\newcommand{\NmuFe}{R_\mu^\mathrm{Fe}\xspace}
+
+\newcommand{\Rmu}{R_\mu\xspace}
+\newcommand{\Rmup}{R_\mu^\mathrm{p}\xspace}
+\newcommand{\RmuFe}{R_\mu^\mathrm{Fe}\xspace}
+
+\newcommand{\Xz}{X_0\xspace}
+
+\newcommand{\gengamma}{generalized gamma distribution\xspace}
+
+\newcommand{\corsika}{\textsc{Corsika}\xspace}
+\newcommand{\scipy}{\textsc{Scipy}\xspace}
+\newcommand{\numpy}{\textsc{Numpy}\xspace}
+\newcommand{\tabulatedsim}{\textsc{Tabulated Tank Simulator}\xspace}
+\newcommand{\cachedshoweregen}{\textsc{Cached Shower Regenerator}\xspace}
+\newcommand{\minuit}{\textsc{Minuit-2}\xspace}
+\newcommand{\nlopt}{\textsc{NLopt}\xspace}
+\newcommand{\rootsoft}{\textsc{ROOT}\xspace}
+
+\newcommand{\qgsjet}{\textsc{QGSJet-II.03}\xspace}
+\newcommand{\epos}{\textsc{Epos-1.99}\xspace}
+\newcommand{\qgsjetlhc}{\textsc{QGSJet-II.04}\xspace}
+\newcommand{\sibyll}{\textsc{Sibyll-2.1}\xspace}
+\newcommand{\eposlhc}{\textsc{Epos-LHC}\xspace}
+\newcommand{\geant}{\textsc{Geant4}\xspace}
+
+\renewcommand{\arraystretch}{1.1}  % größerer Zeilenabstand in tabellen
+
+\renewcommand{\topfraction}{0.85}
+\renewcommand{\textfraction}{0.1}
+\renewcommand{\floatpagefraction}{0.85}
+
+\def\Offline{\mbox{$\overline{\textrm%
+{Off}}$\hspace{.05em}\protect\raisebox{.4ex}%
+{$\protect\underline{\textrm{line}}$}}\xspace}
+
+\newcommand{\HRule}{\rule{\linewidth}{1mm}}
+\newcommand{\valuepm}[2]{#1{\scriptscriptstyle\,\pm #2}}
+
+% --- Macro \xvec
+\makeatletter
+\newlength\xvec@height%
+\newlength\xvec@depth%
+\newlength\xvec@width%
+\newcommand{\xvec}[2][]{%
+  \ifmmode%
+    \settoheight{\xvec@height}{$#2$}%
+    \settodepth{\xvec@depth}{$#2$}%
+    \settowidth{\xvec@width}{$#2$}%
+  \else%
+    \settoheight{\xvec@height}{#2}%
+    \settodepth{\xvec@depth}{#2}%
+    \settowidth{\xvec@width}{#2}%
+  \fi%
+  \def\xvec@arg{#1}%
+  \def\xvec@dd{:}%
+  \def\xvec@d{.}%
+  \raisebox{.2ex}{\raisebox{\xvec@height}{\rlap{%
+    \kern.05em%  (Because left edge of drawing is at .05em)
+    \begin{tikzpicture}[scale=1]
+    \pgfsetroundcap
+    \draw (.05em,0)--(\xvec@width-.05em,0);
+    \draw (\xvec@width-.05em,0)--(\xvec@width-.15em, .075em);
+    % \draw (\xvec@width-.05em,0)--(\xvec@width-.2em,-.05em);
+    \ifx\xvec@arg\xvec@d%
+      \fill(\xvec@width*.45,.5ex) circle (.5pt);%
+    \else\ifx\xvec@arg\xvec@dd%
+      \fill(\xvec@width*.30,.5ex) circle (.5pt);%
+      \fill(\xvec@width*.65,.5ex) circle (.5pt);%
+    \fi\fi%
+    \end{tikzpicture}%
+  }}}%
+  #2%
+}
+\makeatother
+
+\makeatletter
+\newlength\pt@height%
+\newlength\pt@depth%
+\newlength\pt@width%
+\newcommand{\pt}[1]{%
+
+\settoheight{\pt@height}{$#1$}\settodepth{\pt@depth}{$#1$}\settowidth{\pt@width}{$#1$}%
+   \raisebox{.2ex}{\raisebox{\pt@height}{\rlap{\makebox[\pt@width][c]{%
+     \kern.1em%
+     \begin{tikzpicture}[scale=1]
+       \draw(0,0) circle[radius=0.08em];
+     \end{tikzpicture}%
+   }}}}%
+   #1
+}
+\makeatother
+
+% --- Override \vec with an invocation of \xvec.
+\let\stdvec\vec
+\renewcommand{\vec}[1]{\xvec[]{#1}}
+% --- Define \dvec and \ddvec for dotted and double-dotted vectors.
+\newcommand{\dvec}[1]{\xvec[.]{#1}}
+\newcommand{\ddvec}[1]{\xvec[:]{#1}}
+\newcommand{\psl}[1]{#1\sp{\prime}}
+\newcommand{\fold}[1]{#1\sp{\prime}}
+% \renewcommand{\vec}[1]{\mathbf{#1}}
+\newcommand{\uvec}[1]{\hat{#1}}
+
+\renewcommand{\d}[1]{\ensuremath{\operatorname{d}\!{#1}}}
+\newcommand{\dn}[2]{\ensuremath{\operatorname{d}^{#1}\!{#2}}}
+\newcommand{\sig}[1]{\ensuremath{#1\,\sigma}}
+
+\newcommand{\parnum}[1]{\num[round-mode=figures,round-precision=3,retain-explicit-plus,scientific-notation=fixed,fixed-exponent=0]{#1}}
+
+\DeclareDocumentCommand{\rpol}{O{}mooooooo}{%
+    \ensuremath{\parnum{#1} \parnum{#2} \, \hat{r} \IfNoValueTF{#3}{}{\parnum{#3} \, \hat{r}^2} \IfNoValueTF{#4}{}{\parnum{#4} \, \hat{r}^3} \IfNoValueTF{#5}{}{\parnum{#5} \, \hat{r}^4} \IfNoValueTF{#6}{}{\parnum{#6} \, \hat{r}^5} \IfNoValueTF{#7}{}{\parnum{#7} \, \hat{r}^6} \IfNoValueTF{#8}{}{\parnum{#8} \, \hat{r}^7} \IfNoValueTF{#9}{}{\parnum{#9} \, \hat{r}^8} }%
+}
+
+\newcommand{\ropt}{r_\mathrm{opt}\xspace}
+\newcommand{\rscal}{r_\mathrm{scale}\xspace}
+\newcommand{\sigshsh}{\sigma_\mathrm{sh-sh}\xspace}
+\newcommand{\fnkg}{f_\mathrm{NKG}(r)\xspace}
+\newcommand{\fnkgbeta}{f_{\mathrm{NKG},\beta}(r)\xspace}
+\newcommand{\InSize}{S_{450}\xspace}
+\newcommand{\lgInSize}{\lg S_{450}\xspace}
+\newcommand{\SdSize}{S_{1000}\xspace}
+\newcommand{\lgSdSize}{\lg S_{1000}\xspace}
+\newcommand{\lgS}{\lg S\xspace}
+\newcommand{\InEE}{S_{35}\xspace}
+\newcommand{\SdEE}{S_{38}\xspace}
+\newcommand{\lgInEE}{\lg S_{35}\xspace}
+\newcommand{\lgSdEE}{\lg S_{38}\xspace}
+\newcommand{\lgE}{\lg E\xspace}
+\newcommand{\lgEeV}{\lg ( E / \si{\eV} )\xspace}
+\newcommand{\ndof}{n_\mathrm{dof}\xspace}
+\newcommand{\fcic}{f_\mathrm{CIC}\xspace}
+\newcommand{\fcicref}[1]{f_\mathrm{CIC}^\mathrm{ref}(#1)\xspace}
+\newcommand{\cossqtheta}{\cos^2 \theta\xspace}
+\newcommand{\lgr}{\lg (r / \si{\m})\xspace}
+\newcommand{\dlgE}{\d{\,\lg E}\xspace}
+\newcommand{\AvgAoP}{\langle\mathrm{AoP}\rangle\xspace}
+
+\newcommand{\MC}{Monte Carlo\xspace}
+\newcommand{\chisqfit}{chi-squared fit\xspace}
+\newcommand{\chisqfits}{chi-squared fits\xspace}
+\newcommand{\mlfit}{maximum-likelihood fit\xspace}
+\newcommand{\chired}{\chi^2/\ndof}
+
+\newcommand{\WCD}{water-Cherenkov detector\xspace}
+\newcommand{\pdf}{p.d.f.\xspace}
+\newcommand{\cdf}{c.d.f.\xspace}
+
+\newcommand{\defeq}{\vcentcolon=}
+\newcommand{\eqdef}{=\vcentcolon}
+
+\def\avg#1{{\left\langle{#1}\right\rangle}}
+\def\avgx#1{{\langle{#1}\rangle}}
+\def\expect#1{\operatorname{E}[#1]\xspace}
+\def\var#1{\operatorname{Var}[#1]\xspace}
+\def\erf#1{\operatorname{erf} #1 \xspace}
+\def\Pois{\operatorname{Pois}}
