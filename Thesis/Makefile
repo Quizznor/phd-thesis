@@ -17,7 +17,7 @@ LATEX := $(if $(filter 1, $(USEPDFLATEX)), pdflatex, latex)
 COLORIZE := awk 'BEGIN{red="\033[31;1m";yel="\033[33m";byel="\033[33;1m";end="\033[0m"}/Rerun /||/rerunfilecheck[^.]/{e=e$$0"\n";print red""$$0""end;next}/^LaTeX Warning:/||/natbib Warning:/{w=w$$0"\n";print yel""$$0""end;next}{print}END{if(w||e)print "\n"red"Warning/error summary:\n"byel""w""end;if(e){print red""e""end;exit 1}}'
 
 define basic_latex_rule
-  for i in 1 2 3 ; do $(LATEX) $< | $(COLORIZE) && break ; done
+  for i in 1 2 3 ; do $(LATEX --shell-escape) $< | $(COLORIZE) && break ; done
 endef
 
 ifeq ($(USEBIBTEX), 1)
