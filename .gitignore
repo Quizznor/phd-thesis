@@ -49,16 +49,24 @@ bin/history.pickle
 anaconda3
 Masters
 People
-Projects/StationSoftware/Compiler/Xilinx_SDK_2015.4_1118_2_Lin64.bin
 Documents
 
-# git repositories
+# git repositories / large files
+Projects/StationSoftware/Compiler/Xilinx_SDK_2015.4_1118_2_Lin64.bin
 Projects/StationSoftware/DAQ/
 Projects/XYScanner/xy-calibration/
 Projects/XYScanner/S4A
 Projects/ONNXNetwork/
 
-
+# LaTeX
+*.aux
+*.bbl
+*.blg
+*.toc
+*.lot
+*.loc
+*.soc
+*.tdo
 
 # Condor
 *.err
