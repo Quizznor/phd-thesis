@@ -12,7 +12,7 @@
 \newpage
 
 % tex file following format specified by the doctoral committee
-\include{include/title.tex}
+\include{include/title/title.tex}
 \todo[inline]{use 'eingereichte' for hand in, use 'genehmigte' for final version.}
 
 % abstract
@@ -33,13 +33,13 @@
 \clearpage
 \mainmatter
 
-\todo{remove todos}
+\todo[inline]{remove todos}
 \listoftodos
 
-% main text
-\foreach \c in {04, 05, ..., 99}{%
-  \input{"| cat chap/\c-*.tex"}
-}
+% % main text
+% \foreach \c in {04, 05, ..., 99}{%
+%   \input{"| cat chap/\c-*.tex"}
+% }
 
 % tables and figures
 \listoffigures
@@ -51,12 +51,10 @@
 \bibliographystyle{bib/elsarticle-num}
 \bibliography{bib/auger, bib/mybib}
 
-\backmatter
-
-\foreach \c in {00, 01, ..., 99}{%
-  \input{"| cat app/\c-*.tex"}
-}
-
-
+% % appendix
+% \backmatter
+% \foreach \c in {00, 01, ..., 99}{%
+%   \input{"| cat app/\c-*.tex"}
+% }
 
 \end{document}

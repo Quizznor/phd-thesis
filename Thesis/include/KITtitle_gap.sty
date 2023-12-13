@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}[1994/12/01]
-\ProvidesPackage{include/KITtitle}
+\ProvidesPackage{include/KITtitle_gap}
 
 %%%%%%%%% KIT title page as a gap note %%%%%%%%
 
@@ -15,13 +15,13 @@
 \def\supervisor#1{\gdef\@supervisor{#1}}
 \def\supervinst#1{\gdef\@supervinst{#1}}
 
-\newenvironment{KITtitle}{}{\makeKITtitle}
+\newenvironment{KITtitle_gap}{}{\makeKITtitle}
 
 \long\def\makeKITtitle{
   \thispagestyle{empty}
   \onecolumn
   \vspace{-2.5cm}
-  \flushright\large\normalfont{Auger internal note \todo{GAP note number}}\par
+  \flushright\large\normalfont{Auger internal note \todo[inline]{GAP note number}}\par
   \vspace{0.5cm}
   \begin{center}
   \huge\bfseries\@title\par
@@ -63,4 +63,3 @@
 %   \thispagestyle{empty}
 %   \normalsize
 }
-
