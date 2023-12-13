@@ -10,7 +10,7 @@ def __dir__():
 
     return __globals
 
-def time_performance(kernels : Iterable[Callable], input : Callable, n_range : Iterable[int], repeat : int = 1000, skip_verification : bool = False) -> dict : 
+def time_performance(kernels : Iterable[Callable], input : Callable, n_range : Iterable[int], repeat : int = 10000, skip_verification : bool = False) -> dict : 
     """return the runtime for different callables and different inputs, to analyze O(n) performance"""
 
     performances = {str(kernel).split()[1] : [[] for _ in n_range] for kernel in kernels}

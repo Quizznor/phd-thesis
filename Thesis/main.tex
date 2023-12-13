@@ -16,56 +16,46 @@
 \todo[inline]{use 'eingereichte' for hand in, use 'genehmigte' for final version.}
 
 % abstract
-
-\blindtext
 \foreach \c in {01, 02, 03}{%
-  \IfFileExists{"chap/\c-*.tex"}{%
-    \input{"chap/\c-*.tex}
-  }
-  \newline
-  chap/\c
+  \input{"| cat chap/\c-*.tex"}
 }
-\newline\blindtext
 
 \selectlanguage{english}
 
 % tex file with your acronyms defined...you must do this
 \include{include/acronyms}
 
+% table of contents
 \microtypesetup{protrusion=false}
 \tableofcontents
 \microtypesetup{protrusion=true}
 
 \clearpage
-
 \mainmatter
 
 \todo{remove todos}
 \listoftodos
 
+% main text
 \foreach \c in {04, 05, ..., 99}{%
-  \IfFileExists{"chap/\c-*.tex"}{%
-    \input{"chap/\c-*.tex}
-    chap/\c-*.tex
-  }
+  \input{"| cat chap/\c-*.tex"}
 }
 
+% tables and figures
+\listoffigures
 \listoftables
 
-
+% bibliography
 % \bibliographystyle{pybibtex}
 % \bibliographystyle{prsty-mod-hd}
 \bibliographystyle{bib/elsarticle-num}
 \bibliography{bib/auger, bib/mybib}
 
-% \backmatter
+\backmatter
 
-% \foreach \c in {00, 01, ..., 99}{%
-%   \IfFileExists{"app/\c-*.tex"}{%
-%     \input{"app/\c-*.tex}
-%   chap/\c-*.tex
-%   }
-% }
+\foreach \c in {00, 01, ..., 99}{%
+  \input{"| cat app/\c-*.tex"}
+}
 
 
 

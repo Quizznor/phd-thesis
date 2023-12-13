@@ -110,6 +110,9 @@ def performance_plot(kernels : Iterable[callable], input : callable, n_range : I
 
     plt.legend()
 
+def bootstrap_ci_interval() -> tuple([Iterable, Iterable]) : 
+    raise NotImplementedError
+
 def __test_box_series() -> None :
     fig = plt.figure()
     fig.suptitle('Box series plot')
