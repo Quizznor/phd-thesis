@@ -3,8 +3,8 @@ Executable      = /cr/users/filip/Projects/SSDOnlineCalib/ExtractTraces/get_T1s.
 
 error           = /cr/users/filip/Projects/SSDOnlineCalib/ExtractTraces/error-get_T1s.log
 
-STATION         = NadiaEarlyFilteredDownsampled
-DATE            = Mar2023
+STATION         = NuriaJrDownsampled
+DATE            = Nov2022
 ANALYZE_T2s     = 0
 
 arguments       = "$(STATION) $(DATE) $(Process) $(ANALYZE_T2s)"
@@ -12,4 +12,4 @@ request_memory  = 2G
 max_idle        = 150
 max_materialize = 20
                                                 
-queue 400
+queue 800

@@ -16,9 +16,16 @@ int main(int argc, char **argv) {
     const std::string file(argv[3]);
     const std::string analyze_T1s(argv[4]);
 
+    // for debugging:
+    // const std::string station("NuriaJrFilteredDownsampled");
+    // const std::string date("Nov2022");
+    // const std::string file("1");
+    // const std::string analyze_T1s("0");
+
+
     const auto random_file = std::string(4 - std::min((size_t)4, file.length()), '0') + file;
     const auto full_path = "/cr/tempdata01/filip/UubRandoms/"+date+"/converted/"+station+"/randoms"+random_file+"_SSD.dat";
-    const auto t1_path = "/cr/tempdata01/filip/SSDCalib/WCDT1Calib/"+date+"/"+station+"T1/randoms"+random_file+"_WCD.dat";
+    const auto t1_path = "/cr/tempdata01/filip/SSDCalib/WCDT1Calib/"+date+"/"+station+"/randoms"+random_file+"_WCD.dat";
 
     std::cout << "reading from " << full_path << std::endl;
     std::cout << "reading from " << t1_path << std::endl;
@@ -56,8 +63,8 @@ int main(int argc, char **argv) {
     }
  
     const std::string specifier = analyze_T1s == "1" ? "T1" : "";
-    std::cout << "writing to /cr/tempdata01/filip/SSDCalib/UubRates"+specifier+"/"+station+"/randoms"+random_file+".dat" << std::endl;
-    std::ofstream saveFile("/cr/tempdata01/filip/SSDCalib/UubRates"+specifier+"/"+station+"/randoms"+random_file+".dat", std::ios_base::app);
+    std::cout << "writing to /cr/tempdata01/filip/SSDCalib/SsdRates"+specifier+"/"+station+"/randoms"+random_file+".dat" << std::endl;
+    std::ofstream saveFile("/cr/tempdata01/filip/SSDCalib/SsdRates"+specifier+"/"+station+"/randoms"+random_file+".dat", std::ios_base::app);
     for (const auto& bin : rates){saveFile << bin << "\n";}
     
     return 0;

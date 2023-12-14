@@ -30,8 +30,8 @@ def offline_MIP(x_min, x_max, rates, station, ax = None):
     mean, sigma = np.mean(means), np.std(means)
 
     if ax is not None:
-        kwargs = {'ls' : None, 'capsize' : 3, 'fmt' : 'o'}
-        c = {'NuriaJrFiltered' : 'green', 'NadiaLateFilteredDownsampled' : 'tomato', 'NadiaEarlyFilteredDownsampled' : 'rebeccapurple'}
+        kwargs = {'ls' : None, 'capsize' : 1, 'fmt' : 'o', 'markersize' : 0.6,  'elinewidth' : 0.2, 'capthick' : 0.2}
+        c = {'NuriaJrFilteredDownsampled' : 'green', 'NadiaLateFilteredDownsampled' : 'tomato', 'NadiaEarlyFilteredDownsampled' : 'rebeccapurple'}
         ax.errorbar(range(x_min, x_max), residuals, yerr=rates_normalized_error, lw=2, c=c[station], label = station, **kwargs)
         ax.plot(range(x_min, x_max), landau(range(x_min, x_max), *popt), ls='--', c =c[station])
         ax.fill_between(range(x_min, x_max), lower, upper, color=c[station], alpha=0.1)

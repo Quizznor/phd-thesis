@@ -13,6 +13,10 @@ alias "re"="screen -Dr"
 alias "alert"="source $HOME/bin/alert.sh"
 alias "bye"="$HOME/bin/kill_ssh.sh && exit"
 
+alias "pp"="cd /cr/users/filip/Projects"
+alias "pps"="cd /cr/users/filip/Projects/SSDOnlinCalib"
+alias "ppx"="cd /cr/users/filip/Projects/XYScanner/xy-calibration/"
+
 # set environment for ssh, some other stuff
 export TERM=xterm
 export OFFLINE="/cr/data01/filip/Offline/18b2be65a/install/bin/this-auger-offline.sh"
