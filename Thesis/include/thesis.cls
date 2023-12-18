@@ -23,6 +23,7 @@
 
 \usepackage[b]{esvect}    % For \vv
 \usepackage{tikz}         % For arrow and dots in \xvec
+\usetikzlibrary{calc}
 
 \usepackage{xparse}
 
@@ -99,9 +100,7 @@
 
 \usepackage{booktabs}
 \usepackage{eurosym}
-\usepackage{title/KITtitle_en}
-% \usepackage{title/KITtitle_es}
-% \usepackage{title/KITtitle_de}
+\usepackage{title/KITtitle}
 \usepackage{todonotes}
 \usepackage{python}
 \usepackage{xspace}

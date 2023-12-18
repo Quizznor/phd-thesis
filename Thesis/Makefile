@@ -10,7 +10,7 @@ DEPENDENCIES := $(wildcard ./*.tex figures/* chap/*.tex app/*.tex include/*)
 
 ##########################################################
 SHELL := bash
-DEPENDENCIES += $(wildcard *.sty *.bib)
+DEPENDENCIES += $(wildcard *.sty *.bib chap/*.tex title/*.tex abstract/*.tex) 
 
 LATEX := $(if $(filter 1, $(USEPDFLATEX)), pdflatex --shell-escape, latex)
 
@@ -40,7 +40,7 @@ all: $(TARGET).pdf
 $(TARGET).pdf: $(DEPENDENCIES)
 
 clean:
-	- $(RM) -f $(TARGET){.tex~,.ps,.pdf,.dvi,.log,.aux,.toc,.nav,.out,.snm,.bbl,.blg,.spl,.lof,Notes.bib,.maf,.fff,.lot,.ttt}
+	- $(RM) -f $(TARGET){.tex~,.ps,.pdf,.dvi,.log,.aux,.toc,.nav,.out,.snm,.bbl,.blg,.spl,.lof,.maf,.fff,.lot,.ttt} */*.aux
 
 # general rules
 ifeq ($(USEPDFLATEX), 1)
