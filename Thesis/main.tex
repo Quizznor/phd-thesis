@@ -11,19 +11,19 @@
         }
 \newpage
 
-% tex file following format specified by the doctoral committee
-\include{include/title/title.tex}
-\todo[inline]{use 'eingereichte' for hand in, use 'genehmigte' for final version.}
+\include{title/title.tex}           % title page(s)
+\include{intro/introduction.tex}    % introduction(s)
+\include{include/acronyms}          % acronym list
 
-% abstract
-\foreach \c in {01, 02, 03}{%
-  \input{"| cat chap/\c-*.tex"}
-}
+
+% % abstract
+% \foreach \c in {01, 02, 03}{%
+%   \input{"| cat chap/\c-*.tex"}
+% }
 
 \selectlanguage{english}
 
 % tex file with your acronyms defined...you must do this
-\include{include/acronyms}
 
 % table of contents
 \microtypesetup{protrusion=false}

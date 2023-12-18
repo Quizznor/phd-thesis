@@ -99,11 +99,12 @@
 
 \usepackage{booktabs}
 \usepackage{eurosym}
-\usepackage{include/KITtitle}
+\usepackage{title/KITtitle_en}
+% \usepackage{title/KITtitle_es}
+% \usepackage{title/KITtitle_de}
 \usepackage{todonotes}
 \usepackage{python}
 \usepackage{xspace}
-\usepackage{subfigure}
 
 \usepackage[activate={true,nocompatibility},final,tracking=true,kerning=true,spacing=true,factor=1100,stretch=10,shrink=10]{microtype}
 % activate={true,nocompatibility} - activate protrusion and expansion
