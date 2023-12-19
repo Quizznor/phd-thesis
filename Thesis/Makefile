@@ -17,7 +17,7 @@ LATEX := $(if $(filter 1, $(USEPDFLATEX)), pdflatex --shell-escape, latex)
 COLORIZE := awk 'BEGIN{red="\033[31;1m";yel="\033[33m";byel="\033[33;1m";end="\033[0m"}/Rerun /||/rerunfilecheck[^.]/{e=e$$0"\n";print red""$$0""end;next}/^LaTeX Warning:/||/natbib Warning:/{w=w$$0"\n";print yel""$$0""end;next}{print}END{if(w||e)print "\n"red"Warning/error summary:\n"byel""w""end;if(e){print red""e""end;exit 1}}'
 
 define basic_latex_rule
-  for i in 1 2 3 ; do $(LATEX --shell-escape) 
+  for i in 1 2 3 ; do $(LATEX) $< && break; done 
 endef
 # $< | $(COLORIZE) && break ; done
 
@@ -40,7 +40,7 @@ all: $(TARGET).pdf
 $(TARGET).pdf: $(DEPENDENCIES)
 
 clean:
-	- $(RM) -f $(TARGET){.tex~,.ps,.pdf,.dvi,.log,.aux,.toc,.nav,.out,.snm,.bbl,.blg,.spl,.lof,.maf,.fff,.lot,.ttt} */*.aux
+	- $(RM) -f $(TARGET){.tex~,.ps,.pdf,.dvi,.log,.aux,.toc,.nav,.out,.snm,.bbl,.blg,.spl,.lof,.maf,.fff,.lot,.ttt,.mtc*} */*.aux
 
 # general rules
 ifeq ($(USEPDFLATEX), 1)

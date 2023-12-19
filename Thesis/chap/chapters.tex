@@ -1,0 +1,10 @@
+%! TEX root = ../main.tex
+
+\foreach \c in {01, 02, ..., 99}{%
+    \startcontents[sections]
+    \printcontents[sections]{}{1}{\setcounter{tocdepth}{2}}
+    \input{"| cat chap/\c-*.tex"}
+    \stopcontents[sections]
+    }
+
+\

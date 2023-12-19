@@ -1,0 +1,47 @@
+TFile* f = TFile("/cr/auger02/Prod/SDdata/2023/11/sd_2023_11_01_10h58.root")
+TFile* f = new TFile("/cr/auger02/Prod/SDdata/2023/11/sd_2023_11_01_10h58.root")
+f->close()
+f.ls()
+f.ls()
+f->Show()
+f->ShowMembers()
+f->ShowMembers
+quit
+exit
+quit()
+root
+exit
+exit()
+TFile f("/cr/auger02/Prod/SDdata/2023/11/sd_2023_11_01_10h58.root")
+T->Show()
+f
+exit()
+TFile f("/cr/auger02/Prod/SDdata/2023/11/sd_2023_11_01_10h58.root")
+f.Info()
+f.Info
+f.Draw()
+exit()
+TFile f("/cr/auger02/Prod/SDdata/2023/11/sd_2023_11_01_10h58.root")
+exit()
+TFile *_file0 = TFile::Open("/cr/auger02/Prod/SDdata/2023/11/sd_2023_11_01_10h58.root")
+.ls
+exit()
+TFile *_file0 = TFile::Open("/cr/auger02/Prod/SDdata/2023/11/sd_2023_11_01_10h58.root")
+gSystem->Load("$ADSTROOT/libRecEventKG.so")
+.ls
+exit()
+TFile *_file0 = TFile::Open("/cr/auger02/Prod/SDdata/2023/11/sd_2023_11_01_10h58.root")
+.ls
+exit()
+TFile f("/cr/auger02/Prod/SDdata/2023/11/sd_2023_11_10_11h02.root")
+auto event = f.Get("74122430#0#2C1&3C2&4C4#1382913684#5")
+event.ls
+event->TObject
+event->TObject()
+TBrowser
+TBrowser f
+TBrowser a
+exit()
+TFile *_file0 = TFile::Open("/cr/auger02/Prod/v1r0/Auger/2015/11/ad_2015_11_11_12h00.root")
+TBrowser a
+exit()

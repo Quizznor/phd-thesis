@@ -12,9 +12,10 @@ export USERNAME=filip
 alias "re"="screen -Dr"
 alias "alert"="source $HOME/bin/alert.sh"
 alias "bye"="$HOME/bin/kill_ssh.sh && exit"
+alias "root"="root -l"
 
 alias "pp"="cd /cr/users/filip/Projects"
-alias "pps"="cd /cr/users/filip/Projects/SSDOnlinCalib"
+alias "pps"="cd /cr/users/filip/Projects/SSDOnlineCalib"
 alias "ppx"="cd /cr/users/filip/Projects/XYScanner/xy-calibration/"
 
 # set environment for ssh, some other stuff

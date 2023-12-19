@@ -17,7 +17,7 @@
 \usepackage{subfig}
 \usepackage{mparhack}
 \usepackage[printonlyused, footnote, withpage]{acronym}
-\usepackage[table]{xcolor}
+\usepackage[dvipsnames, table]{xcolor}
 \usepackage{changes}
 \usepackage{blindtext}
 
@@ -125,61 +125,33 @@
 \widowpenalty = 10000
 \displaywidowpenalty = 10000 % Disable single lines at the end of a paragraph (Hurenkinder)
 
-% title of this piece of work
-\newcommand{\thetitle}{Your Title}
-
-\usepackage{hyperref}
-\hypersetup{
-  pdfsubject = {Ph.D. thesis},
-  pdftitle = {\thetitle},
-  pdfauthor = {Your Name},
-  pdfcreator = {LaTeX, pdfTeX},
-  pdfkeywords = {astroparticle physics, ultra-high energy cosmic rays, Pierre Auger Observatory, flux measurement, energy spectrum, mass composition, mass discrimination, shower universality, anisotropy, magnetic lensing},
-  colorlinks = true,
-  plainpages = false,
-  linkcolor = blue,
-  citecolor = magenta,
-  urlcolor = blue,
-  bookmarksopen = false,
-  linktocpage = true
-}
 
 \usepackage[numbers,sort&compress]{natbib}
 
 % Describe separation hints here:
 \hyphenation{
-% Pro-to-koll-in-stan-zen
-% Ma-na-ge-ment  Netz-werk-ele-men-ten
-% Netz-werk Netz-werk-re-ser-vie-rung
-% Netz-werk-adap-ter Fein-ju-stier-ung
-% Da-ten-strom-spe-zi-fi-ka-tion Pa-ket-rumpf
-% Kon-troll-in-stanz
-% Me
-}
-
-\title{\thetitle}
-\date{}
-\author{Your Name}
+  % Pro-to-koll-in-stan-zen
+  % Ma-na-ge-ment  Netz-werk-ele-men-ten
+  % Netz-werk Netz-werk-re-ser-vie-rung
+  % Netz-werk-adap-ter Fein-ju-stier-ung
+  % Da-ten-strom-spe-zi-fi-ka-tion Pa-ket-rumpf
+  % Kon-troll-in-stanz
+  % Me
+  }
 
 \extrafloats{100}
-
-\usepackage[capitalize]{cleveref}
-
 \usepackage{mathpazo} % use mathpazo for math fonts
-% \usepackage{eulervm}
-% \normalfont % we want to avoid annoying warnings
-
+  
 % math mode text style automatically adjusts to surrounding style
 % good snippet to make symbols in titles appear in text and bold face without defining them explicitly
 
 \makeatletter
 \DeclareRobustCommand*{\bfseries}{%
-  \not@math@alphabet\bfseries\mathbf
-  \fontseries\bfdefault\selectfont
-  \boldmath
-}
+\not@math@alphabet\bfseries\mathbf
+\fontseries\bfdefault\selectfont
+\boldmath}
 \makeatother
-
+  
 \input{include/utilities}
 
 \graphicspath{{figures/}}
@@ -191,14 +163,75 @@
 \renewcommand{\textfraction}{0.}
 \renewcommand{\floatpagefraction}{1.}
 
-
 \sisetup{
-        per-mode = symbol,
-        detect-all,
-        tight-spacing = true,
-        separate-uncertainty = true
-        }
-
+  per-mode = symbol,
+  detect-all,
+  tight-spacing = true,
+  separate-uncertainty = true
+}
+  
 \let\oldbaselinestretch=\baselinestretch%
 \renewcommand{\baselinestretch}{1.15}%
 \large\normalsize%
+
+\usepackage{titlesec}
+\usepackage{titletoc}
+
+\titlecontents{part}            % what is changed
+[0.1cm]                       % left margin
+{\vspace{1cm}\hrule height 1.5pt}          % code executed before toc-item
+{}                            % content if label is present
+{}                            % content if there is no label present
+{}                            % filler page format (like dots, etc.)
+[\hrule height 1.5pt]                      % code executed after toc-item
+
+\titlecontents{chapter}
+[0.2cm]
+{\bfseries}
+{\vspace{0.5cm}\hrule\vspace{-0.5cm}}
+{}
+{}
+
+\titleformat{\chapter}[hang]{\huge\bfseries}{\thechapter\hspace{20pt}\textcolor{gray75}{|}\hspace{20pt}}{0pt}{\huge\bfseries}
+
+\definecolor{gray75}{gray}{0.75}
+\newcommand{\forceTOC}[2]{\addtocontents{toc}{\protect\contentsline {section}{\includegraphics[height=0.3cm]{../include/#1.png}\hspace{0.2cm}#2}{\color{RawSienna}{\pageref{sec:#2}}}{}}}
+
+\makeatletter
+\renewcommand{\frontmatter}{%
+\titleformat*{\section}{\centering\normalfont\bfseries\Large}
+\pagenumbering{roman}
+}
+\renewcommand{\mainmatter}{%
+\addtocontents{toc}{\protect\contentsline {part}{Main Content}{}{}}
+  \titleformat*{\section}{\normalfont\bfseries\Large}
+  \pagenumbering{arabic}
+  \setcounter{chapter}{0}
+  \cleardoublepage
+  }
+  \renewcommand{\backmatter}{%
+  \addtocontents{toc}{\protect\contentsline {part}{Supplementary Information}{}{}}
+  \renewcommand{\thechapter}{\Alph{chapter}}
+  \setcounter{chapter}{0}
+  \cleardoublepage
+  }
+  
+  
+  
+  \usepackage{hyperref}
+  \hypersetup{
+    pdfsubject = {Ph.D. thesis},
+    pdftitle = {\@title},
+    pdfauthor = {\@author},
+    pdfcreator = {LaTeX, pdfTeX},
+    pdfkeywords = {astroparticle physics, ultra-high energy cosmic rays, Pierre Auger Observatory},
+    colorlinks = true,
+    plainpages = false,
+    linkcolor = RawSienna,
+    citecolor = magenta,
+  urlcolor = blue,
+  bookmarksopen = false,
+  linktocpage = true
+  }
+  
+  \usepackage[capitalize]{cleveref}

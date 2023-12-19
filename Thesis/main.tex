@@ -1,50 +1,34 @@
 \documentclass{include/thesis}
+
+\title{PhD draft test title}
+\author{Paul Filip}
+\dateOfDefense{01.01.1970}
+\dateOfPrint{\date{\today}}
+
 \begin{document}
 
-\frontmatter
+    \frontmatter
 
-\sisetup{
-        per-mode = symbol,
-        detect-all,
-        tight-spacing = true,
-        separate-uncertainty = true
-        }
-\newpage
+    \include{title/title.tex}               % title page(s)
+    \include{abstract/abstract.tex}         % introduction(s)
+    % \include{include/acronyms.tex}          % acronym list
 
-\include{title/title.tex}           % title page(s)
-\include{abstract/abstract.tex}     % introduction(s)
-\include{include/acronyms}          % acronym list
+    \tableofcontents                        % table of contents
 
-% table of contents
-\microtypesetup{protrusion=false}
-\tableofcontents
-\microtypesetup{protrusion=true}
+    \listoftodos                            % todo list
+    \todo[inline]{remove todos}
 
-\clearpage
-\mainmatter
+    % \listoffigures                          % list of figures                
+    % \listoftables                           % list of tables
 
-\todo[inline]{remove todos}
-\listoftodos
+    \mainmatter
 
-% % main text
-% \foreach \c in {04, 05, ..., 99}{%
-%   \input{"| cat chap/\c-*.tex"}
-% }
+    \include{chap/chapters.tex}             % main thesis body
 
-% tables and figures
-\listoffigures
-\listoftables
+    \include{bib/bibliography.tex}          % references and more
 
-% bibliography
-% \bibliographystyle{pybibtex}
-% \bibliographystyle{prsty-mod-hd}
-\bibliographystyle{bib/elsarticle-num}
-\bibliography{bib/auger, bib/mybib}
+    \backmatter
 
-% % appendix
-% \backmatter
-% \foreach \c in {00, 01, ..., 99}{%
-%   \input{"| cat app/\c-*.tex"}
-% }
+    \include{app/appendix.tex}              % appendices
 
 \end{document}
