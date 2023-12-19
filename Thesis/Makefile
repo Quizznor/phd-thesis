@@ -6,7 +6,7 @@ USEBIBTEX := 1
 
 # TARGET := $(basename $(shell grep -le '^\s*\\document\(class\|style\)' *.tex))
 TARGET := main
-DEPENDENCIES := $(wildcard ./*.tex figures/* chap/*.tex app/*.tex include/*)
+DEPENDENCIES := $(wildcard ./*.tex figures/* chap/*.tex app/*.tex include/* title/*)
 
 ##########################################################
 SHELL := bash
