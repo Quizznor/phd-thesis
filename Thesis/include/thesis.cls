@@ -176,62 +176,93 @@
 
 \usepackage{titlesec}
 \usepackage{titletoc}
+\usepackage{qrcode}
+\newlength\qrlength
+\setlength\qrlength{20mm}
+\qrset{height=\qrlength}
 
-\titlecontents{part}            % what is changed
-[0.1cm]                       % left margin
-{\vspace{1cm}\hrule height 1.5pt}          % code executed before toc-item
-{}                            % content if label is present
-{}                            % content if there is no label present
-{}                            % filler page format (like dots, etc.)
-[\hrule height 1.5pt]                      % code executed after toc-item
+\titlecontents{part}                  % what is changed
+  [0.1cm]                             % left margin
+  {\vspace{1cm}\hrule height 1.5pt}   % code executed before toc-item
+  {}                                  % content if label is present
+  {}                                  % content if there is no label present
+  {}                                  % filler page format (like dots, etc.)
+  [\hrule height 1.5pt]               % code executed after toc-item
 
-\titlecontents{chapter}
-[0.2cm]
-{\bfseries}
-{\vspace{0.5cm}\hrule\vspace{-0.5cm}}
-{}
-{}
-
-\titleformat{\chapter}[hang]{\huge\bfseries}{\thechapter\hspace{20pt}\textcolor{gray75}{|}\hspace{20pt}}{0pt}{\huge\bfseries}
+\titlecontents{chapter}[0.2cm]{\bfseries}{\vspace{0.1cm}\hrule\vspace{-0.5cm}}{}{\hfill\contentspage}[\vspace{0.2cm}]
+\titlecontents{psection}[0.2cm]{\bfseries}{\vspace{0.1cm}\hrule\vspace{-0.5cm}\thecontentslabel\hspace{0.5em}}{}{\hfill\contentspage}
+\titlecontents{psubsection}[5.5em]{}{\contentslabel{3.2em}}{}{\titlerule*[1pc]{.}\contentspage}
+\titlecontents{psubsubsection}[7.0em]{}{\contentslabel{4.1em}}{}{\titlerule*[1pc]{.}\contentspage}
 
 \definecolor{gray75}{gray}{0.75}
 \newcommand{\forceTOC}[2]{\addtocontents{toc}{\protect\contentsline {section}{\includegraphics[height=0.3cm]{../include/#1.png}\hspace{0.2cm}#2}{\color{RawSienna}{\pageref{sec:#2}}}{}}}
-
+  
 \makeatletter
 \renewcommand{\frontmatter}{%
-\titleformat*{\section}{\centering\normalfont\bfseries\Large}
-\pagenumbering{roman}
+  \pagestyle{plain}
+  % \titleformat{\chapter}[hang]{\huge\bfseries}{%
+  %   % \thechapter\hspace{20pt}\textcolor{gray75}{|}\hspace{20pt}
+  %   \begin{minipage}[t]{66pt}
+  %     \qrcode{\thechapter}\hspace{10pt}\textcolor{gray75}{\vline width 1.5pt}
+  %   \end{minipage}
+  %   \begin{minipage}[c]{\textwidth - 66pt}
+  %   \end{minipage}
+  %   }
+  %   {0pt}{\huge\bfseries test asd}}
+
+  \titleformat{\chapter}[display]{}{}{0pt}{
+    \raisebox{-5mm}[0pt][0pt]{%<<
+    \begin{minipage}{\qrlength}
+    \end{minipage}
+    }%
+    \qrcode{\thechapter}\hspace{-\qrlength}%
+    \scriptsize\chaptertitlename\thechapter
+    \rule{\textwidth-22mm}{.4pt}\\%
+    \hspace*{\qrlength}\begin{minipage}{\textwidth-\qrlength}
+    \centering
+    \bfseries\huge
+  }[\end{minipage}\vspace*{10mm}]
+
+
+  \titleformat*{\section}{\centering\normalfont\bfseries\linespread{0}\fontsize{14}{0pt}\selectfont}
+  \pagenumbering{roman}
 }
+
 \renewcommand{\mainmatter}{%
-\addtocontents{toc}{\protect\contentsline {part}{Main Content}{}{}}
+  \pagestyle{headings}
+  \addtocontents{toc}{\protect\contentsline {part}{Main Content}{}{}}
   \titleformat*{\section}{\normalfont\bfseries\Large}
+  \titleformat{\chapter}[hang]{\huge\bfseries}{\thechapter\hspace{20pt}\textcolor{gray75}{|}\hspace{20pt}}{0pt}{\huge\bfseries}
+    [\vspace*{4pc}%
+    \startcontents
+    \normalsize\normalfont
+    \printcontents{p}{1}{\setcounter{tocdepth}{3}}]
   \pagenumbering{arabic}
   \setcounter{chapter}{0}
   \cleardoublepage
-  }
-  \renewcommand{\backmatter}{%
+}
+
+\renewcommand{\backmatter}{%
   \addtocontents{toc}{\protect\contentsline {part}{Supplementary Information}{}{}}
   \renewcommand{\thechapter}{\Alph{chapter}}
   \setcounter{chapter}{0}
   \cleardoublepage
-  }
-  
-  
-  
-  \usepackage{hyperref}
-  \hypersetup{
-    pdfsubject = {Ph.D. thesis},
-    pdftitle = {\@title},
-    pdfauthor = {\@author},
-    pdfcreator = {LaTeX, pdfTeX},
-    pdfkeywords = {astroparticle physics, ultra-high energy cosmic rays, Pierre Auger Observatory},
-    colorlinks = true,
-    plainpages = false,
-    linkcolor = RawSienna,
-    citecolor = magenta,
+}
+
+\usepackage{hyperref}
+\hypersetup{
+  pdfsubject = {Ph.D. thesis},
+  pdftitle = {\@title},
+  pdfauthor = {\@author},
+  pdfcreator = {LaTeX, pdfTeX},
+  pdfkeywords = {astroparticle physics, ultra-high energy cosmic rays, Pierre Auger Observatory},
+  colorlinks = true,
+  plainpages = false,
+  linkcolor = RawSienna,
+  citecolor = magenta,
   urlcolor = blue,
   bookmarksopen = false,
   linktocpage = true
-  }
-  
-  \usepackage[capitalize]{cleveref}
+}
+
+\usepackage[capitalize]{cleveref}

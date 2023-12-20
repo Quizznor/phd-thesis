@@ -40,7 +40,7 @@ all: $(TARGET).pdf
 $(TARGET).pdf: $(DEPENDENCIES)
 
 clean:
-	- $(RM) -f $(TARGET){.tex~,.ps,.pdf,.dvi,.log,.aux,.toc,.nav,.out,.snm,.bbl,.blg,.spl,.lof,.maf,.fff,.lot,.ttt,.mtc*} */*.aux
+	- $(RM) -f $(TARGET){.tex~,.ps,.pdf,.dvi,.log,.aux,.toc,.nav,.out,.snm,.bbl,.blg,.spl,.lof,.maf,.fff,.lot,.ttt,.mtc*,.ptc} */*.aux
 
 # general rules
 ifeq ($(USEPDFLATEX), 1)
