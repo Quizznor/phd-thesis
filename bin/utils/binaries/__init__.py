@@ -9,4 +9,4 @@ binaries_logger.info('import numpy as np')
 import pandas as pd
 binaries_logger.info('import pandas as pd')
 from . import binary_tools as tools
-binaries_logger.info('import binaries.tools as binaries')
+binaries_logger.info('import binaries.tools as tools')

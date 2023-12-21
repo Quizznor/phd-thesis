@@ -33,7 +33,7 @@ def set_plt_style(style : str = 'notebook') -> None :
 import matplotlib.pyplot as plt
 plotting_logger.info('import matplotlib.pyplot as plt')
 import seaborn as so
-plotting_logger.info('import seaborn as sns')
+plotting_logger.info('import seaborn as so')
 set_plt_style()
 from . import plotting_tools as plot
 plotting_logger.info('import plotting.tools as plot')
