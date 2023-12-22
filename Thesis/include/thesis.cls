@@ -214,32 +214,9 @@
 \titlecontents{psubsection}[5.5em]{}{\contentslabel{3.2em}}{}{\titlerule*[1pc]{.}\contentspage}
 \titlecontents{psubsubsection}[7.0em]{}{\contentslabel{4.1em}}{}{\titlerule*[1pc]{.}\contentspage}
 
-% % custom chapters for frontmatter
-% \titleformat{\prechapter}           % what is changed
-%   [display]                         % shape factor within text
-%   {\centering\normalfont\huge}      % format of title and label
-%   {}                                % label of title (chapter?)
-%   {0pt}                             % separation between label and title body
-%   {#1}                              % code executed after label, before title. #1 is the title
-%   [\hrule\vspace{-0.5cm}]           % code executed after title
-
-  % \titleformat{\chapter}[display]{}{}{0pt}{
-  %   % \raisebox{-5mm}[0pt][0pt]{%<<
-  %   % \begin{minipage}{\qrlength}
-  %   % \end{minipage}
-  %   % }%
-  %   \qrcode{\thechapter}\hspace{-\qrlength}%
-  %   % \scriptsize\chaptertitlename\thechapter
-  %   \hspace{22mm}\rule{\textwidth-22mm}{.4pt}\\%
-  %   \hspace*{\qrlength}\begin{minipage}{\textwidth-\qrlength}
-  %   % \centering
-  %   \bfseries\huge
-  % }[\end{minipage}\vspace*{10mm}]
-
-  % https://tex.stackexchange.com/questions/511033/automatically-reduce-size-of-text-to-fit-inside-a-frame
-  % https://tex.stackexchange.com/questions/165878/width-of-chapter-section-with-titlesec
-
 % chapter with automatic minitoc creation
+  \usepackage[pdftex, outline]{contour}
+  \contourlength{0.8mm}
   \usepackage{qrcode}
   \newlength\qrlength
   \setlength\qrlength{2.5cm}
@@ -247,28 +224,40 @@
   \newlength\titlesep
   \setlength\titlesep{0.4cm}
 
+  \ExplSyntaxOn
+  \NewDocumentCommand{\Contour}{m}
+  {
+    \seq_set_split:Nnn \l_tmpa_seq { ~ } { #1 }
+    \seq_map_inline:Nn \l_tmpa_seq { \contour{white}{##1} ~ } \unskip
+  }
+  \ExplSyntaxOff
+
   \titleformat{\chapter}
     [display]
-    {\bfseries}
+    {}
     {}
     {0pt}
     {%
-      % \begin{minipage}[\qrlength]{\qrlength}
-      % \qrcode{Test lol woos;hdfpsdoyhgpiUrks}
-      % \end{minipage}
-      % \hspace{\titlesep}
-      % { \rlap \includegraphics[height=\qrlength+3.5pt, width=\textwidth]{../header/1.png} }
-      % \begin{minipage}{\textwidth-\qrlength-\titlesep}
-      % \fontsize{30pt}{0pt}\selectfont#1
-      \begin{tikzpicture}[remember picture, overlay]
-        \node[anchor=north west] at (0, 0) {\qrcode{test lol woos}};
-          \draw[line width=0.5mm](\qrlength + \titlesep, -3.9pt)--(\qrlength + \titlesep, -\qrlength - 4pt);
-        \node[anchor=south west] at (\qrlength + \titlesep + 1.7pt, -\qrlength - 9.8pt)%
+      \begin{tikzpicture}[overlay]
+        \node[anchor=north west] at (0, 0.847cm) {\qrcode{test lol woos}};
+          \draw[line width=0.5mm](\qrlength + \titlesep, 0.847cm-3.9pt)--(\qrlength + \titlesep, -\qrlength - 4pt + 0.847cm);
+        \node[anchor=south west] at (\qrlength + \titlesep + 1.7pt, -\qrlength - 9.8pt + 0.847cm)%
           {\includegraphics[height=\qrlength+3.7pt, width=\textwidth-\qrlength-1.3\titlesep]{header/1.png}};
-        \node[anchor=west] at (\qrlength + \titlesep + 1.7pt, -\qrlength/2){\parbox{\textwidth-\qrlength-1.3\titlesep}{\vspace{0.5cm}\Huge#1}};
+        \end{tikzpicture}
+        % \node[anchor=west] at (\qrlength + \titlesep + 1.7pt, -\qrlength/2){%
+        %   \begin{minipage}{\textwidth-\qrlength-1.3\titlesep}
+        %     \centering\fontsize{30pt}{0pt}\selectfont#1
+        %   \end{minipage}};
+        % \parbox{\textwidth-\qrlength-1.3\titlesep}
+        %   {\centering\vspace{0.5cm}\contour{white}{\Huge#1}}};
+        \hfill
+        \begin{minipage}[t]{\textwidth-\qrlength-2.6\titlesep}
+          % \centering\fontsize{30pt}{30pt}\selectfont#1
+            % \vspace{-\qrlength/2}
+            \centering\fontsize{25pt}{0pt}\selectfont\Contour{Chapter\ \thechapter:\ #1}
+        \end{minipage}
     }
     [%
-    \end{tikzpicture}
     \vspace*{3cm}%
     \startcontents
     \normalsize\normalfont
