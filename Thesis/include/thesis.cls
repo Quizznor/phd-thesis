@@ -223,7 +223,6 @@
   \qrset{height=\qrlength}
   \newlength\titlesep
   \setlength\titlesep{0.4cm}
-
   \ExplSyntaxOn
   \NewDocumentCommand{\Contour}{m}
   {
@@ -244,16 +243,8 @@
         \node[anchor=south west] at (\qrlength + \titlesep + 1.7pt, -\qrlength - 9.8pt + 0.847cm)%
           {\includegraphics[height=\qrlength+3.7pt, width=\textwidth-\qrlength-1.3\titlesep]{header/1.png}};
         \end{tikzpicture}
-        % \node[anchor=west] at (\qrlength + \titlesep + 1.7pt, -\qrlength/2){%
-        %   \begin{minipage}{\textwidth-\qrlength-1.3\titlesep}
-        %     \centering\fontsize{30pt}{0pt}\selectfont#1
-        %   \end{minipage}};
-        % \parbox{\textwidth-\qrlength-1.3\titlesep}
-        %   {\centering\vspace{0.5cm}\contour{white}{\Huge#1}}};
         \hfill
         \begin{minipage}[t][\qrlength+3.7pt][t]{\textwidth-\qrlength-2.6\titlesep}
-          % \centering\fontsize{30pt}{30pt}\selectfont#1
-            % \vspace{-\qrlength/2}
             \centering\fontsize{25pt}{0pt}\selectfont\Contour{Chapter\ \thechapter:\ #1}
         \end{minipage}
     }
@@ -301,23 +292,6 @@
   {\titlerule*[0.7pc]{.}\contentspage}
   []
 
-
-
-
-
-
-  % \titlecontents{chapter}[0.2cm]{\bfseries}{\vspace{0.1cm}\hrule\vspace{-0.5cm}}{}{\hfill\contentspage}[\vspace{0.2cm}]
-% \usepackage{qrcode}
-% \newlength\qrlength
-% \setlength\qrlength{20mm}
-% \qrset{height=\qrlength}
-
-
-% \definecolor{gray75}{gray}{0.75}
-
-% \titleformat*{\section}{\centering\normalfont\bfseries\linespread{0}\fontsize{14}{0pt}\selectfont}
-
-
 \makeatletter
 \renewcommand{\frontmatter}{%
   \pagestyle{plain}
@@ -331,31 +305,6 @@
   \pagenumbering{arabic}
   \let\chapter=\tempchapter
   \addtocontents{toc}{\protect\contentsline {part}{Main Content}{}{}}
-
-
-  % % \titleformat*{\section}{\normalfont\bfseries\Large}
-
-  % \titleformat{\chapter}[display]%
-  % {}%
-  % {\vspace{-8em}\raggedleft{%
-  %   {\color{gray75}%
-  %       \rule[-5pt]{2pt}{5cm}}\quad%
-  %   {\color{gray75}
-  %       \fontsize{60}{60}\selectfont\thechapter}%
-  %   }%
-  % }%
-  % {-2.1em}%
-  % {\parbox[b]{\dimexpr\textwidth-3em\relax}{\raggedright#1}}%
-
-
-
-
-  % \titleformat{\chapter}[hang]{\huge\bfseries}{\thechapter\hspace{20pt}\textcolor{gray75}{|}\hspace{20pt}}{0pt}{\huge\bfseries}
-  %   [\vspace*{4pc}%
-  %   \startcontents
-  %   \normalsize\normalfont
-  %   \printcontents{p}{1}{\setcounter{tocdepth}{3}}]
-
 }
 
 \renewcommand{\backmatter}{%
