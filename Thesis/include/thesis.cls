@@ -251,14 +251,14 @@
         % \parbox{\textwidth-\qrlength-1.3\titlesep}
         %   {\centering\vspace{0.5cm}\contour{white}{\Huge#1}}};
         \hfill
-        \begin{minipage}[t]{\textwidth-\qrlength-2.6\titlesep}
+        \begin{minipage}[t][\qrlength+3.7pt][t]{\textwidth-\qrlength-2.6\titlesep}
           % \centering\fontsize{30pt}{30pt}\selectfont#1
             % \vspace{-\qrlength/2}
             \centering\fontsize{25pt}{0pt}\selectfont\Contour{Chapter\ \thechapter:\ #1}
         \end{minipage}
     }
     [%
-    \vspace*{3cm}%
+    \vspace*{1cm}%
     \startcontents
     \normalsize\normalfont
     \printcontents{p}{2}{\setcounter{tocdepth}{4}}
