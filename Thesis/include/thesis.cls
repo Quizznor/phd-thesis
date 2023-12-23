@@ -217,10 +217,12 @@
 % chapter with automatic minitoc creation
   \usepackage[pdftex, outline]{contour}
   \contourlength{0.8mm}
-  \usepackage{qrcode}
+  \usepackage[nolinks]{qrcode}
   \newlength\qrlength
   \setlength\qrlength{2.5cm}
   \qrset{height=\qrlength}
+  \usepackage{catchfile}
+  % \newcommand{\thechapterheading}{Placeholder}
   \newlength\titlesep
   \setlength\titlesep{0.4cm}
   \ExplSyntaxOn
@@ -237,8 +239,9 @@
     {}
     {0pt}
     {%
+      \CatchFileDef\thechapterheading{header/\thechapter.txt}{\endlinechar=-1 }
       \begin{tikzpicture}[overlay]
-        \node[anchor=north west] at (0, 0.847cm) {\qrcode{test lol woos}};
+        \node[anchor=north west] at (0, 0.847cm) {\textcolor{cyan}{\qrcode{\thechapterheading}}};
           \draw[line width=0.5mm](\qrlength + \titlesep, 0.847cm-3.9pt)--(\qrlength + \titlesep, -\qrlength - 4pt + 0.847cm);
         \node[anchor=south west] at (\qrlength + \titlesep + 1.7pt, -\qrlength - 9.8pt + 0.847cm)%
           {\includegraphics[height=\qrlength+3.7pt, width=\textwidth-\qrlength-1.3\titlesep]{header/1.png}};
