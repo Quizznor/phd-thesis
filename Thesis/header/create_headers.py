@@ -7,9 +7,11 @@ hostname = os.uname()[1]
 if "crc" in hostname:
     scriptdir = "/cr/users/filip/bin/"
     basedir = "/cr/data01/filip/.history/"
+    savedir = "/cr/users/filip/Thesis/header/"
 elif "beep-boop" == hostname:
     scriptdir = "/home/quizznor/projects/phd-thesis/bin/"
     basedir = "/home/quizznor/projects/phd-thesis/Data/"
+    savedir = "/home/quizznor/projects/phd-thesis/Thesis/header"
 
 sys.path.append(scriptdir)
 
@@ -55,19 +57,34 @@ for hour in os.listdir(basedir):
     timestamps = get_timestamps(history, timestamp)
     all_of_history = add_to_dict(all_of_history, timestamps)
 
+
 """
 Maybe create some function to massage data here? I.e. put all condor_* into one category?
 """
 
 cmds = [
     "git",          # Introduction
+    "make",         # Pierre Auger Observatory
+    "exit",         # Example Shit
+    "git",          # Bibliography
+    "ls",           # Hallo
 ]
 
 tooltips = [
     "1. The part where everything begins\n\nCollaboration through meetings.\t- Paul Filip",
+    "2. The part where everything begins\n\nCollaboration through meetings.\t- Paul Filip",
+    "3. The part where everything begins\n\nCollaboration through meetings.\t- Paul Filip",
+    "4. The part where everything begins\n\nCollaboration through meetings.\t- Paul Filip",
+    "5. The part where everything begins\n\nCollaboration through meetings.\t- Paul Filip",
 ]
 
+plt.figure()
+plt.plot([0, 1, 2], [0, 1, 2], lw=3, c="#009999")
+
+
 for i, (tooltip, cmd) in enumerate(zip(tooltips, cmds), 1):
+    
+    if i == 5: i = "A"
 
     plt.figure()
     data = all_of_history[cmd]
@@ -77,7 +94,6 @@ for i, (tooltip, cmd) in enumerate(zip(tooltips, cmds), 1):
     line = tool.kd1d_estimate(data, bandwidth=3e5)
     X = np.linspace(min(data), max(data), 10000)
 
-
     plt.rcParams["figure.figsize"] = [11, 2.5]
     plt.plot(X, line(X), lw=3, c="#009999")
     plt.xlim(phd_start.timestamp(), phd_end.timestamp())
@@ -86,17 +102,17 @@ for i, (tooltip, cmd) in enumerate(zip(tooltips, cmds), 1):
     plt.axis("off")
     so.rugplot(data, c="k", alpha=0.1)
     plt.legend(loc="upper left", title=cmd, title_fontsize=10)
-    plt.savefig(f"{i}.png")
+    plt.savefig(f"{savedir}/{i}.png")
 
     format = f"{tooltip}\n\ngit\n{{"
-    n_chars = 0.3 * len(str(data))
-    n_sqrt = int(np.floor(np.sqrt(n_chars)))
+    n_chars = len(str(data))
+    width = np.sqrt(5/3 * n_chars)
 
     matrix = ""
     row = ""
 
-    for number in np.random.choice(data, 30):
-        if len(row) // n_sqrt:
+    for number in data:
+        if len(row) // width:
             matrix += "\n\t" + row
             row = ""
         
@@ -104,5 +120,5 @@ for i, (tooltip, cmd) in enumerate(zip(tooltips, cmds), 1):
 
     format += matrix + "\n}"
 
-    with open(f"{i}.txt", "w") as qr_code:
+    with open(f"{savedir}/{i}.txt", "w") as qr_code:
         qr_code.write(format)
