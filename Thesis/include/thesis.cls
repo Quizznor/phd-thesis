@@ -138,7 +138,7 @@
 \newrobustcmd*{\mkbibdesc}[1]{%
   \number\numexpr\csuse{entrycount:\strfield{prefixnumber}}+1-#1\relax}
 
-\addbibresource{bib/thesis.bib}
+\addbibresource{/home/quizznor/projects/phd-thesis/bib/thesis.bib}
 
 % Describe separation hints here:
 \hyphenation{
@@ -327,13 +327,10 @@
 }
 
 \renewcommand{\backmatter}{%
-
-  \include{bib/bibliography.tex}
   \addtocontents{toc}{\protect\contentsline {part}{Supplementary Information}{}{}}
   \renewcommand{\thechapter}{\Alph{chapter}}
   % \let\chapter=\prechapter
   \setcounter{chapter}{0}
-
 }
 
 \usepackage{hyperref}

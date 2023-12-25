@@ -10,11 +10,9 @@ DEPENDENCIES := $(wildcard ./*.tex figures/* chap/*.tex app/*.tex include/* titl
 
 ##########################################################
 SHELL := bash
-DEPENDENCIES += $(wildcard *.sty *.bib chap/*.tex title/*.tex abstract/*.tex) 
+DEPENDENCIES += $(wildcard *.sty chap/*.tex title/*.tex abstract/*.tex) 
 
 LATEX := $(if $(filter 1, $(USEPDFLATEX)), pdflatex --shell-escape, latex)
-
-COLORIZE := awk 'BEGIN{red="\033[31;1m";yel="\033[33m";byel="\033[33;1m";end="\033[0m"}/Rerun /||/rerunfilecheck[^.]/{e=e$$0"\n";print red""$$0""end;next}/^LaTeX Warning:/||/natbib Warning:/{w=w$$0"\n";print yel""$$0""end;next}{print}END{if(w||e)print "\n"red"Warning/error summary:\n"byel""w""end;if(e){print red""e""end;exit 1}}'
 
 define basic_latex_rule
   for i in 1 2 3 ; do $(LATEX) $< && break; done 
@@ -40,7 +38,7 @@ all: $(TARGET).pdf
 $(TARGET).pdf: $(DEPENDENCIES)
 
 clean:
-	- $(RM) -f $(TARGET){.tex~,.ps,.dvi,.log,.aux,.toc,.nav,.out,.snm,.bbl,.blg,.spl,.lof,.maf,.fff,.lot,.ttt,.mtc*,.ptc,.loc,.tdo,.soc} */*.aux
+	- $(RM) -f $(TARGET){.pdf,.tex~,.ps,.dvi,.log,.aux,.toc,.bcf,.nav,.out,.snm,.bbl,.blg,.spl,.lof,.maf,.fff,.lot,.ttt,.mtc*,.ptc,.loc,.tdo,.soc} */*.aux
 
 # general rules
 ifeq ($(USEPDFLATEX), 1)
