@@ -16,7 +16,10 @@
 \usepackage{rotating}
 \usepackage{subfig}
 \usepackage{mparhack}
-\usepackage[printonlyused, footnote, withpage]{acronym}
+\usepackage[printonlyused, withpage]{acronym}
+
+\newcommand{\word}[2]{\acro{#1}{\textit{#2}}}
+
 \usepackage[dvipsnames, table]{xcolor}
 \usepackage{changes}
 \usepackage{blindtext}
@@ -104,6 +107,7 @@
 \usepackage{todonotes}
 \usepackage{python}
 \usepackage{xspace}
+\usepackage{parskip}
 
 \usepackage[activate={true,nocompatibility},final,tracking=true,kerning=true,spacing=true,factor=1100,stretch=10,shrink=10]{microtype}
 % activate={true,nocompatibility} - activate protrusion and expansion
@@ -210,7 +214,7 @@
 \newcounter{prechapter}
 
 % custom sections, subsections, and subsubsections for minitocs
-\titlecontents{psection}[0.2cm]{\bfseries}{\vspace{0.1cm}\hrule\vspace{-0.5cm}\thecontentslabel\hspace{0.5em}}{}{\hfill\contentspage}
+\titlecontents{psection}[0.2cm]{\bfseries}{\thecontentslabel\hspace{0.5em}}{}{\titlerule*[1pc]{.}\contentspage}
 \titlecontents{psubsection}[5.5em]{}{\contentslabel{3.2em}}{}{\titlerule*[1pc]{.}\contentspage}
 \titlecontents{psubsubsection}[7.0em]{}{\contentslabel{4.1em}}{}{\titlerule*[1pc]{.}\contentspage}
 
