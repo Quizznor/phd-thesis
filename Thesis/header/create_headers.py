@@ -78,10 +78,6 @@ tooltips = [
     "5. The part where everything begins\n\nCollaboration through meetings.\t- Paul Filip",
 ]
 
-plt.figure()
-plt.plot([0, 1, 2], [0, 1, 2], lw=3, c="#009999")
-
-
 for i, (tooltip, cmd) in enumerate(zip(tooltips, cmds), 1):
     
     if i == 5: i = "A"
@@ -101,7 +97,7 @@ for i, (tooltip, cmd) in enumerate(zip(tooltips, cmds), 1):
     plt.yticks([])
     plt.axis("off")
     so.rugplot(data, c="k", alpha=0.1)
-    plt.legend(loc="upper left", title=cmd, title_fontsize=10)
+    plt.legend(loc="lower right", title=cmd, title_fontsize=10)
     plt.savefig(f"{savedir}/{i}.png")
 
     format = f"{tooltip}\n\ngit\n{{"

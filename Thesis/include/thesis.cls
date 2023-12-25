@@ -173,16 +173,16 @@
   tight-spacing = true,
   separate-uncertainty = true
 }
-  
-\let\oldbaselinestretch=\baselinestretch%
-\renewcommand{\baselinestretch}{1.15}%
-\large\normalsize%
+
+\makeatletter
+\def\instring#1#2{TT\fi\begingroup
+  \edef\x{\endgroup\noexpand\in@{#1}{#2}}\x\ifin@}
+\makeatother
 
 
 % toc & title formatting
 \usepackage[explicit]{titlesec}
 \usepackage{titletoc}
-
 \setcounter{secnumdepth}{3}
 \setcounter{tocdepth}{3}
 
@@ -214,9 +214,14 @@
 \newcounter{prechapter}
 
 % custom sections, subsections, and subsubsections for minitocs
-\titlecontents{psection}[0.2cm]{\bfseries}{\thecontentslabel\hspace{0.5em}}{}{\titlerule*[1pc]{.}\contentspage}
-\titlecontents{psubsection}[5.5em]{}{\contentslabel{3.2em}}{}{\titlerule*[1pc]{.}\contentspage}
-\titlecontents{psubsubsection}[7.0em]{}{\contentslabel{4.1em}}{}{\titlerule*[1pc]{.}\contentspage}
+\titlecontents{psection}
+  [0.2cm]
+  {\bfseries\vspace{0.65cm}\hrule\vspace{-0.7cm}}
+  {\thecontentslabel\hspace{0.4em}}
+  {}
+  {\hfill\contentspage}
+\titlecontents{psubsection}[5.5em]{\vspace{-0.2cm}}{\contentslabel{3.2em}}{}{\titlerule*[1pc]{.}\contentspage}
+\titlecontents{psubsubsection}[7.0em]{\vspace{-0.2cm}}{\contentslabel{4.1em}}{}{\titlerule*[1pc]{.}\contentspage}
 
 % chapter with automatic minitoc creation
   \usepackage[pdftex, outline]{contour}
@@ -228,6 +233,7 @@
   \usepackage{catchfile}
   \newlength\titlesep
   \setlength\titlesep{0.4cm}
+  \usepackage{setspace}
   \ExplSyntaxOn
   \NewDocumentCommand{\Contour}{m}
   {
@@ -266,8 +272,7 @@
     {\hspace{0.4em}\begin{Large}\thecontentslabel\end{Large}\hspace{0.85em}\large}
     {}
     {\hfill\normalsize\contentspage}
-    []
-  \titlespacing*{\chapter} {0pt}{0pt}{40pt}
+    [\vspace{0.5em}]
 
 
 % sections
@@ -317,6 +322,7 @@
   \addtocontents{toc}{\protect\contentsline {part}{Supplementary Information}{}{}}
   \renewcommand{\thechapter}{\Alph{chapter}}
   \cleardoublepage
+  \setcounter{chapter}{0}
 }
 
 \usepackage{hyperref}
