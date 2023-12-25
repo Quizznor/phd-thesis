@@ -57,14 +57,25 @@ for hour in os.listdir(basedir):
     timestamps = get_timestamps(history, timestamp)
     all_of_history = add_to_dict(all_of_history, timestamps)
 
-
 """
 Maybe create some function to massage data here? I.e. put all condor_* into one category?
 """
+keys_to_delete = []
+for key, value in all_of_history.items():
+    if len(value) < 10:
+        keys_to_delete.append(key)
+
+for key in keys_to_delete:
+    del all_of_history[key]
+
+# add lyon keyword
+all_of_history["lyon"] = []
+for key in ['ssh', './copy_data_to_iap.sh', './copy_to_iap.sh']:
+    all_of_history["lyon"] += all_of_history[key]
 
 cmds = [
     "git",          # Introduction
-    "make",         # Pierre Auger Observatory
+    "lyon",         # Pierre Auger Observatory
     "exit",         # Example Shit
     "git",          # Bibliography
     "ls",           # Hallo

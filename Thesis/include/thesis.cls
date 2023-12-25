@@ -129,8 +129,16 @@
 \widowpenalty = 10000
 \displaywidowpenalty = 10000 % Disable single lines at the end of a paragraph (Hurenkinder)
 
+\usepackage[style=numeric-comp,sorting=ydnt,defernumbers]{biblatex}
+\AtDataInput{%
+  \csnumgdef{entrycount:\strfield{prefixnumber}}{%
+    \csuse{entrycount:\strfield{prefixnumber}}+1}}
 
-\usepackage[numbers,sort&compress]{natbib}
+\DeclareFieldFormat{labelnumber}{\mkbibdesc{#1}}    
+\newrobustcmd*{\mkbibdesc}[1]{%
+  \number\numexpr\csuse{entrycount:\strfield{prefixnumber}}+1-#1\relax}
+
+\addbibresource{bib/thesis.bib}
 
 % Describe separation hints here:
 \hyphenation{
@@ -319,10 +327,13 @@
 }
 
 \renewcommand{\backmatter}{%
+
+  \include{bib/bibliography.tex}
   \addtocontents{toc}{\protect\contentsline {part}{Supplementary Information}{}{}}
   \renewcommand{\thechapter}{\Alph{chapter}}
-  \cleardoublepage
+  % \let\chapter=\prechapter
   \setcounter{chapter}{0}
+
 }
 
 \usepackage{hyperref}
