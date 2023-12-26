@@ -254,7 +254,7 @@
           {\includegraphics[height=\qrlength+3.7pt, width=\textwidth-\qrlength-1.3\titlesep]{header/\thechapter.png}};
         \end{tikzpicture}
         \hfill
-        \begin{minipage}[\qrlength+3.7pt]{\textwidth-\qrlength-2.6\titlesep}
+        \begin{minipage}[t][1.3cm][t]{\textwidth-\qrlength-2.6\titlesep}
             \centering\fontsize{25pt}{0pt}\selectfont\Contour{\ifnum\thechapter=0\else Part\ \thechapter:\ \fi#1}
         \end{minipage}
     }
@@ -323,8 +323,9 @@
 }
 
 \renewcommand{\backmatter}{%
+  % \setcounter{chapter}{-1}
   \addtocontents{toc}{\protect\contentsline {part}{Supplementary Information}{}{}}
-  \renewcommand{\thechapter}{\Alph{chapter}}
+  % \renewcommand{\thechapter}{\Alph{chapter}}
   % \let\chapter=\postchapter
 }
 
