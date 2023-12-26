@@ -76,7 +76,6 @@ for key in ['ssh', './copy_data_to_iap.sh', './copy_to_iap.sh']:
 cmds = [
     "git",          # Introduction
     "lyon",         # Pierre Auger Observatory
-    "exit",         # Example Shit
     "git",          # Bibliography
     "ls",           # Hallo
 ]
@@ -85,17 +84,14 @@ tooltips = [
     "1. The part where everything begins\n\nCollaboration through meetings.\t- Paul Filip",
     "2. The part where everything begins\n\nCollaboration through meetings.\t- Paul Filip",
     "3. The part where everything begins\n\nCollaboration through meetings.\t- Paul Filip",
-    "4. The part where everything begins\n\nCollaboration through meetings.\t- Paul Filip",
     "5. The part where everything begins\n\nCollaboration through meetings.\t- Paul Filip",
 ]
 
-plt.figure()
-plt.plot([0, 1, 2], [0, 1, 2], lw=3, c="#009999")
+n_chapters = 4
 
-
-for i, (tooltip, cmd) in enumerate(zip(tooltips, cmds), 1):
+for i, (tooltip, cmd) in enumerate(zip(tooltips, cmds), 0):
     
-    if i == 5: i = "A"
+    if i == n_chapters: i = "A"
 
     plt.figure()
     data = all_of_history[cmd]
@@ -112,7 +108,7 @@ for i, (tooltip, cmd) in enumerate(zip(tooltips, cmds), 1):
     plt.yticks([])
     plt.axis("off")
     so.rugplot(data, c="k", alpha=0.1)
-    plt.legend(loc="upper left", title=cmd, title_fontsize=10)
+    plt.legend(loc="lower right", title=cmd, title_fontsize=10)
     plt.savefig(f"{savedir}/{i}.png")
 
     format = f"{tooltip}\n\ngit\n{{"
