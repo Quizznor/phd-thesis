@@ -129,7 +129,7 @@
 \clubpenalty = 10000 % Disable single lines at the start of a paragraph (Schusterjungen)
 \widowpenalty = 10000
 \displaywidowpenalty = 10000 % Disable single lines at the end of a paragraph (Hurenkinder)
-\usepackage[style=numeric-comp, sorting=ynt]{biblatex}
+\usepackage[style=numeric-comp, sorting=ynt, defernumbers=true]{biblatex}
 \addbibresource{bib/thesis.bib}
 
 
@@ -197,28 +197,32 @@
 
 
 % custom chapters for frontmatter
-\titleclass{\prechapter}{straight}[\part]
-\titleformat{\prechapter}           % what is changed
+\titleclass{\prepostchapter}{straight}[\part]
+\titleformat{\prepostchapter}       % what is changed
   [display]                         % shape factor within text
   {\centering\normalfont\huge}      % format of title and label
   {}                                % label of title (chapter?)
   {0pt}                             % separation between label and title body
   {#1}                              % code executed after label, before title. #1 is the title
   [\hrule\vspace{-0.5cm}]           % code executed after title
-\titlespacing*{\prechapter} {0pt}{50pt}{40pt}
-\titlecontents{prechapter}
+\titlespacing*{\prepostchapter} {0pt}{50pt}{40pt}
+\titlecontents{prepostchapter}
   [0.2cm]
   {\bfseries}
-  {\includegraphics[height=0.3cm]{../include/\thecontentslabel.png}\hspace{0.5em}}
+  {
+    \IfInteger{\theprepostchapter}
+    {\includegraphics[height=0.3cm]{../include/\theprepostchapter.png}\hspace{0.5em}}
+    {\theprepostchapter\hspace{0.5em}}
+  }
   {}
   {\titlerule*[1pc]{.}\contentspage}
-\newcounter{prechapter}
-
+\newcounter{prepostchapter}
+\counterwithin{prepostchapter}{prepostchapter}
 
 % custom sections, subsections, and subsubsections for minitocs
 \titlecontents{psection}[0.2cm]{\vspace{-0.3cm}\bfseries}{\thecontentslabel\hspace{0.5em}}{}{\normalfont\titlerule*[1pc]{.}\contentspage}
-\titlecontents{psubsection}[5.5em]{\vspace{-0.3cm}}{\contentslabel{3.2em}}{}{\titlerule*[1pc]{.}\contentspage}
-\titlecontents{psubsubsection}[7.0em]{\vspace{-0.3cm}}{\contentslabel{4.1em}}{}{\titlerule*[1pc]{.}\contentspage}
+\titlecontents{psubsection}[5.1em]{\vspace{-0.3cm}}{\contentslabel{2.7em}}{}{\titlerule*[1pc]{.}\contentspage}
+\titlecontents{psubsubsection}[5.7em]{\vspace{-0.3cm}}{\contentslabel{4.1em}}{}{\titlerule*[1pc]{.}\contentspage}
 
 
 % chapter with automatic minitoc creation
@@ -278,6 +282,7 @@
     []
 \titlespacing*{\chapter} {0pt}{0pt}{40pt}
 
+
 % sections
 \titlecontents{section}
     [0.55cm]
@@ -311,7 +316,7 @@
   \pagestyle{plain}
   \pagenumbering{roman}
   \let\tempchapter=\chapter
-  \let\chapter=\prechapter
+  \let\chapter=\prepostchapter
 }
 
 \renewcommand{\mainmatter}{%
@@ -323,10 +328,9 @@
 }
 
 \renewcommand{\backmatter}{%
-  % \setcounter{chapter}{-1}
+  % \setcounter{prepostchapter}{1}
+  % \renewcommand{\theprepostchapter}{\Alph{chapter}}
   \addtocontents{toc}{\protect\contentsline {part}{Supplementary Information}{}{}}
-  % \renewcommand{\thechapter}{\Alph{chapter}}
-  % \let\chapter=\postchapter
 }
 
 \usepackage{hyperref}
