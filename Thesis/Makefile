@@ -16,7 +16,7 @@ COLORIZE := awk 'BEGIN{red="\033[31;1m";yel="\033[33m";byel="\033[33;1m";end="\0
 all: $(TARGET).pdf
 
 clean:
-	- $(RM) -f $(TARGET){.pdf,.tex~,.ps,.dvi,.log,.aux,.toc,.bcf,.nav,.out,.snm,.bbl,.blg,-blx.bib,.run.xml,.spl,.lof,.maf,.fff,.lot,.ttt,.mtc*,.ptc,.loc,.tdo,.soc} */*.aux
+	- $(RM) -f $(TARGET){.pdf,.tex~,.ps,.dvi,.log,.aux,.toc,.bcf,.nav,.out,.snm,.bbl,.blg,-blx.bib,.tex.bbl,.tex.blg,.run.xml,.spl,.lof,.maf,.fff,.lot,.ttt,.mtc*,.ptc,.loc,.tdo,.soc} */*.aux
 
 %.pdf: $(DEPENDENCIES)
 	$(LATEX) $*

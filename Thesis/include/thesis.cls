@@ -195,6 +195,7 @@
   {}                                % filler page format (like dots, etc.)
 [\hrule height 1.5pt]               % code executed after toc-item
 
+
 % custom chapters for frontmatter
 \titleclass{\prechapter}{straight}[\part]
 \titleformat{\prechapter}           % what is changed
@@ -213,46 +214,15 @@
   {\titlerule*[1pc]{.}\contentspage}
 \newcounter{prechapter}
 
-% % custom chapters for first chapter
-% \titleclass{\firstchapter}{straight}[\part]
-% \titlespacing*{\firstchapter} {0pt}{0pt}{40pt}
-% \newcounter{firstchapter}
-% \titleformat{\firstchapter}
-%   [display]
-%   {}
-%   {}
-%   {0pt}
-%   {%
-%     \begin{tikzpicture}[overlay]
-%       \node[anchor=north west] at (0, 0.847cm) 
-%         {\textcolor{cyan}{\qrcode{https://github.com/Quizznor/phd-thesis/blob/main/Thesis/header/1.txt}}};
-%       \draw[line width=0.5mm](\qrlength + \titlesep, 0.847cm-3.9pt)--(\qrlength + \titlesep, -\qrlength - 4pt + 0.847cm);
-%       \node[anchor=south west] at (\qrlength + \titlesep + 1.7pt, -\qrlength - 9.8pt + 0.847cm)%
-%         {\includegraphics[height=\qrlength+3.7pt, width=\textwidth-\qrlength-1.3\titlesep]{header/0.png}};
-%       \end{tikzpicture}
-%       \hfill
-%       \begin{minipage}[t][\qrlength+3.7pt][t]{\textwidth-\qrlength-2.6\titlesep}
-%           \centering\fontsize{25pt}{0pt}\selectfont\Contour{#1}
-%       \end{minipage}
-%   }
-%   [%
-%   \normalsize\normalfont
-%   ]
-% \titlecontents{firstchapter}
-%   [0.2cm]
-%   {\bfseries\vspace{0.85cm}\hrule\vspace{-0.55cm}}
-%   {\hspace{0.4em}\begin{Large}\thecontentslabel\end{Large}\hspace{0.85em}\large}
-%   {}
-%   {\hfill\normalsize\contentspage}
-% []
 
 % custom sections, subsections, and subsubsections for minitocs
-\titlecontents{psection}[0.2cm]{\vspace{-0.3cm}\bfseries}{\thecontentslabel\hspace{0.5em}}{}{\titlerule*[1pc]{.}\contentspage}
+\titlecontents{psection}[0.2cm]{\vspace{-0.3cm}\bfseries}{\thecontentslabel\hspace{0.5em}}{}{\normalfont\titlerule*[1pc]{.}\contentspage}
 \titlecontents{psubsection}[5.5em]{\vspace{-0.3cm}}{\contentslabel{3.2em}}{}{\titlerule*[1pc]{.}\contentspage}
 \titlecontents{psubsubsection}[7.0em]{\vspace{-0.3cm}}{\contentslabel{4.1em}}{}{\titlerule*[1pc]{.}\contentspage}
 
+
 % chapter with automatic minitoc creation
-  \usepackage[pdftex, outline]{contour}
+\usepackage[pdftex, outline]{contour}
   \contourlength{0.8mm}
   \usepackage[nolinks]{qrcode}
   \newlength\qrlength
@@ -284,16 +254,20 @@
           {\includegraphics[height=\qrlength+3.7pt, width=\textwidth-\qrlength-1.3\titlesep]{header/\thechapter.png}};
         \end{tikzpicture}
         \hfill
-        \begin{minipage}[t][\qrlength+3.7pt][t]{\textwidth-\qrlength-2.6\titlesep}
-            \centering\fontsize{25pt}{0pt}\selectfont\Contour{Part\ \thechapter:\ #1}
+        \begin{minipage}[\qrlength+3.7pt]{\textwidth-\qrlength-2.6\titlesep}
+            \centering\fontsize{25pt}{0pt}\selectfont\Contour{\ifnum\thechapter=0\else Part\ \thechapter:\ \fi#1}
         \end{minipage}
     }
     [%
-    \vspace*{1cm}%
-    \normalsize\normalfont
-    \hfill\textbf{Contents}\hrule\vspace{0.1cm}
-    \printcontents{p}{2}{\setcounter{tocdepth}{4}}
-    \hrule\vspace{-0.6cm}
+    \ifnum\thechapter=0
+      \vspace{0.6cm}
+    \else
+      \vspace*{1cm}%
+      \normalsize\normalfont
+      \hfill\textbf{Contents}\hrule\vspace{0.1cm}
+      \printcontents{p}{2}{\setcounter{tocdepth}{4}}
+      \hrule\vspace{-0.6cm}
+    \fi
     ]
   \titlecontents{chapter}
     [0.2cm]
@@ -304,34 +278,33 @@
     []
 \titlespacing*{\chapter} {0pt}{0pt}{40pt}
 
+% sections
+\titlecontents{section}
+    [0.55cm]
+    {}
+    {\bfseries\thecontentslabel\hspace{0.5em}}
+    {}
+    {\normalfont\titlerule*[0.7pc]{.}\contentspage}
+[]
 
-% % sections
-% \titlecontents{section}
-%     [0.55cm]
-%     {}
-%     {\thecontentslabel\hspace{0.5em}}
-%     {}
-%     {\normalfont\titlerule*[0.7pc]{.}\contentspage}
-% []
 
+% subsection
+\titlecontents{subsection}
+    [0.85cm]
+    {}
+    {\thecontentslabel\hspace{0.5em}}
+    {}
+    {\titlerule*[0.7pc]{.}\contentspage}
+[]
 
-% % subsection
-% \titlecontents{subsection}
-%     [0.85cm]
-%     {}
-%     {\thecontentslabel\hspace{0.5em}}
-%     {}
-%     {\titlerule*[0.7pc]{.}\contentspage}
-% []
-
-% % subsubsection
-% \titlecontents{subsubsection}
-%   [0.85cm]
-%   {}
-%   {\thecontentslabel\hspace{0.5em}}
-%   {}
-%   {\titlerule*[0.7pc]{.}\contentspage}
-% []
+% subsubsection
+\titlecontents{subsubsection}
+  [0.85cm]
+  {}
+  {\thecontentslabel\hspace{0.5em}}
+  {}
+  {\titlerule*[0.7pc]{.}\contentspage}
+[]
 
 \makeatletter
 \renewcommand{\frontmatter}{%
@@ -342,6 +315,7 @@
 }
 
 \renewcommand{\mainmatter}{%
+  \setcounter{chapter}{-1}
   \pagestyle{headings}
   \pagenumbering{arabic}
   \let\chapter=\tempchapter
@@ -351,8 +325,7 @@
 \renewcommand{\backmatter}{%
   \addtocontents{toc}{\protect\contentsline {part}{Supplementary Information}{}{}}
   \renewcommand{\thechapter}{\Alph{chapter}}
-  % \let\chapter=\prechapter
-  \setcounter{chapter}{0}
+  % \let\chapter=\postchapter
 }
 
 \usepackage{hyperref}
