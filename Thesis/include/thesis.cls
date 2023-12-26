@@ -20,6 +20,7 @@
 
 \newcommand{\word}[2]{\acro{#1}{\textit{#2}}}
 
+
 \usepackage[dvipsnames, table]{xcolor}
 \usepackage{changes}
 \usepackage{blindtext}
@@ -128,17 +129,9 @@
 \clubpenalty = 10000 % Disable single lines at the start of a paragraph (Schusterjungen)
 \widowpenalty = 10000
 \displaywidowpenalty = 10000 % Disable single lines at the end of a paragraph (Hurenkinder)
+\usepackage[style=numeric-comp, sorting=ynt]{biblatex}
+\addbibresource{bib/thesis.bib}
 
-\usepackage[style=numeric-comp,sorting=ydnt,defernumbers]{biblatex}
-\AtDataInput{%
-  \csnumgdef{entrycount:\strfield{prefixnumber}}{%
-    \csuse{entrycount:\strfield{prefixnumber}}+1}}
-
-\DeclareFieldFormat{labelnumber}{\mkbibdesc{#1}}    
-\newrobustcmd*{\mkbibdesc}[1]{%
-  \number\numexpr\csuse{entrycount:\strfield{prefixnumber}}+1-#1\relax}
-
-\addbibresource{/home/quizznor/projects/phd-thesis/bib/thesis.bib}
 
 % Describe separation hints here:
 \hyphenation{
@@ -181,16 +174,16 @@
   tight-spacing = true,
   separate-uncertainty = true
 }
-
-\makeatletter
-\def\instring#1#2{TT\fi\begingroup
-  \edef\x{\endgroup\noexpand\in@{#1}{#2}}\x\ifin@}
-\makeatother
+  
+\let\oldbaselinestretch=\baselinestretch%
+\renewcommand{\baselinestretch}{1.15}%
+\large\normalsize%
 
 
 % toc & title formatting
 \usepackage[explicit]{titlesec}
 \usepackage{titletoc}
+
 \setcounter{secnumdepth}{3}
 \setcounter{tocdepth}{3}
 
@@ -222,14 +215,9 @@
 \newcounter{prechapter}
 
 % custom sections, subsections, and subsubsections for minitocs
-\titlecontents{psection}
-  [0.2cm]
-  {\bfseries\vspace{0.65cm}\hrule\vspace{-0.7cm}}
-  {\thecontentslabel\hspace{0.4em}}
-  {}
-  {\hfill\contentspage}
-\titlecontents{psubsection}[5.5em]{\vspace{-0.2cm}}{\contentslabel{3.2em}}{}{\titlerule*[1pc]{.}\contentspage}
-\titlecontents{psubsubsection}[7.0em]{\vspace{-0.2cm}}{\contentslabel{4.1em}}{}{\titlerule*[1pc]{.}\contentspage}
+\titlecontents{psection}[0.2cm]{\bfseries}{\thecontentslabel\hspace{0.5em}}{}{\titlerule*[1pc]{.}\contentspage}
+\titlecontents{psubsection}[5.5em]{\vspace{-0.3cm}}{\contentslabel{3.2em}}{}{\titlerule*[1pc]{.}\contentspage}
+\titlecontents{psubsubsection}[7.0em]{\vspace{-0.3cm}}{\contentslabel{4.1em}}{}{\titlerule*[1pc]{.}\contentspage}
 
 % chapter with automatic minitoc creation
   \usepackage[pdftex, outline]{contour}
@@ -241,7 +229,6 @@
   \usepackage{catchfile}
   \newlength\titlesep
   \setlength\titlesep{0.4cm}
-  \usepackage{setspace}
   \ExplSyntaxOn
   \NewDocumentCommand{\Contour}{m}
   {
@@ -280,7 +267,8 @@
     {\hspace{0.4em}\begin{Large}\thecontentslabel\end{Large}\hspace{0.85em}\large}
     {}
     {\hfill\normalsize\contentspage}
-    [\vspace{0.5em}]
+    []
+  \titlespacing*{\chapter} {0pt}{0pt}{40pt}
 
 
 % sections

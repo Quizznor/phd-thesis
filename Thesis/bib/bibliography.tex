@@ -1,10 +1,24 @@
 %! TEX root = ../main.tex
 
-% \bibliographystyle{bib/elsarticle-num}
+\let\tempchapter=\chapter
+\let\chapter=\prechapter
 
-% Pierre Auger Observatory - Internal references
+\pagestyle{plain}
 
 \printbibheading
-\printbibliography[prefixnumbers={A},category={Auger Internal References},title={Auger Internal References},heading=subbibliography]
-% \printbibliography[prefixnumbers={R},type=report,title={Reports},heading=subbibliography]
-% \printbibliography[prefixnumbers={P},type=inproceedings,group={Auger Internal References}, heading=subbibliography]
+
+% Auger Internal References
+\newrefcontext[labelprefix=A]
+\printbibliography[keyword={GAP-Note},title={GAP Notes},heading=subbibliography]
+
+% General Physical References
+\newrefcontext[labelprefix=P]
+\printbibliography[keyword={phys},notkeyword={GAP-Note},title={Physical References},heading=subbibliography]
+
+% Other References
+\newrefcontext[labelprefix=O]
+\printbibliography[notkeyword={phys},notkeyword={GAP-Note},title={Other References},heading=subbibliography]
+
+\cleardoublepage
+\pagestyle{headings}
+\let\chapter=\tempchapter
