@@ -5,13 +5,27 @@
 
 \printbibheading
 
+The Pierre Auger observatory hosts an internal database of papers. These 
+typically short reports serve to accelerate the exchange of knowledge within the
+collaboration, and are called \GAP notes. Since they contain information that is
+not freely accessible outside the Pierre Auger collaboration, they are listed in
+a special category with the prefix \textbf{\textit{A}}. Similarly, sources from 
+personal correspondence are grouped with the prefix \textbf{\textit{C}}. 
+Physical references, also containing official publications by the Pierre Auger 
+collaboration, can be found with label \textbf{\textit{P}}. All other references
+are indexed under the label \textbf{\textit{O}}.
+
+% Personal Correspondence
+\newrefcontext[labelprefix=C]
+\printbibliography[keyword={private},title={Personal Correspondence},heading=subbibliography]
+
 % Auger Internal References
 \newrefcontext[labelprefix=A]
 \printbibliography[keyword={GAP-Note},title={GAP Notes},heading=subbibliography]
 
 % General Physical References
 \newrefcontext[labelprefix=P]
-\printbibliography[keyword={phys},notkeyword={GAP-Note},title={Physical References},heading=subbibliography]
+\printbibliography[keyword={phys},notkeyword={GAP-Note},title={Physics References},heading=subbibliography]
 
 % Other References
 \newrefcontext[labelprefix=O]

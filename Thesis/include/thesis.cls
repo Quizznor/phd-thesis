@@ -302,10 +302,6 @@
   \pagenumbering{arabic}
   \let\chapter=\tempchapter
   \addtocontents{toc}{\protect\contentsline {part}{Main Content}{}{}}
-  \pagestyle{fancy}
-  \fancyhead{}
-  \fancyhead[LE]{\thechapter.\ \leftmark}
-  \fancyhead[RO]{\thechapter.\ \leftmark}
 }
 
 \renewcommand{\backmatter}{%
