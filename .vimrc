@@ -10,8 +10,8 @@ set fileencoding=utf-8
 set encoding=utf-8
 
 " see vim-latex for details (mm for full build, nn for quick build)
-map mm :! $HOME/scripts/_LaTeXBinaries/vim-latex.sh %:p build full<CR><CR>
-map nn :! $HOME/scripts/_LaTeXBinaries/vim-latex.sh %:p build <CR><CR>
+map nn :! (cd ../ && make) <CR><CR>
+map mm :! (cd ../ && make clean) <CR>
 
 " automatically change fontsize when writing stuff
 autocmd VimEnter *.tex :silent !xdotool key ctrl+9
