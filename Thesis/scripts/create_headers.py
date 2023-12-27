@@ -23,6 +23,33 @@ import datetime
 
 phd_start, phd_end = datetime.datetime(2023, 8, 1), datetime.datetime(2026, 7, 31)
 
+cmds = [
+    "git",          # Introduction
+    "lyon",         # Pierre Auger Observatory
+    "git",          # Bibliography
+    "ls",           # Hallo
+]
+
+titles = [
+    "The part where everything begins",
+    "The part where everything begins",
+    "The part where everything begins",
+    "The part where everything begins",
+]
+
+quotes = [
+    ["I am happy you are here with me. Here at the end of all things, Sam", "Frodo Baggins, Return of the King"],
+    ["I am happy you are here with me. Here at the end of all things, Sam", "Frodo Baggins, Return of the King"],
+    ["I am happy you are here with me. Here at the end of all things, Sam", "Frodo Baggins, Return of the King"],
+    ["I am happy you are here with me. Here at the end of all things, Sam", "Frodo Baggins, Return of the King"],
+]
+
+def make_tooltip(i):
+    this_title = titles[i]
+    quote, author = quotes[i]
+    
+    return f"{i}. {this_title}\n\n{quote}\n{f'- {author}'.rjust(len(quote))}"
+
 def add_to_dict(original, new):
 
     for key, value in new.items():
@@ -41,6 +68,7 @@ def get_timestamps(original, timestamp):
         new[key] = [int(timestamp + np.random.randint(3600)) for _ in range(value)]
     
     return new
+
 
 all_of_history = {}
 
@@ -68,30 +96,19 @@ for key, value in all_of_history.items():
 for key in keys_to_delete:
     del all_of_history[key]
 
+
+# dict modification ##############################################################
+    
 # add lyon keyword
 all_of_history["lyon"] = []
 for key in ['ssh', './copy_data_to_iap.sh', './copy_to_iap.sh']:
     all_of_history["lyon"] += all_of_history[key]
 
-cmds = [
-    "git",          # Introduction
-    "lyon",         # Pierre Auger Observatory
-    "git",          # Bibliography
-    "ls",           # Hallo
-]
+##################################################################################
 
-tooltips = [
-    "1. The part where everything begins\n\nCollaboration through meetings.\t- Paul Filip",
-    "2. The part where everything begins\n\nCollaboration through meetings.\t- Paul Filip",
-    "3. The part where everything begins\n\nCollaboration through meetings.\t- Paul Filip",
-    "5. The part where everything begins\n\nCollaboration through meetings.\t- Paul Filip",
-]
-
-n_chapters = 4
-
-for i, (tooltip, cmd) in enumerate(zip(tooltips, cmds), 0):
+for i, cmd in enumerate(cmds, 0):
     
-    if i == n_chapters: i = "A"
+    tooltip = make_tooltip(i)
 
     plt.figure()
     data = all_of_history[cmd]

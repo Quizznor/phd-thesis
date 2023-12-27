@@ -17,56 +17,29 @@
 \usepackage{subfig}
 \usepackage{mparhack}
 \usepackage[printonlyused, withpage]{acronym}
-
 \newcommand{\word}[2]{\acro{#1}{\textit{#2}}}
-
-
 \usepackage[dvipsnames, table]{xcolor}
 \usepackage{changes}
 \usepackage{blindtext}
-
 \usepackage[b]{esvect}    % For \vv
 \usepackage{tikz}         % For arrow and dots in \xvec
 \usetikzlibrary{calc}
-
 \usepackage{xparse}
-
-% this block for listings is just for the example.tex
 \usepackage{listings}
-\lstset{
-    frame=single,
-    breaklines=true,
-    postbreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\color{red}\hookrightarrow\space}}
-}
+
 \lstdefinelanguage{numpy}{
-    keywords = {
-        and,del,from,not,while,
-        as,elif,global,or,with,
-        assert,else,if,pass,yield,
-        break,except,import,print,
-        class,exec,in, raise,continue,
-        finally,is, return,def,for,
-        lambda,try
+  keywords = {
+    and,del,from,not,while,
+    as,elif,global,or,with,
+    assert,else,if,pass,yield,
+    break,except,import,print,
+    class,exec,in, raise,continue,
+    finally,is, return,def,for,
+    lambda,try
     },
     morekeywords = {numpy,fft,mean}
-}
-
-\usepackage{color}
-\definecolor{darkred}{rgb}{0.5,0,0}
-\definecolor{firebrick}{rgb}{0.75,0.125,0.125}
-\definecolor{darkgreen}{rgb}{0,0.5,0}
-\definecolor{lightgray}{gray}{0.9}
-\definecolor{gray}{rgb}{0.4,0.4,0.4}
-\definecolor{darkblue}{rgb}{0.0,0.0,0.6}
-\definecolor{cyan}{rgb}{0.0,0.6,0.6}
-
-\lstset{
-  basicstyle=\ttfamily,
-  columns=fullflexible,
-  showstringspaces=false,
-  commentstyle=\color{gray}\upshape
-}
-
+    }
+    
 \lstdefinelanguage{XML}
 {
   basicstyle=\ttfamily\color{darkblue}\bfseries\footnotesize,
@@ -80,8 +53,21 @@
   breaklines=true
 }
 
-%\usepackage[mathlines,switch]{lineno}
+\lstset{
+  basicstyle=\ttfamily,
+  columns=fullflexible,
+  showstringspaces=false,
+  commentstyle=\color{gray}\upshape
+}
 
+\usepackage{color}
+\definecolor{darkred}{rgb}{0.5,0,0}
+\definecolor{firebrick}{rgb}{0.75,0.125,0.125}
+\definecolor{darkgreen}{rgb}{0,0.5,0}
+\definecolor{lightgray}{gray}{0.9}
+\definecolor{gray}{rgb}{0.4,0.4,0.4}
+\definecolor{darkblue}{rgb}{0.0,0.0,0.6}
+\definecolor{cyan}{rgb}{0.0,0.6,0.6}
 \usepackage{etoolbox}
 \AtBeginEnvironment{acronym}{%
   \renewcommand*\descriptionlabel[1]{\hspace\labelsep
@@ -101,7 +87,6 @@
 
 \usepackage[rightcaption]{sidecap}
 \sidecaptionvpos{figure}{t}
-
 \usepackage{booktabs}
 \usepackage{eurosym}
 \usepackage{title/KITtitle}
@@ -118,38 +103,29 @@
 % stretch=10, shrink=10 - reduce stretchability/shrinkability (default is 20/20)
 
 \SetTracking{encoding={*}, shape=sc}{40}
-
 \usepackage[Conny]{fncychap}
 \ChTitleAsIs
-
-% Paket caption muss _nach_ rotating und subfigure eingebunden werden!!
 \usepackage[labelfont=bf,font=small,margin=10pt,format=plain,tableposition=top]{caption}
-
-% from colin
-\clubpenalty = 10000 % Disable single lines at the start of a paragraph (Schusterjungen)
+\displaywidowpenalty = 10000      % Disable single lines at the end of a paragraph (Hurenkinder)
+\clubpenalty = 10000              % Disable single lines at the start of a paragraph (Schusterjungen)
 \widowpenalty = 10000
-\displaywidowpenalty = 10000 % Disable single lines at the end of a paragraph (Hurenkinder)
+\usepackage{mathpazo}
+\extrafloats{100}
 \usepackage[style=numeric-comp, sorting=ynt, defernumbers=true]{biblatex}
 \addbibresource{bib/thesis.bib}
 
+% % Describe separation hints here:
+% \hyphenation{
+%   % Pro-to-koll-in-stan-zen
+%   % Ma-na-ge-ment  Netz-werk-ele-men-ten
+%   % Netz-werk Netz-werk-re-ser-vie-rung
+%   % Netz-werk-adap-ter Fein-ju-stier-ung
+%   % Da-ten-strom-spe-zi-fi-ka-tion Pa-ket-rumpf
+%   % Kon-troll-in-stanz
+%   % Me
+%   }
 
-% Describe separation hints here:
-\hyphenation{
-  % Pro-to-koll-in-stan-zen
-  % Ma-na-ge-ment  Netz-werk-ele-men-ten
-  % Netz-werk Netz-werk-re-ser-vie-rung
-  % Netz-werk-adap-ter Fein-ju-stier-ung
-  % Da-ten-strom-spe-zi-fi-ka-tion Pa-ket-rumpf
-  % Kon-troll-in-stanz
-  % Me
-  }
-
-\extrafloats{100}
-\usepackage{mathpazo} % use mathpazo for math fonts
   
-% math mode text style automatically adjusts to surrounding style
-% good snippet to make symbols in titles appear in text and bold face without defining them explicitly
-
 \makeatletter
 \DeclareRobustCommand*{\bfseries}{%
 \not@math@alphabet\bfseries\mathbf
@@ -210,14 +186,14 @@
   [0.2cm]
   {\bfseries}
   {
-    \IfInteger{\theprepostchapter}
-    {\includegraphics[height=0.3cm]{../include/\theprepostchapter.png}\hspace{0.5em}}
-    {\theprepostchapter\hspace{0.5em}}
+    \IfInteger{\thecontentslabel}
+    {\includegraphics[height=0.3cm]{../include/\thecontentslabel.png}\hspace{0.5em}}
+    \thecontentslabel\hspace{0.5em}
   }
   {}
   {\titlerule*[1pc]{.}\contentspage}
 \newcounter{prepostchapter}
-\counterwithin{prepostchapter}{prepostchapter}
+% \counterwithin{prepostchapter}{prepostchapter}
 
 % custom sections, subsections, and subsubsections for minitocs
 \titlecontents{psection}[0.2cm]{\vspace{-0.3cm}\bfseries}{\thecontentslabel\hspace{0.5em}}{}{\normalfont\titlerule*[1pc]{.}\contentspage}
@@ -232,7 +208,8 @@
   \newlength\qrlength
   \setlength\qrlength{2.5cm}
   \qrset{height=\qrlength}
-  \usepackage{catchfile}
+  \usepackage{fancyhdr}
+  \renewcommand{\chaptermark}[1]{\markboth{#1}{}}
   \newlength\titlesep
   \setlength\titlesep{0.4cm}
   \ExplSyntaxOn
@@ -249,6 +226,7 @@
     {}
     {0pt}
     {%
+      \thispagestyle{empty}
       \startcontents
       \begin{tikzpicture}[overlay]
         \node[anchor=north west] at (0, 0.847cm) 
@@ -321,16 +299,20 @@
 
 \renewcommand{\mainmatter}{%
   \setcounter{chapter}{-1}
-  \pagestyle{headings}
   \pagenumbering{arabic}
   \let\chapter=\tempchapter
   \addtocontents{toc}{\protect\contentsline {part}{Main Content}{}{}}
+  \pagestyle{fancy}
+  \fancyhead{}
+  \fancyhead[LE]{\thechapter.\ \leftmark}
+  \fancyhead[RO]{\thechapter.\ \leftmark}
 }
 
 \renewcommand{\backmatter}{%
-  % \setcounter{prepostchapter}{1}
-  % \renewcommand{\theprepostchapter}{\Alph{chapter}}
+  \setcounter{prepostchapter}{0}
+  \renewcommand{\theprepostchapter}{\Alph{prepostchapter}}
   \addtocontents{toc}{\protect\contentsline {part}{Supplementary Information}{}{}}
+  \part*{Supplementary Information}
 }
 
 \usepackage{hyperref}

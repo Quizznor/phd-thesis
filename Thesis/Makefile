@@ -20,6 +20,7 @@ clean:
 
 %.pdf: $(DEPENDENCIES)
 	scripts/gather_chapters
+	scripts/gather_appendices
 	$(LATEX) $*
 	$(BIBTEX) $*
 	$(LATEX) $*
