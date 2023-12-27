@@ -51,15 +51,17 @@
   keywordstyle=\color{cyan},
   morekeywords={xmlns,version,type},
   breaklines=true
-}
-
+  }
+  
 \lstset{
   basicstyle=\ttfamily,
   columns=fullflexible,
   showstringspaces=false,
   commentstyle=\color{gray}\upshape
-}
+  }
 
+\usepackage[type={CC},modifier={by-nc-sa},version={3.0}]{doclicense}
+    
 \usepackage{color}
 \definecolor{darkred}{rgb}{0.5,0,0}
 \definecolor{firebrick}{rgb}{0.75,0.125,0.125}
@@ -70,15 +72,15 @@
 \definecolor{cyan}{rgb}{0.0,0.6,0.6}
 \usepackage{etoolbox}
 \AtBeginEnvironment{acronym}{%
-  \renewcommand*\descriptionlabel[1]{\hspace\labelsep
-                                \normalfont\bfseries\color{grey} #1}}
+\renewcommand*\descriptionlabel[1]{\hspace\labelsep
+\normalfont\bfseries\color{grey} #1}}
 
 % adjust colour of acronyms
 \makeatletter
 \AtBeginDocument{%
   \renewcommand*{\AC@hyperlink}[2]{%
-    \begingroup
-      \hypersetup{hidelinks}%
+  \begingroup
+  \hypersetup{hidelinks}%
       \hyperlink{#1}{#2}%
     \endgroup
   }%
