@@ -10,7 +10,7 @@ if "crc" in hostname:
     savedir = "/cr/users/filip/Thesis/header/"
 elif "beep-boop" == hostname:
     scriptdir = "/home/quizznor/projects/phd-thesis/bin/"
-    basedir = "/home/quizznor/projects/phd-thesis/Data/"
+    basedir = "/home/quizznor/projects/phd-thesis/Data/activity/"
     savedir = "/home/quizznor/projects/phd-thesis/Thesis/header"
 
 sys.path.append(scriptdir)
