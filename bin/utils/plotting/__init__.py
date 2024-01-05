@@ -17,7 +17,9 @@ def set_plt_style(style : str = 'notebook') -> None :
             r'\usepackage{lipsum}' \
             + r'\usepackage{amsmath}' \
             + r'\usepackage{upgreek}' \
-            + r'\usepackage{siunitx}'
+            + r'\usepackage{siunitx}' \
+            + r'\DeclareSIUnit\sr{sr}'\
+            + r'\DeclareSIUnit\year{yr}'
     elif style == 'notebook':
         fontsize = 4
         figuresize = [2.4, 1.2]

@@ -1,0 +1,11 @@
+#InGeV: 0
+#InLog10: 1
+#Scaling: 0.0
+#Label: JACEE_1998_allPrticle
+#Columns: E, Flux, UncertLow, UncertHigh, SysUncertLow, SysUncertHigh
+#Separator: ";"
+13.72;6.431800e-18;4.365310e-19;4.365310e-19;nan;nan
+13.94;1.731900e-18;1.296650e-19;1.296650e-19;nan;nan
+14.27;2.324300e-19;3.174700e-20;3.174700e-20;nan;nan
+14.74;1.600610e-20;6.941110e-21;6.941110e-21;nan;nan
+15.25;5.659460e-22;2.855150e-22;2.855150e-22;nan;nan
