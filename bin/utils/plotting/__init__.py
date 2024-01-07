@@ -14,13 +14,13 @@ def set_plt_style(styles : str = 'single') -> None :
     markersize = 2.0
     use_tex = 'tex' in opts
     if 'single' in opts:
-        # Maybe revise this to just make it twice as wide as 'double'?
-        figuresize = [6.6, 2.5]
+        figuresize = [6.6, 3.3]
     elif 'double' in opts:
         figuresize = [3.3, 2.5] 
     else:
         plotting_logger.warn(f'I dont know what to do with the arguments youve given me: {opts}')
-    
+        figuresize = [2.5, 2.5]
+
     plt.style.use(['science', 'ieee', 'no-latex'] if not use_tex else ['science', 'ieee'])
     plt.rcParams['font.size'] = fontsize
     plotting_logger.debug(f'font size set to {fontsize}')
