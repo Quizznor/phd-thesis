@@ -71,6 +71,9 @@ Projects/ONNXNetwork/
 *.soc
 *.tdo
 *.mtc*
+*.bcf
+*.ptc
+*.run.xml
 
 # Condor
 *.err

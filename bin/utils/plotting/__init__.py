@@ -4,31 +4,39 @@ from .. import create_stream_logger
 plotting_logger = create_stream_logger("utils.plotting")
 del create_stream_logger
 
-def set_plt_style(style : str = 'notebook') -> None : 
+def set_plt_style(styles : str = 'single') -> None : 
     """Change the global plotting style based on performance/look"""
     import scienceplots
 
-    if style == 'script':
-        fontsize = 8
-        figuresize = [3.3, 2.5]
-        plt.style.use(['science', 'ieee'])
-        plt.rcParams['text.usetex'] = True
-        plt.rcParams['text.latex.preamble'] = \
-            r'\usepackage{lipsum}' \
-            + r'\usepackage{amsmath}' \
-            + r'\usepackage{upgreek}' \
-            + r'\usepackage{siunitx}'
-    elif style == 'notebook':
-        fontsize = 4
-        figuresize = [2.4, 1.2]
-        plt.style.use(['science', 'ieee', 'no-latex', 'high-vis'])
-    
+    opts = styles.split()
+
+    fontsize = 8
+    markersize = 2.0
+    use_tex = 'tex' in opts
+    if 'single' in opts:
+        figuresize = [6.6, 3.3]
+    elif 'double' in opts:
+        figuresize = [3.3, 2.5] 
+    else:
+        plotting_logger.warn(f'I dont know what to do with the arguments youve given me: {opts}')
+        figuresize = [2.5, 2.5]
+
+    plt.style.use(['science', 'ieee', 'no-latex'] if not use_tex else ['science', 'ieee'])
     plt.rcParams['font.size'] = fontsize
     plotting_logger.debug(f'font size set to {fontsize}')
     plt.rcParams['figure.figsize'] = figuresize
     plotting_logger.debug(f'figure size set to {figuresize}')
-    plt.rcParams['font.size'] = fontsize
-    plotting_logger.debug(f'plotting style set to `{style}`.')
+    plt.rcParams['lines.markersize'] = markersize
+    plotting_logger.debug(f'markersize set to {markersize}')
+    plt.rcParams['text.usetex'] = use_tex
+    plt.rcParams['text.latex.preamble'] = \
+        r'\usepackage{lipsum}' \
+        + r'\usepackage{amsmath}' \
+        + r'\usepackage{upgreek}' \
+        + r'\usepackage{siunitx}' \
+        + r'\DeclareSIUnit\sr{sr}'\
+        + r'\DeclareSIUnit\year{yr}'
+    plotting_logger.debug(f'usetex set to {use_tex}')
 
 import matplotlib.pyplot as plt
 plotting_logger.info('import matplotlib.pyplot as plt')
