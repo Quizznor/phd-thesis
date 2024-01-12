@@ -10,7 +10,8 @@ def set_plt_style(styles : str = 'single') -> None :
 
     opts = styles.split()
 
-    fontsize = 8
+    fontsize = 9.5
+    labelsize = 13.0
     markersize = 2.0
     use_tex = 'tex' in opts
     if 'single' in opts:
@@ -24,6 +25,8 @@ def set_plt_style(styles : str = 'single') -> None :
     plt.style.use(['science', 'ieee', 'no-latex'] if not use_tex else ['science', 'ieee'])
     plt.rcParams['font.size'] = fontsize
     plotting_logger.debug(f'font size set to {fontsize}')
+    plt.rcParams['axes.labelsize'] = labelsize
+    plotting_logger.debug(f'label size set to {labelsize}')
     plt.rcParams['figure.figsize'] = figuresize
     plotting_logger.debug(f'figure size set to {figuresize}')
     plt.rcParams['lines.markersize'] = markersize
