@@ -26,6 +26,7 @@
 \usetikzlibrary{calc}
 \usepackage{xparse}
 \usepackage{listings}
+\usepackage{upgreek}
 
 \lstdefinelanguage{numpy}{
   keywords = {
