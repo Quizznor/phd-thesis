@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- Define which surface detector description managers
+are used and in what order.  Order of queries follows order
+of manager name appearence in this file. -->
+
+<SDetectorManagerList>
+
+<!--
+Note that the override manager should be first in the list.
+Data found in override manager pre-empts data in subsequent managers.    
+ -->
+
+  <manager> SStationListXMLManager </manager>  
+
+</SDetectorManagerList>
+
+

@@ -1,0 +1,135 @@
+#
+# Standard .airesrc file for AIRES version 19.04.00
+#
+#
+# -------
+# airesrc
+# -------
+#
+# This is a sh script to customize the Aires Runner system.
+# Is is "sourced" from other sripts.
+#
+# LINUX and Mac OSX VERSION (Last revision: 13/Apr/2019).
+#
+###############################################################################
+#
+# DIRECTORIES: Must be the same as specified in the "config" file used
+#              when the software was installed.
+#
+# AIRES root directory.
+#
+Aireshome="/cr/data01/filip//External/aires"
+#
+# Bin directory, the place where the executable binaries are stored in.
+#
+Airesbindir="${Aireshome}/bin"
+#
+# Lib directory, the place where the object libraries are stored in.
+#
+Aireslibdir="${Aireshome}/lib"
+#
+# Inp directory, the place where the collection of AIRES input and
+# data files are stored in.
+#
+Airesinpdir="${Aireshome}/inp"
+#
+# Spool and log main directories.
+#
+spooldiroot="${Aireshome}/spool"
+logdir="${Aireshome}/log"
+#
+# Spools that are being used.
+# Set this variable only if you are working simultaneously with more than one
+# spool (for example allspools="1 2 3"). Otherwise leave it unchanged.
+#
+allspools=""
+#
+# AiresRunner script. Can be "NORMAL" or "0"
+# (See the documentation).
+#
+RunnerScript=NORMAL
+#
+# Commands used to run the different programs.
+#
+# Simulations: A default program must be defined for each of the
+#              9 standard spools. For normal use, all these programs
+#              are identical. You may want to set different programs
+#              for different spools in the case several machines
+#              share the same file system.
+#
+program="nice -9 ${Airesbindir}/Aires"
+#
+program1="$program"
+program2="$program"
+program3="$program"
+program4="$program"
+program5="$program"
+program6="$program"
+program7="$program"
+program8="$program"
+program9="$program"
+#
+AiresS23="${program}"
+for a in S21 S23c EPLHC EP199 QIIr03 QIIr04; do
+  v="Aires$a"
+  eval ${v}=\"${program}$a\"
+done
+AiresS="$AiresS23"
+AiresEP="$AiresEPLHC"
+AiresQ="$AiresQIIr04"
+Aires="$AiresS"
+#
+# Simulation program to use with "AiresCheck" script.
+#
+tprogram="${Airesbindir}/Aires"
+#
+# Summary program.
+#
+Sryprogram="${Airesbindir}/AiresSry"
+#
+# Other programs.
+#
+IDF2ADFprogram="${Airesbindir}/AiresIDF2ADF"
+#
+# Command to print AiresCheck output. If the machine has no
+# printer attached, you can set this variable to "cat"
+#
+PrintCommand="lpr"
+#
+# File browser (normally "more" or "less" commands):
+#
+FileBrowser=less
+#
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Some unix commands which may be platform dependent:
+#
+# To list files in a directory in REVERSED temporal order
+# (oldest file goes first), needed in the spooling system
+#
+ls_reversed='ls -tr'
+#
+# To obtain information about current running processes (even
+# those which are non-interactive:
+#
+pscomm='ps ax'
+#
+# The same as before but listing also child processes:
+#
+psjob='ps axj'
+#
+# Command to type a line without trailing line feed.
+#
+echonlf='echo -n'
+#
+# Command to mail messages. It must support the following invoking format:
+# AiresMailer -s 'This is the subject' address@node < file
+#
+AiresMailer='mail'
+#
+# Receive also informative mails?
+#
+AiresInfoMails=NO
+#
+# No more things to customize.
+# Don't put any "exit" statement!
+#

@@ -20,7 +20,7 @@ alias "ppx"="cd /cr/users/filip/Projects/XYScanner/xy-calibration/"
 
 # set environment for ssh, some other stuff
 export TERM=xterm
-export OFFLINE="/cr/data01/filip/Offline/18b2be65a/install/bin/this-auger-offline.sh"
+export OFFLINE="/cr/data01/filip/offline/set_offline_env.sh"
 export ONNXPATH="/cr/data01/filip/ONNXNetwork/onnxruntime/"
 export ONNXLIBPATH="${ONNXPATH}/build/Linux/MinSizeRel"
 export ONNXINCPATH="${ONNXPATH}/include/onnxruntime/core/session"

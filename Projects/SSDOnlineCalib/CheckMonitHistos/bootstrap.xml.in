@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<bootstrap xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"   
+           xsi:noNamespaceSchemaLocation='@abs_top_builddir@/Framework/CentralConfig/bootstrap.xsd' 
+           xmlns:xlink="http://www.auger.org/schema/types">
+
+  <centralConfig>
+
+<!-- 
+These configLinks are for use by the SDetector managers.
+The id's may not be changed, as the Managers specifically
+for *these* links to get the detector configuration file and the models file.
+-->
+
+<!--               DETECTOR MANAGERS               -->
+
+    <configLink 
+        id         = "SStationListXMLManager"
+        type       = "XML" 
+        xlink:href = "@abs_top_builddir@/Framework/SDetector/testSStationList.xml" /> 
+
+
+<!--              MANAGER REGISTER             -->
+
+<!-- File with data for configuring the surface detector manager register.
+(This controls which detector managers are queried and in what order) -->
+
+    <configLink 
+        id         = "SManagerRegister"
+        type       = "XML" 
+        xlink:href = "@abs_srcdir@/testSManagerRegisterConfig.xml" /> 
+
+   
+  </centralConfig>
+
+
+</bootstrap>
