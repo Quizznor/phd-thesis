@@ -20,8 +20,7 @@ alias "ppx"="cd /cr/users/filip/Projects/XYScanner/xy-calibration/"
 
 # set environment for ssh, some other stuff
 export TERM=xterm
-export OFFLINE="/cr/data01/filip/offline/set_offline_env.sh"
-export ONNXPATH="/cr/data01/filip/ONNXNetwork/onnxruntime/"
+export OFFLINE="/cr/data01/filip/set_offline_env.sh"
 export ONNXLIBPATH="${ONNXPATH}/build/Linux/MinSizeRel"
 export ONNXINCPATH="${ONNXPATH}/include/onnxruntime/core/session"
 
@@ -161,19 +160,19 @@ if ! shopt -oq posix; then
 fi
 
 
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/cr/users/filip/anaconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/cr/users/filip/anaconda3/etc/profile.d/conda.sh" ]; then
-        . "/cr/users/filip/anaconda3/etc/profile.d/conda.sh"
-   else
-       export PATH="/cr/users/filip/anaconda3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
+## >>> conda initialize >>>
+## !! Contents within this block are managed by 'conda init' !!
+#__conda_setup="$('/cr/users/filip/anaconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+#if [ $? -eq 0 ]; then
+#    eval "$__conda_setup"
+#else
+#    if [ -f "/cr/users/filip/anaconda3/etc/profile.d/conda.sh" ]; then
+#        . "/cr/users/filip/anaconda3/etc/profile.d/conda.sh"
+#   else
+#       export PATH="/cr/users/filip/anaconda3/bin:$PATH"
+#    fi
+#fi
+#unset __conda_setup
+## <<< conda initialize <<<
 
 trap keep_stats DEBUG
