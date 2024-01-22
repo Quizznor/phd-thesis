@@ -37,7 +37,7 @@
 *.out
 *.err
 *.pyc
-.airesrc
+.airesrc*
 .Xauthority-l
 .screenrc
 .byobu
