@@ -31,17 +31,17 @@ cmds = [
 ]
 
 titles = [
+    "Introduction",
     "The part where everything begins",
     "The part where everything begins",
-    "The part where everything begins",
-    "The part where everything begins",
+    "Acknowledgements",
 ]
 
 quotes = [
+    ["In the beginning the universe was created. This has made a lot of people angry, and has been widely regarded as a bad move", "Douglas Adams, The Restaurant at the End of the Universe"],
     ["I am happy you are here with me. Here at the end of all things, Sam", "Frodo Baggins, Return of the King"],
     ["I am happy you are here with me. Here at the end of all things, Sam", "Frodo Baggins, Return of the King"],
-    ["I am happy you are here with me. Here at the end of all things, Sam", "Frodo Baggins, Return of the King"],
-    ["I am happy you are here with me. Here at the end of all things, Sam", "Frodo Baggins, Return of the King"],
+    ["If I have seen further, it is by standing on the shoulders of giants", "Sir Isaac Newton"],
 ]
 
 def make_tooltip(i):

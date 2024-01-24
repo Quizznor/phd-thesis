@@ -196,7 +196,6 @@
   {}
   {\titlerule*[1pc]{.}\contentspage}
 \newcounter{prepostchapter}
-% \counterwithin{prepostchapter}{prepostchapter}
 
 % custom sections, subsections, and subsubsections for minitocs
 \titlecontents{psection}[0.2cm]{\vspace{-0.3cm}\bfseries}{\thecontentslabel\hspace{0.5em}}{}{\normalfont\titlerule*[1pc]{.}\contentspage}
@@ -223,7 +222,8 @@
   }
   \ExplSyntaxOff
 
-  \titleformat{\chapter}
+% chapter
+\titleformat{\chapter}
     [display]
     {}
     {}
@@ -250,7 +250,7 @@
       \vspace*{1cm}%
       \normalsize\normalfont
       \hfill\textbf{Contents}\hrule\vspace{0.1cm}
-      \printcontents{p}{2}{\setcounter{tocdepth}{4}}
+      \printcontents{p}{2}{\setcounter{tocdepth}{3}}
       \hrule\vspace{-0.6cm}
     \fi
     ]
@@ -297,6 +297,7 @@
   \pagestyle{plain}
   \pagenumbering{roman}
   \let\tempchapter=\chapter
+  \let\tempsection=\section
   \let\chapter=\prepostchapter
 }
 
@@ -314,6 +315,7 @@
 
 \renewcommand{\backmatter}{%
   \setcounter{prepostchapter}{0}
+  \let\chapter=\prepostchapter
   \renewcommand{\theprepostchapter}{\Alph{prepostchapter}}
   \addtocontents{toc}{\protect\contentsline {part}{Supplementary Information}{}{}}
   \part*{Supplementary Information}
