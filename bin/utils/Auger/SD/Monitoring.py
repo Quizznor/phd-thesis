@@ -9,7 +9,7 @@ class Monit():
     def __init__(self, year : int, month : int, day : int, starting_branch : str = "SDMonCal/SDMonCalBranch", monit_file : str = None, IDs : np.ndarray = None) -> None :
 
         if monit_file is None:
-            self.monit_file = f"{self.monit_path}/{year}/{month}/mc_{year}_{month}_{day}_00h00.root"
+            self.monit_file = f"{self.monit_path}/{year}/{month}/mc_{year}_{month:02}_{day:02}_00h00.root"
         else:
             self.monit_file = monit_file
         
@@ -47,7 +47,11 @@ class Monit():
 
         return s
     
-     
+
+    def help(self) -> str :
+        return print(self)
+
+
     def format_keys(self, keys : list) -> list :
 
         for i, key in enumerate(keys):

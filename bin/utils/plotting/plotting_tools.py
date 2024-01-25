@@ -4,6 +4,8 @@ from ..binaries import np
 from . import plt
 from . import so
 
+import datetime
+
 def __dir__() -> list[str] :
     """spoof dir function for a clean namespace"""
 
@@ -47,15 +49,20 @@ def box_series(x : Union[str, Iterable], y : Union[str, Iterable], data : Union[
     # get the full dataset and construct valid bins
     if data is None:
         scatter_x, scatter_y = np.array(x), np.array(y)
+
+        if isinstance(scatter_x[0], datetime.datetime):
+            is_datetime = True
+            scatter_x = np.array([x.timestamp() for x in scatter_x])
+        else: is_datetime = False
     else:
         scatter_x, scatter_y = data[x], data[y]
 
     bins = kwargs.get('bins', 10)
     if isinstance(bins, int):
-        bins = np.linspace(min(scatter_x), max(scatter_x), bins+1)
-    positions = 0.5 * (bins[1:] + bins[:-1])
+        bins = np.linspace(0.9*min(scatter_x), 1.1*max(scatter_x), bins+1)
 
     # split the data into different boxes
+    positions = 0.5 * (bins[1:] + bins[:-1])
     binplace = np.digitize(scatter_x, bins)
     boxes = [scatter_y[np.where(binplace == i+1)] for i in range(len(bins)-1)]
 
@@ -90,6 +97,12 @@ def box_series(x : Union[str, Iterable], y : Union[str, Iterable], data : Union[
         ax.plot(X, model(X), color=color, lw=0.4,
                 label=fr"$\hat{{y}}\,\approx\,{popt[0]:.2f}\,$x$\,{'+' if popt[1]>0 else ''}{popt[1]:.2f}$")
         ax.fill_between(X, model(X)-error(X), model(X)+error(X), color=color, alpha = 0.3)
+
+    if is_datetime:
+        xticks = ax.get_xticks()
+        fmt = kwargs.get("fmt", "%h %D")
+        ticklabels = [datetime.datetime.fromtimestamp(x).strftime(fmt) for x in xticks]
+        ax.set_xticklabels(ticklabels)
 
 def performance_plot(kernels : Iterable[callable], input : callable, n_range : Iterable[int], repeat : int = 100, skip_verification : bool = False) -> None :
     """visualize the results of a runtime performance test of various kernels over an input range defined by n_range"""
