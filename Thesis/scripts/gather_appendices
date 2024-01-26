@@ -3,7 +3,7 @@
 DOCSTRING1="%! TEX root = ../main.tex\n"
 DOCSTRING2="% this file was automatically created"
 DOCSTRING3="% via make by ../scripts/gather_appendices\n"
-# DOCSTRING4="\\\appendix"
+DOCSTRING4="\\\appendix"
 
 case $HOSTNAME in
     "beep-boop")
@@ -17,6 +17,6 @@ esac
 echo -e $DOCSTRING1 > $TARGET
 echo -e $DOCSTRING2 >> $TARGET
 echo -e $DOCSTRING3 >> $TARGET
-# echo -e $DOCSTRING4 >> $TARGET
+echo -e $DOCSTRING4 >> $TARGET
 ls app/*-*.tex | sed -e 's/\(.*\)/\\include{\1}/' >> $TARGET
 

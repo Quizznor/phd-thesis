@@ -239,8 +239,8 @@
           {\includegraphics[height=\qrlength+3.7pt, width=\textwidth-\qrlength-1.3\titlesep]{header/\thechapter.png}};
         \end{tikzpicture}
         \hfill
-        \begin{minipage}[t][1.3cm][t]{\textwidth-\qrlength-2.6\titlesep}
-            \centering\fontsize{25pt}{0pt}\selectfont\Contour{\ifnum\thechapter=0\else Part\ \thechapter:\ \fi#1}
+        \begin{minipage}[t][1.3cm][b]{\textwidth-\qrlength-2.6\titlesep}
+            \centering\fontsize{25pt}{0pt}\selectfont\Contour{\ifnum\thechapter=0\fontsize{50}{0}\selectfont\else Part\ \thechapter:\ \fi#1}
         \end{minipage}
     }
     [%
@@ -250,7 +250,7 @@
       \vspace*{1cm}%
       \normalsize\normalfont
       \hfill\textbf{Contents}\hrule\vspace{0.1cm}
-      \printcontents{p}{2}{\setcounter{tocdepth}{3}}
+      \printcontents{p}{2}{\setcounter{tocdepth}{4}}
       \hrule\vspace{-0.6cm}
     \fi
     ]
@@ -292,12 +292,13 @@
   {\titlerule*[0.7pc]{.}\contentspage}
 []
 
+
+% split logical structure of thesis into several chunks
 \makeatletter
 \renewcommand{\frontmatter}{%
   \pagestyle{plain}
   \pagenumbering{roman}
   \let\tempchapter=\chapter
-  \let\tempsection=\section
   \let\chapter=\prepostchapter
 }
 
@@ -314,11 +315,10 @@
 }
 
 \renewcommand{\backmatter}{%
-  \setcounter{prepostchapter}{0}
-  \let\chapter=\prepostchapter
-  \renewcommand{\theprepostchapter}{\Alph{prepostchapter}}
   \addtocontents{toc}{\protect\contentsline {part}{Supplementary Information}{}{}}
-  \part*{Supplementary Information}
+  \let\chapter=\tempchapter
+  \pagestyle{plain}
+  \stopcontents
 }
 
 \usepackage{hyperref}
