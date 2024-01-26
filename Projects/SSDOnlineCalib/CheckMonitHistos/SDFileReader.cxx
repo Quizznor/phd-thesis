@@ -6,12 +6,22 @@
 static std::mutex fileWriteLock;
 UInt_t nEventsFound = 0;
 
-void iterateOverFiles(char inFile[])
+void iterateOverFiles(const std::string* const filePath)
 {
-  EventPos pos; IoSd input(inFile);
+  EventPos pos; IoSd input((*filePath).c_str());
+
+  for (pos = input.FirstEvent(); pos < input.LastEvent(); pos = input.NextEvent())
+  {
+    IoSdEvent event(pos);
+    std::cout << event.Id << '\n';
+  }
+
+
+  input.Close();
+  delete filePath;
 }
 
-int main(int argc, char *argv[])
+int test(int argc, char *argv[])
 {
   vector<std::future<void>> results;
   ofstream outFile("out_concurrent", std::ios_base::app);
@@ -21,27 +31,29 @@ int main(int argc, char *argv[])
     // we should limit number of threads here
     // otherwise people will start complaining
     // about performance of the IAP computers
-    const int maxThreads = 1;
+    const int maxThreads = 2;
 
-    while (results.size() > maxThreads)
+    while (results.size() > maxThreads - 1)
     {
       for (unsigned int iThread = 0; iThread < results.size(); iThread++)
       {
         const auto response = results[iThread].wait_for(std::chrono::seconds(0));
-        // if (response == std::future_status::ready) results.erase(results.begin() + iThread);
+        if (response == std::future_status::ready) results.erase(results.begin() + iThread);
       }
     }
     
-    // std::cout << *file << '\n';
-    results.push_back(std::async(std::launch::async, iterateOverFiles, *file));
+    const std::string *const filePath = new std::string(*file);
+    results.push_back(std::async(std::launch::async, iterateOverFiles, filePath));
   }
 
 
   return 0;
 }
 
-int test(int argc, char *argv[]) {
+int main(int argc, char *argv[]) 
+{
 
+  ofstream outFile("out_wcd.txt", ios_base::app);
   EventPos pos; IoSd input(argc - 1, argv + 1);
   UInt_t nData = 0;
 
@@ -49,7 +61,6 @@ int test(int argc, char *argv[]) {
   for (pos = input.FirstEvent(); pos < input.LastEvent(); pos = input.NextEvent())
   {
     IoSdEvent event(pos);
-    ofstream outFile("out_wcd.txt", ios_base::app);
     
     const vector<IoSdStation>& stations = event.Stations;
 
@@ -61,14 +72,14 @@ int test(int argc, char *argv[]) {
       const IoSdCalib* const stationCalib = station.calib();
       if (stationCalib->Version <= 262) continue;                     // ensure SSD Histograms are present
       const IoSdHisto* const calibrationHistograms = station.histo();
-      if (calibrationHistograms->type != 1) continue;                 // ensure SSD Histograms are normal
+      if (calibrationHistograms->type != 1) continue;                 // ensure SSD Histograms are "normal"
 
       nData += 1;
       const UInt_t startSecond = stationCalib->StartSecond;
       const UInt_t endSecond = startSecond + stationCalib->EndSecond;
       const UInt_t average = 0.5 * (startSecond + endSecond);
-
       const auto wcdPeakHisto = calibrationHistograms->Peak;
+      const UShort_t* const ssdPeakHisto = calibrationHistograms->Peak3;
 
       for (unsigned int iPMT = 0; iPMT < 3; iPMT++)
       {
@@ -82,7 +93,6 @@ int test(int argc, char *argv[]) {
         outFile << '\n';
       }
 
-      // const UShort_t* const ssdPeakHisto = calibrationHistograms->Peak3;
     //   for (unsigned int i = 0; i < sizeof(IoSdHisto::Peak3)/sizeof(UShort_t); i++)
     //   {
     //     outFile << ssdPeakHisto[i] << " ";
