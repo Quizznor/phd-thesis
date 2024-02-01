@@ -44,15 +44,18 @@ def worker(counts, _id, time, q):
         while True:
             rate += 1/61
             this_diff = np.abs(target_rate - rate)
-            rate_based_mip = next(it)
+
+            try:
+                rate_based_mip = next(it)
+            except StopIteration:
+                rate_based_mip = np.nan
+                break
 
             if min_diff < this_diff: break
             
             min_diff = this_diff
 
         this_result += f"{rate_based_mip / threshold:.4f} "
-
-    print(this_result)
 
     q.put(1)
 
@@ -69,9 +72,8 @@ pool = mp.Pool(mp.cpu_count() + 2)                             # use 16 cores?
 outfile = open('/cr/tempdata01/filip/SSDCalib/BootstrapHistos/mean_rate_deviation_study.txt', 'w')
 outfile.write(f"#id t mip {' '.join([str(t) + 'xmip' for t in thresholds])}\n")
 
-sys.exit('have you updated mean_rates from second_look.ipynb?')
-
 print()
+n_completed = 0
 while True:
     try:
         
@@ -91,7 +93,8 @@ while True:
 
         assert n_success == POOLSIZE, 'Some job could not be finished! =('
 
-
+        n_completed += n_success
+        print(f"{n_completed: 6}/139366 : {n_completed/139366 * 100:.2f}%", end='\r')
 
     except StopIteration: break
 
