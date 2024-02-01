@@ -6,9 +6,10 @@ class Monit():
 
     monit_path = '/cr/auger02/Prod/monit/Sd/'
 
-    def __init__(self, year : int, month : int, day : int, starting_branch : str = "SDMonCal/SDMonCalBranch", monit_file : str = None, IDs : np.ndarray = None) -> None :
+    def __init__(self, *args : list[int], starting_branch : str = "SDMonCal/SDMonCalBranch", monit_file : str = None, IDs : np.ndarray = None) -> None :
 
         if monit_file is None:
+            year, month, day = args
             self.monit_file = f"{self.monit_path}/{year}/{month}/mc_{year}_{month:02}_{day:02}_00h00.root"
         else:
             self.monit_file = monit_file
@@ -29,7 +30,7 @@ class Monit():
 
             first_key = self.__stream.keys()[np.argmax(hits)].split('/')[-1]
             print(f"Multiple entries found for {name}, returning first occurence: {first_key}")
-            return Monit(..., ..., ..., 'SDMonCal/' + first_key, self.monit_file, self.IDs)
+            return Monit(..., ..., ..., starting_branch='SDMonCal/' + first_key, monit_file=self.monit_file, IDs=self.IDs)
 
             # raise ValueError("Fetching of entire branches is not encouraged!")
         

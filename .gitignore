@@ -52,8 +52,10 @@ People
 Documents
 Data/activity
 Papers
+plots/
 
 # git repositories / large files
+Data/SDMonitHistos
 Projects/StationSoftware/Compiler/Xilinx_SDK_2015.4_1118_2_Lin64.bin
 Projects/StationSoftware/DAQ/
 Projects/XYScanner/xy-calibration/

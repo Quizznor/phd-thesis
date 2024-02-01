@@ -4,13 +4,13 @@
 #include <future>
 #include "IoSd.h"
 
-static std::mutex fileWriteLock;
-UInt_t nEventsFound = 0;
+// static std::mutex fileWriteLock;
+// UInt_t nEventsFound = 0;
 
-void readRootFile(std::vector<std::string> filePaths, UInt_t threadNumber)
+void readRootFile(const char file)
 {
-  std::cout << "launched thread #" << threadNumber << " to analyze file: " << filePaths[threadNumber] << '\n';
-  EventPos pos; IoSd input(filePaths[threadNumber].c_str());
+  std::cout << "launched thread to analyze file: " << file << '\n';
+  // EventPos pos; IoSd input(filePaths[threadNumber].c_str());
 
   // for (pos = input.FirstEvent(); pos < input.LastEvent(); pos = input.NextEvent())
   // {
@@ -19,15 +19,15 @@ void readRootFile(std::vector<std::string> filePaths, UInt_t threadNumber)
   // }
 
   // input.Close();
-  filePaths[threadNumber] = "";
+  // filePaths[threadNumber] = "";
 }
 
-int main(int argc, char *argv[])
+int concurrent_main(int argc, char **argv)
 {
   // we should limit number of threads here
   // otherwise people will start complaining
   // about performance of the IAP computers
-  const UInt_t maxThreads = 2;
+  const UInt_t maxThreads = 3;
   vector<std::future<void>> results;
   std::vector<std::string> filePaths(maxThreads);
   ofstream outFile("out_concurrent.txt", std::ios_base::app);
@@ -45,27 +45,17 @@ int main(int argc, char *argv[])
     }
 
     // create new threads
-    UInt_t freeThread;
-    for (UInt_t iFreeThread = 0; iFreeThread < filePaths.size(); iFreeThread++)
-    {
-      if (filePaths[iFreeThread].size() == 0)
-      {
-        freeThread = iFreeThread;
-        break;
-      }
-    }
-
-    filePaths[freeThread] = *file;
-    results.push_back(std::async(std::launch::async, readRootFile, filePaths, freeThread));
+    // results.push_back(std::async(std::launch::async, readRootFile, file));
   }
 
 
   return 0;
 }
 
-int test(int argc, char *argv[]) 
+int main(int argc, char *argv[]) 
 {
-  ofstream outFile("out_wcd.txt", ios_base::app);
+  vector<int> consideredStations = {56, 1737, 1738, 1742, 1744, 1733, 1723, 1251, 1732, 699, 734};
+  ofstream outFile("out.txt", ios_base::app);
   EventPos pos; IoSd input(argc - 1, argv + 1);
   UInt_t nData = 0;
 
@@ -79,7 +69,9 @@ int test(int argc, char *argv[])
     for (const IoSdStation& station : stations)
     {
       const UInt_t stationId = station.id();
-      if (stationId != 56) continue;                                  // skip stations that are not NuriaJr
+      const auto index = find(consideredStations.begin(), consideredStations.end(), stationId);
+      
+      if (index == consideredStations.end()) continue;                // skip stations that are not UUBRandoms
       if (!station.IsUUB) continue;                                   // skip non-UUB stations, unneccesary
       const IoSdCalib* const stationCalib = station.calib();
       if (stationCalib->Version <= 262) continue;                     // ensure SSD Histograms are present
@@ -90,27 +82,28 @@ int test(int argc, char *argv[])
       const UInt_t startSecond = stationCalib->StartSecond;
       const UInt_t endSecond = startSecond + stationCalib->EndSecond;
       const UInt_t average = 0.5 * (startSecond + endSecond);
-      const auto wcdPeakHisto = calibrationHistograms->Peak;
-      // const UShort_t* const ssdPeakHisto = calibrationHistograms->Peak3;
 
-      for (unsigned int iPMT = 0; iPMT < 3; iPMT++)
+      // const auto wcdPeakHisto = calibrationHistograms->Peak;
+      // for (unsigned int iPMT = 0; iPMT < 3; iPMT++)
+      // {
+      //   const Float_t* vemPeak = (&stationCalib->VemPeak)[iPMT];
+      //   outFile << stationId << " " << average << " " << *vemPeak << " " << iPMT + 1 << " ";
+
+      //   for (unsigned int i = 0; i < sizeof(IoSdHisto::Peak)/sizeof(UShort_t)/3; i++)
+      //   {
+      //     outFile << wcdPeakHisto[iPMT][i] << ' ';
+      //   }
+      //   outFile << '\n';
+      // }
+
+      const UShort_t* const ssdPeakHisto = calibrationHistograms->Peak3;
+      outFile << stationId << " " << average << " ";
+      for (unsigned int i = 0; i < sizeof(IoSdHisto::Peak3)/sizeof(UShort_t); i++)
       {
-        const Float_t* vemPeak = (&stationCalib->VemPeak)[iPMT];
-        outFile << stationId << " " << average << " " << *vemPeak << " " << iPMT + 1 << " ";
-
-        for (unsigned int i = 0; i < sizeof(IoSdHisto::Peak)/sizeof(UShort_t)/3; i++)
-        {
-          outFile << wcdPeakHisto[iPMT][i] << ' ';
-        }
-        outFile << '\n';
+        outFile << ssdPeakHisto[i] << " ";
       }
-
-    //   for (unsigned int i = 0; i < sizeof(IoSdHisto::Peak3)/sizeof(UShort_t); i++)
-    //   {
-    //     outFile << ssdPeakHisto[i] << " ";
-    //   }
-    //   outFile << "\n";
-    //   // break;
+      outFile << "\n";
+      // break;
     }
     // break;
   }
