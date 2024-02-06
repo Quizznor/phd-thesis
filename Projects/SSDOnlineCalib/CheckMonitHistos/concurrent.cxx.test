@@ -1,0 +1,50 @@
+#include <future>
+
+// static std::mutex fileWriteLock;
+// UInt_t nEventsFound = 0;
+
+void readRootFile(const char file)
+{
+  std::cout << "launched thread to analyze file: " << file << '\n';
+  // EventPos pos; IoSd input(filePaths[threadNumber].c_str());
+
+  // for (pos = input.FirstEvent(); pos < input.LastEvent(); pos = input.NextEvent())
+  // {
+  //   IoSdEvent event(pos);
+  //   std::cout << event.Id << '\n';
+  // }
+
+  // input.Close();
+  // filePaths[threadNumber] = "";
+}
+
+int concurrent_main(int argc, char **argv)
+{
+  // we should limit number of threads here
+  // otherwise people will start complaining
+  // about performance of the IAP computers
+  const UInt_t maxThreads = 3;
+  vector<std::future<void>> results;
+  std::vector<std::string> filePaths(maxThreads);
+  ofstream outFile("out_concurrent.txt", std::ios_base::app);
+
+  for (char **file = argv + 1; *file != argv[argc]; file++)
+  {
+    // eliminate threads that have finished their work
+    while (results.size() > maxThreads - 1)
+    {
+      for (unsigned int iThread = 0; iThread < results.size(); iThread++)
+      {
+        const auto response = results[iThread].wait_for(std::chrono::seconds(0));
+        if (response == std::future_status::ready) results.erase(results.begin() + iThread);
+      }
+    }
+
+    // create new threads
+    // results.push_back(std::async(std::launch::async, readRootFile, file));
+  }
+
+
+  return 0;
+}
+

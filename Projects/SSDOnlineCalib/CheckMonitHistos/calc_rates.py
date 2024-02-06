@@ -1,9 +1,10 @@
+#!/usr/bin/python
+
 import sys, os
 
 sys.path.append('/cr/users/filip/bin')
 
 from utils.binaries import *
-# from utils.plotting import *
 from workers import calc_rate_worker
 
 import multiprocessing as mp
@@ -11,13 +12,14 @@ import multiprocessing as mp
 POOLSIZE = 100
 thresholds = np.round(np.arange(1.0, 2.51, 0.05),2)
 
+lines = int(os.popen('wc -l /cr/users/filip/Data/SDMonitHistos/all.txt').read().split()[0])
 infile = open('/cr/users/filip/Data/SDMonitHistos/all.txt', 'r')
 iterator = iter(infile)
 manager = mp.Manager()
 q = manager.Queue()
 pool = mp.Pool(mp.cpu_count() + 2)
 
-outfile = open('/cr/tempdata01/filip/SSDCalib/BootstrapHistos/rate_spread_study.txt', 'w')
+outfile = open('/cr/tempdata01/filip/SSDCalib/BootstrapHistos/rates.txt', 'w')
 outfile.write(f"#id t mip {' '.join([str(t) + 'xmip' for t in thresholds])}\n")
 
 print()
@@ -41,7 +43,7 @@ while True:
         assert n_success == POOLSIZE, 'Some job could not be finished! =('
 
         n_completed += n_success
-        print(f"{n_completed: 6}/139366 : {n_completed/139366 * 100:.2f}%", end='\r')
+        print(f"{n_completed: 6}/{lines} : {n_completed/lines * 100:.2f}%", end='\r')
 
     except StopIteration: break
 

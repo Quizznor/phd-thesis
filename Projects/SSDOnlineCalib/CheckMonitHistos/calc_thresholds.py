@@ -1,9 +1,10 @@
+#!/usr/bin/python
+
 import sys, os
 
 sys.path.append('/cr/users/filip/bin')
 
 from utils.binaries import *
-from utils.plotting import *
 from workers import calc_threshold_worker
 
 import multiprocessing as mp

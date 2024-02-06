@@ -3,7 +3,7 @@ import sys, os
 sys.path.append('/cr/users/filip/bin')
 
 from utils.binaries import *
-from utils.plotting import *
+# from utils.plotting import *
 
 import multiprocessing as mp
 from scipy.optimize import curve_fit
@@ -50,20 +50,18 @@ def make_histo_fit(histogram, _id, time):
     
     except ValueError:
         a, b, _ = np.nan, np.nan, np.nan
-    
-    mip = -b/(2*a) if -b/(2*a) < 300 else np.nan
 
-    if mip is np.nan:
-        plt.figure()
-        plt.plot(x_fit, parabola(x_fit, a, b, _), label='lstsq. fit')
-        plt.plot(x_fit, binned, label='SSD histo')
-        plt.axvline(x_fit[start], ls='--')
-        plt.axvline(x_fit[stop], ls='--')
-        plt.yscale('log')
-        plt.legend()
-        plt.savefig(f'/cr/users/filip/plots/failed_{_id}_{time}.png')
+    # if -b/(2*a) is np.nan:
+    #     plt.figure()
+    #     plt.plot(x_fit, np.exp(parabola(x_fit, a, b, _)), label='lstsq. fit')
+    #     plt.plot(x_fit, binned, label='SSD histo')
+    #     plt.axvline(x_fit[start], ls='--')
+    #     plt.axvline(x_fit[stop], ls='--')
+    #     plt.yscale('log')
+    #     plt.legend()
+    #     plt.savefig(f'/cr/users/filip/plots/failed_{_id}_{time}.png')
 
-    return mip
+    return -b/(2*a) or np.nan
 
 def calc_rate_worker(counts, _id, time, q):
 
