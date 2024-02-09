@@ -9,8 +9,8 @@ from workers import calc_rate_worker
 
 import multiprocessing as mp
 
-POOLSIZE = 100
-thresholds = np.round(np.arange(1.0, 2.51, 0.05),2)
+POOLSIZE = 32
+thresholds = np.round(np.arange(1.0, 5.01, 0.05),2)
 
 lines = int(os.popen('wc -l /cr/users/filip/Data/SDMonitHistos/all.txt').read().split()[0])
 infile = open('/cr/users/filip/Data/SDMonitHistos/all.txt', 'r')
@@ -43,7 +43,8 @@ while True:
         assert n_success == POOLSIZE, 'Some job could not be finished! =('
 
         n_completed += n_success
-        print(f"{n_completed: 6}/{lines} : {n_completed/lines * 100:.2f}%", end='\r')
+
+        tools.progress_bar(n_completed, lines, in_place = True)
 
     except StopIteration: break
 

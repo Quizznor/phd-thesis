@@ -61,18 +61,23 @@ def make_histo_fit(histogram, _id, time):
     #     plt.legend()
     #     plt.savefig(f'/cr/users/filip/plots/failed_{_id}_{time}.png')
 
-    return -b/(2*a) or np.nan
+    return -b/(2*a) if 10 < -b/(2*a) < 250 else np.nan
 
 def calc_rate_worker(counts, _id, time, q):
 
-    thresholds = np.round(np.arange(1.0, 2.51, 0.05),2)
+    thresholds = np.round(np.arange(1.0, 5.01, 0.05),2)
     counts = [int(_) for _ in counts]
     full_histogram = make_histo(counts)
     mip = make_histo_fit(full_histogram, _id, time)
 
     this_result = f"{_id} {time} {mip:.2f} "
-    for t in thresholds:
-        this_result += f"{sum([_ > t * mip for _ in full_histogram]) / 61:.2f} "
+
+    if mip is np.nan:
+        this_result += len(thresholds) * f"{np.nan} "
+        this_result = this_result[:-1]
+    else:
+        for t in thresholds:
+            this_result += f"{np.sum([_ > t * mip for _ in full_histogram]) / 61:.2f} "
     q.put(1)
 
     return this_result

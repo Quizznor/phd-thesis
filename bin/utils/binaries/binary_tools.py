@@ -33,3 +33,28 @@ def kd1d_estimate(samples : Iterable, **kwargs : dict) -> Callable :
     kernel_density.fit(np.array(samples)[:, np.newaxis])
 
     return lambda x: np.exp(kernel_density.score_samples(np.array(x)[:, np.newaxis]))
+
+def progress_bar(step : int, all_steps : int, in_place : bool = False) -> None :
+
+    import time
+    global start_of_progressbar
+    step += 1
+
+    if step == all_steps: return "done... =)"
+
+    try:
+        _ = start_of_progressbar
+    except NameError:
+        start_of_progressbar = time.time()
+
+    convert = lambda x : f"{x//3600:02}:{(x%3600)//60:02}:{x%60:02}"
+
+    padding = f' {len(str(all_steps)) + 1}'
+    steps_info = f"{step:{padding}}/{all_steps} // {step/all_steps * 1e2:.2f}%"
+    elapsed = int(time.time() - start_of_progressbar)
+    per_step = elapsed/step
+    estimated = int(per_step * (all_steps - step))
+
+    time_info = f"running: {convert(elapsed)} // ETA: {convert(estimated)} // {int(per_step * 1e3):}ms/step"
+
+    print(" || ".join([steps_info, time_info]), end = '\r' if in_place else '\n')

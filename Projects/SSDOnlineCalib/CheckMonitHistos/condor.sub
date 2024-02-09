@@ -1,11 +1,15 @@
 JobBatchName    = CALCULATE_MEAN_RATES
-Executable      = /cr/users/filip/Projects/SSDOnlineCalib/CheckMonitHistos/calc_rates.py
-error           = /cr/users/filip/Projects/SSDOnlineCalib/CheckMonitHistos/calc_rates.err
-output          = /cr/users/filip/Projects/SSDOnlineCalib/CheckMonitHistos/calc_rates.out
-log             = /cr/users/filip/Projects/SSDOnlineCalib/CheckMonitHistos/calc_rates.log
+
+Executable      = /cr/users/filip/Projects/SSDOnlineCalib/CheckMonitHistos/calc_thresholds.py
+error           = /cr/users/filip/Projects/SSDOnlineCalib/CheckMonitHistos/calc_thresholds.err
+output          = /cr/users/filip/Projects/SSDOnlineCalib/CheckMonitHistos/calc_thresholds.out
+log             = /cr/users/filip/Projects/SSDOnlineCalib/CheckMonitHistos/calc_thresholds.log
 
 should_transfer_files = YES
 transfer_input_files = workers.py
 
-request_memory  = 2G                                                
+# request_memory  = ifthenelse(MemoryUsage =!= undefined, MAX({MemoryUsage * 3/2, 2G}, 2G))
+
+request_memory  = 4G                                           
+request_cpus    = 32
 queue 1
