@@ -36,6 +36,7 @@ def kd1d_estimate(samples : Iterable, **kwargs : dict) -> Callable :
     return lambda x: np.exp(kernel_density.score_samples(np.array(x)[:, np.newaxis]))
 
 def progress_bar(step : int, all_steps : int, in_place : bool = False) -> None :
+    """print progress of (typically) for loop to stdout, together with time information"""
 
     import time
     global start_of_progressbar
@@ -61,6 +62,7 @@ def progress_bar(step : int, all_steps : int, in_place : bool = False) -> None :
     print(" || ".join([steps_info, time_info]), end = '\r' if in_place else '\n')
 
 def bootstrap_ci(fctn : callable, popt : list, pcov : list, x_vals : list, ci : int = 1, n_samples : int = 10000) -> np.ndarray :
+    """propagate errors of a function given by fitting algorithm via MC bootstrapping"""
 
     std = [x.std_dev for x in uncertainties.correlated_values(popt, pcov)]
     bootstrap_params = np.array([np.random.normal(x, ci * s_x, n_samples) for x, s_x in zip(popt, std)])
