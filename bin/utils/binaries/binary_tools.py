@@ -1,4 +1,5 @@
 from typing import Iterable, Callable
+from . import uncertainties
 from . import np
 
 def __dir__() -> list[str] :
@@ -58,3 +59,18 @@ def progress_bar(step : int, all_steps : int, in_place : bool = False) -> None :
     time_info = f"running: {convert(elapsed)} // ETA: {convert(estimated)} // {int(per_step * 1e3):}ms/step"
 
     print(" || ".join([steps_info, time_info]), end = '\r' if in_place else '\n')
+
+def bootstrap_ci(fctn : callable, popt : list, pcov : list, x_vals : list, ci : int = 1, n_samples : int = 10000) -> np.ndarray :
+
+    std = [x.std_dev for x in uncertainties.correlated_values(popt, pcov)]
+    bootstrap_params = np.array([np.random.normal(x, ci * s_x, n_samples) for x, s_x in zip(popt, std)])
+
+    err_up, err_down = np.zeros((2, len(x_vals)))
+    err_up.fill(-np.inf), err_down.fill(np.inf)
+
+    for params in bootstrap_params.T:
+
+        err_up = np.maximum(err_up, fctn(x_vals, *params))
+        err_down = np.minimum(err_down, fctn(x_vals, *params))
+
+    return err_up, err_down
