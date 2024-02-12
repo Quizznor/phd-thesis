@@ -26,6 +26,7 @@ def get_latch_bin(wcd_trace):
         
         return bin * 3
     else: return -1
+
 print()
 ssd_randoms_histogram = []
 n_present_files, n_analyzed_files = len(os.listdir(root_ssd + station)) // 2, 0
