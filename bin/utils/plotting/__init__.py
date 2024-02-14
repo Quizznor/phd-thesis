@@ -17,7 +17,9 @@ def set_plt_style(styles : str = 'single') -> None :
     if 'single' in opts:
         figuresize = [6.6, 3.3]
     elif 'double' in opts:
-        figuresize = [3.3, 2.5] 
+        figuresize = [3.3, 2.5]
+    elif 'triple' in opts:
+        figuresize = [2.2, 2.5] 
     else:
         plotting_logger.warn(f'I dont know what to do with the arguments youve given me: {opts}')
         figuresize = [2.5, 2.5]
