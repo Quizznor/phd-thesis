@@ -23,6 +23,7 @@ export TERM=xterm
 export OFFLINE="/cr/data01/filip/set_offline_env.sh"
 export ONNXLIBPATH="${ONNXPATH}/build/Linux/MinSizeRel"
 export ONNXINCPATH="${ONNXPATH}/include/onnxruntime/core/session"
+export PATH="${PATH}:/cr/users/filip/bin"
 
 #if [ -z "$LE_LIBRARY_PATH" ]; then
 #	export LD_LIBRARY_PATH="/cr/users/filip/anaconda3/lib"

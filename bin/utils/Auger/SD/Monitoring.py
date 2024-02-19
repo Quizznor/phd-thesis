@@ -10,7 +10,7 @@ class Monit():
 
         if monit_file is None:
             year, month, day = args
-            self.monit_file = f"{self.monit_path}/{year}/{month}/mc_{year}_{month:02}_{day:02}_00h00.root"
+            self.monit_file = f"{self.monit_path}/{year}/{month:02}/mc_{year}_{month:02}_{day:02}_00h00.root"
         else:
             self.monit_file = monit_file
         
