@@ -80,3 +80,6 @@ Projects/ONNXNetwork/
 # Condor
 *.err
 *.log
+
+# LibreOffice
+*.~lock.*
