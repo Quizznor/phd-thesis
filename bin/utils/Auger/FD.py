@@ -1,4 +1,5 @@
 from ..plotting import plt
+from ..binaries import np
 
 def AperturePlot(ax=None, unit='mm', filterStructure=True, zorder=10) -> None:
     """Add aperture, corrector, lens structure of FD telescopes to a given axis"""
@@ -30,3 +31,55 @@ def AperturePlot(ax=None, unit='mm', filterStructure=True, zorder=10) -> None:
     ax.set_xlim(-1300 * uf, 1300 * uf)
     ax.set_ylim(-1300 * uf, 1300 * uf)
     ax.set_aspect('equal', 'box')
+
+def PixelPlot(pixel_data, cmap=plt.cm.viridis, hist_bins=50):
+
+    from matplotlib.patches import RegularPolygon
+    from matplotlib.colors import LogNorm
+    from matplotlib.cm import ScalarMappable
+
+    fig, (ax1, ax2) = plt.subplots(1, 2)
+
+    norm = LogNorm(vmin=np.nanmin(pixel_data), vmax=np.nanmax(pixel_data))
+    
+    for ipix, pixel in enumerate(pixel_data, 1):
+
+        # determine pixel location
+        col = int(np.ceil(ipix / 22.0))
+        row = int(ipix - 22 * (col - 1))
+
+        # determine hexagon viewing angle
+        centerRow = 35 / 3.0
+        elevation_angle = (row - centerRow) * 1.5 * np.sqrt(3) / 2
+        centerCol = 10.5 - 0.5 * (row % 2)
+        azimuth_angle = (col - centerCol) * 1.5
+
+        hexagon = RegularPolygon(
+            (azimuth_angle, elevation_angle),
+            numVertices = 6,
+            radius = 0.866,
+            orientation=np.radians(60),
+            facecolor=cmap(norm(pixel)),
+            edgecolor='k',
+            lw = 1
+        )
+
+        ax1.add_patch(hexagon)
+
+    n, _, _ = ax2.hist(pixel_data, bins = hist_bins, histtype='step', lw=2)
+    ax2.text(0.98, 0.98,
+             f"$\mu = {np.mean(pixel_data):.2f}\,\mathrm{{ADC}}$, $\sigma = {np.std(pixel_data):.2f}\,\mathrm{{ADC}}$" + '\n' \
+             + fr"$(\uparrow, \downarrow) = ({min(pixel_data):.2f}\,\mathrm{{ADC}}, {max(pixel_data):.2f}\,\mathrm{{ADC}})$",
+             horizontalalignment='right',
+             verticalalignment='top',
+             transform=ax2.transAxes,
+             )
+    ax2.set_ylim(0, 1.2 * max(n))
+
+    fig.colorbar(ScalarMappable(norm=norm, cmap=cmap), ax=ax1, orientation='horizontal')
+
+    ax1.set_xlim(-15.8, 15.8)
+    ax1.set_ylim(-15.8, 15.8)
+    ax1.invert_yaxis()
+    ax1.axis('off')
+    ax1.set_aspect(20 / 22)
