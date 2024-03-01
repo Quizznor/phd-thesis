@@ -72,14 +72,14 @@ def PixelPlot(pixel_data, cmap=plt.cm.viridis, hist_bins=50, unit="", cbarlabel=
     n, _, _ = ax2.hist(pixel_data, bins = hist_bins, histtype='step', lw=2)
     ax2.text(0.98, 0.98,
              f"$\mu = {np.mean(pixel_data):.2f} {unit}$, $\sigma/\mu = {np.std(pixel_data)/np.mean(pixel_data):.3f}$" + '\n' \
-             + fr"$(\uparrow, \downarrow) = ({min(pixel_data):.0f} {unit}, {max(pixel_data):.0f} {unit})$",
+             + fr"$(\uparrow, \downarrow) = ({min(pixel_data):.2f} {unit}, {max(pixel_data):.2f} {unit})$",
              horizontalalignment='right',
              verticalalignment='top',
              transform=ax2.transAxes,
              )
     ax2.set_ylim(0, 1.2 * max(n))
 
-    fig.colorbar(ScalarMappable(norm=norm, cmap=cmap), ax=ax1, orientation='horizontal', label=cbarlabel)
+    fig.colorbar(ScalarMappable(norm=norm, cmap=cmap), ax=ax1, orientation='horizontal', label=cbarlabel, pad=0.05)
 
     ax1.set_xlim(-15.8, 15.8)
     ax1.set_ylim(-15.8, 15.8)
