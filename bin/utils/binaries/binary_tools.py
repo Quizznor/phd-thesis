@@ -35,7 +35,7 @@ def kd1d_estimate(samples : Iterable, **kwargs : dict) -> Callable :
 
     return lambda x: np.exp(kernel_density.score_samples(np.array(x)[:, np.newaxis]))
 
-def progress_bar(step : int, all_steps : int, in_place : bool = False) -> None :
+def progress_bar(step : int, all_steps : int, in_place : bool = False, name : str = '') -> None :
     """print progress of (typically) for loop to stdout, together with time information"""
 
     import time
@@ -52,12 +52,12 @@ def progress_bar(step : int, all_steps : int, in_place : bool = False) -> None :
     convert = lambda x : f"{x//3600:02}:{(x%3600)//60:02}:{x%60:02}"
 
     padding = f' {len(str(all_steps)) + 1}'
-    steps_info = f"{step:{padding}}/{all_steps} // {step/all_steps * 1e2:.2f}%"
+    steps_info = f"{step:{padding}}/{all_steps} // {f'{step/all_steps * 1e2:.2f}':>6}%"
     elapsed = int(time.time() - start_of_progressbar)
     per_step = elapsed/step
     estimated = int(per_step * (all_steps - step))
 
-    time_info = f"running: {convert(elapsed)} // ETA: {convert(estimated)} // {int(per_step * 1e3):}ms/step"
+    time_info = f"running {name} since: {convert(elapsed)} // ETA: {convert(estimated)} // {int(per_step * 1e3):}ms/step" + "         "
 
     print(" || ".join([steps_info, time_info]), end = '\r' if in_place else '\n')
 

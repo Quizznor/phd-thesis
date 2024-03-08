@@ -31,9 +31,9 @@ def box_series(x : Union[str, Iterable], y : Union[str, Iterable], data : Union[
     """draw a series of box plots for a sequential dataset
     
     Parameters:
-        * *x* (``str``)                     : data or name of the column used for the x axis
-        * *y* (``str``)                     : data or name of the column used for the y axis
-        * *data* (``pd.Dataframe``)         : the dataset for which the box plot is created
+        * *x* (``str``)                         : data or name of the column used for the x axis
+        * *y* (``str``)                         : data or name of the column used for the y axis
+        * *data* (``pd.Dataframe``)             : the dataset for which the box plot is created
 
     Keywords:
         * *bins* (``int | Iterable``)      = 10 : number of bins, or bin edges for the boxplots
@@ -68,7 +68,8 @@ def box_series(x : Union[str, Iterable], y : Union[str, Iterable], data : Union[
 
     # visualize results
     ax = kwargs.get('ax', plt.gca())
-    color = next(ax._get_lines.prop_cycler)['color']
+    # color = next(ax._get_lines.prop_cycler)['color']
+    color = kwargs.get('c', 'k')
     ax.boxplot(boxes,
                positions=positions, 
                widths=np.diff(bins), 
@@ -98,11 +99,11 @@ def box_series(x : Union[str, Iterable], y : Union[str, Iterable], data : Union[
                 label=fr"$\hat{{y}}\,\approx\,{popt[0]:.2f}\,$x$\,{'+' if popt[1]>0 else ''}{popt[1]:.2f}$")
         ax.fill_between(X, model(X)-error(X), model(X)+error(X), color=color, alpha = 0.3)
 
-    if is_datetime:
-        xticks = ax.get_xticks()
-        fmt = kwargs.get("fmt", "%h %D")
-        ticklabels = [datetime.datetime.fromtimestamp(x).strftime(fmt) for x in xticks]
-        ax.set_xticklabels(ticklabels)
+    # if is_datetime:
+    #     xticks = ax.get_xticks()
+    #     fmt = kwargs.get("fmt", "%h %D")
+    #     ticklabels = [datetime.datetime.fromtimestamp(x).strftime(fmt) for x in xticks]
+    #     ax.set_xticklabels(ticklabels)
 
 def performance_plot(kernels : Iterable[callable], input : callable, n_range : Iterable[int], repeat : int = 100, skip_verification : bool = False) -> None :
     """visualize the results of a runtime performance test of various kernels over an input range defined by n_range"""
