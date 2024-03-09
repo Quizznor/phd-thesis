@@ -1,66 +1,82 @@
-import typing
+from ... import logging, create_stream_logger
+from itertools import product
 from ...binaries import np
 import uproot
+import typing
+import json
+import os
 
 class Monit():
 
     monit_path = '/cr/auger02/Prod/monit/Sd/'
 
-    def __init__(self, *args : list[int], starting_branch : str = "SDMonCal/SDMonCalBranch", monit_file : str = None, IDs : np.ndarray = None) -> None :
+    def __init__(self, years : list[int], months : list[int], days : list[int], /, *, starting_branch=None, verbosity=logging.INFO) -> None :
 
-        if monit_file is None:
-            year, month, day = args
-            self.monit_file = f"{self.monit_path}/{year}/{month:02}/mc_{year}_{month:02}_{day:02}_00h00.root"
-        else:
-            self.monit_file = monit_file
+        starting_branch = starting_branch or "SDMonCal/SDMonCalBranch"
+        if isinstance(years, int): years = [years]
+        if isinstance(months, int): months = [months]
+        if isinstance(days, int): days = [days]
         
-        self.starting_branch = starting_branch
-        self.__stream = uproot.open(f"{self.monit_file}:{starting_branch}")
-        self.IDs = self.__stream['fLsId'].array() if IDs is None else IDs
-
-
-    def __getattr__(self, name: str) -> typing.Union[typing.Callable, set] :
-
-        hits = [True if name in key else False for key in self.__stream.keys()]
-
-        if sum(hits) == 0:
-            print(self)
-            raise KeyError(f"'{name}' not found in online monitoring!")
-        elif sum(hits) != 1:
-
-            first_key = self.__stream.keys()[np.argmax(hits)].split('/')[-1]
-            print(f"Multiple entries found for {name}, returning first occurence: {first_key}")
-            return Monit(..., ..., ..., starting_branch='SDMonCal/' + first_key, monit_file=self.monit_file, IDs=self.IDs)
-
-            # raise ValueError("Fetching of entire branches is not encouraged!")
+        self.logger = create_stream_logger("SD.Monitor", loglevel=verbosity)
+        to_path = lambda y, m, d : f"{self.monit_path}/{y:04}/{m:02}/mc_{y:04}_{m:02}_{d:02}_00h00.root"
+        files = [to_path(YYYY, MM, DD) for YYYY, MM, DD in product(years, months, days)]
+        self.logger.info(f'received {len(files)} file(s) as input')
+        temp = set([file for file in files if not os.path.isfile(file)])
+        for file in temp: self.logger.warning(f"I cannot find {file}!")
         
-        else:
-            if name.lower() in ['id', 'flsid', 'ids']: return set(self.IDs)
-        
-        return lambda x: np.array(self.__stream[self.__stream.keys()[np.argmax(hits)]].array())[np.array(np.argwhere(self.IDs == x)).flatten()]
+        """
+        opening individual files is faster than concatenate, iterate etc.,
+        because we dont immediately load everything into memory at once
+        """
+        self.__streams = [uproot.open(f"{file}:{starting_branch}") for file in set(files) - temp]
+
+        """these keys surely generalize to the entire dataset..."""
+        temp, self._keys = self.__streams[0].keys(), {}
+        temp.sort(key=lambda x: x.count('/'))
+
+        for key in temp:
+            try:
+                branch, name = key.split('/')
+                self._keys[branch][name.split('.')[-1].replace('[3]', '')] = key
+
+            except (ValueError, KeyError):
+                if key in ['fLsId', 'fTime', 'fCDASTime']: 
+                    self._keys[key] = key
+                else : 
+                    self._keys[key] = {}
+
+        self.logger.info(f"View monit keys with self.keys()")
+
+    def __getitem__(self, item) -> typing.Union[dict, str]:
+        return self.get_key(item) or self._keys[item]
     
-    
-    def __str__(self) -> str : 
+    def __call__(self, path, station : int = -1) -> np.ndarray :
+        """Fetching multiple stations is discouraged due to runtime performance"""
+        result = []
 
-        s  = f"File: {self.monit_file}\n"
-        s += f"on branch: {self.starting_branch}\n"
-        s += "\n".join(self.format_keys(self.__stream.keys()))
+        easy_path = self.get_key(path)
+        full_path = path if easy_path is None else easy_path
 
-        return s
-    
+        for stream in self.__streams:
+            data = stream[full_path].array()
 
-    def help(self) -> str :
-        return print(self)
+            if station != -1:
+                station_list = stream['fLsId'].array()
+                station_mask = station_list == station
+            else: station_mask = [True for _ in range(len(data))]
 
+            [result.append(x) for x in data[station_mask]]
 
-    def format_keys(self, keys : list) -> list :
+        maybe_station = f' and station #{station}' if station != -1 else ''
+        self.logger.info(f"found {len(result)} entries for key {path}{maybe_station}")  
+        return np.array(result)
 
-        for i, key in enumerate(keys):
-            k = key.split('/') 
-            n_indent = len(k)
-            indent = "  " * n_indent
-            mod = "-:" if n_indent != 0 else ""
-            key = k[-1].split('.')[-1]
-            keys[i] = f"{indent}{mod} {key}"
+    def get_key(self, key) -> typing.Union[None, str] :
+        for branch in ['fMonitoring', 'fRawMonitoring', 'fCalibration']:
+            try:
+                return self._keys[branch][key]
+            except KeyError:
+                continue
 
-        return keys
+    def keys(self) -> str :
+        return json.dumps(self._keys, indent=2)

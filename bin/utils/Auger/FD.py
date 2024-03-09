@@ -1,48 +1,44 @@
 from ..plotting import plt
 from ..binaries import np
+from ..binaries import pd
+from ..binaries import uncertainties
 
-def AperturePlot(ax=None, unit='mm', filterStructure=True, zorder=10) -> None:
+def AperturePlot(ax=None, filterStructure=True) -> plt.axes :
     """Add aperture, corrector, lens structure of FD telescopes to a given axis"""
 
     ax = ax if not ax is None else plt.gca()
 
-    if unit == 'mm':
-        uf = 1
-        ax.set_xlabel(r'$x$ / mm')
-        ax.set_ylabel(r'$y$ / mm')
-    elif unit == 'm':
-        uf = 1e-3
-        ax.set_xlabel(r'$x$ / m')
-        ax.set_ylabel(r'$y$ / m')
-    else:
-        raise ValueError('Only m and mm are supported!')
-    aperture = plt.Circle((0, 0), 1100 * uf, color='tab:red', fill=False, lw=2.5, zorder=zorder)
+    aperture = plt.Circle((0, 0), 1100, color='tab:red', fill=False, lw=2.5, zorder=1)
     ax.add_artist(aperture)
-    corrector = plt.Circle((0, 0), 1700 / 2 * uf, color='k', fill=False, ls='--', zorder=zorder)
+    corrector = plt.Circle((0, 0), 1700 / 2, color='k', fill=False, ls='--', zorder=1)
+    
     if filterStructure:
-        ax.plot([-1030 * uf, 1030 * uf], [765 * uf / 2] * 2, color='grey', alpha=0.2, lw=0.8, zorder=zorder-1, ls='solid')
-        ax.plot([-1030 * uf, 1030 * uf], [-765 * uf / 2] * 2, color='grey', alpha=0.2, lw=0.8, zorder=zorder-1, ls='solid')
-        ax.plot([-450 * uf / 2] * 2, [-1078 * uf, 1076 * uf], color='grey', alpha=0.2, lw=0.8, zorder=zorder-1, ls='solid')
-        ax.plot([450 * uf / 2] * 2, [-1078 * uf, 1076 * uf], color='grey', alpha=0.2, lw=0.8, zorder=zorder-1, ls='solid')
+        ax.plot([-1030, 1030], [765/ 2] * 2, color='grey', alpha=0.2, lw=0.8, zorder=0, ls='solid')
+        ax.plot([-1030, 1030], [-765/2] * 2, color='grey', alpha=0.2, lw=0.8, zorder=0, ls='solid')
 
-        ax.plot([450 * uf / 2 + 460 * uf] * 2, [-850 * uf, 850 * uf], color='grey', alpha=0.1, lw=0.5, zorder=zorder-1, ls='solid')
-        ax.plot([-450 * uf / 2 - 460 * uf] * 2, [-850 * uf, 850 * uf], color='grey', alpha=0.1, lw=0.5, zorder=zorder-1, ls='solid')
+        ax.plot([-450/ 2] * 2, [-1078, 1076], color='grey', alpha=0.2, lw=0.8, zorder=0, ls='solid')
+        ax.plot([450/ 2] * 2, [-1078, 1076], color='grey', alpha=0.2, lw=0.8, zorder=0, ls='solid')
+        ax.plot([450/ 2 + 460] * 2, [-850, 850], color='grey', alpha=0.1, lw=0.5, zorder=0, ls='solid')
+        ax.plot([-450/ 2 - 460] * 2, [-850, 850], color='grey', alpha=0.1, lw=0.5, zorder=0, ls='solid')
+
     ax.add_artist(corrector)
-    ax.set_xlim(-1300 * uf, 1300 * uf)
-    ax.set_ylim(-1300 * uf, 1300 * uf)
+    ax.set_xlim(-1300, 1300)
+    ax.set_ylim(-1300, 1300)
     ax.set_aspect('equal', 'box')
 
-def PixelPlot(pixel_data, cmap=plt.cm.viridis, hist_bins=50, unit="", cbarlabel='ADC sum', vmin=None, vmax=None):
+    return ax
+
+def PixelPlot(pixel_data : np.ndarray, cmap=plt.cm.viridis, vmin=None, vmax=None, ax=None, norm=None) -> plt.axes :
+    """Plot a pixel array to the standard FD display mode of hexagonal grids"""
 
     from matplotlib.patches import RegularPolygon
     from matplotlib.colors import Normalize
-    from matplotlib.cm import ScalarMappable
 
-    fig, (ax1, ax2) = plt.subplots(1, 2)
+    ax = ax if ax is not None else plt.gca()
+    norm = norm if norm is not None else Normalize(vmin=vmin, vmax=vmax)
 
     vmin = vmin if vmin is not None else np.nanmin(pixel_data)
     vmax = vmax if vmax is not None else np.nanmax(pixel_data)
-    norm = Normalize(vmin=vmin, vmax=vmax)
     
     for ipix, pixel in enumerate(pixel_data, 1):
 
@@ -66,25 +62,123 @@ def PixelPlot(pixel_data, cmap=plt.cm.viridis, hist_bins=50, unit="", cbarlabel=
             lw = 1
         )
 
-        ax1.add_patch(hexagon)
+        ax.add_patch(hexagon)
 
-    hist_bins = np.linspace(vmin, vmax, hist_bins)
-    n, _, _ = ax2.hist(pixel_data, bins = hist_bins, histtype='step', lw=2)
-    ax2.text(0.98, 0.98,
-             f"$\mu = {np.mean(pixel_data):.2f} {unit}$, $\sigma/\mu = {np.std(pixel_data)/np.mean(pixel_data):.3f}$" + '\n' \
-             + fr"$(\uparrow, \downarrow) = ({min(pixel_data):.2f} {unit}, {max(pixel_data):.2f} {unit})$",
-             horizontalalignment='right',
-             verticalalignment='top',
-             transform=ax2.transAxes,
-             )
-    ax2.set_ylim(0, 1.2 * max(n))
+    ax.set_xlim(-15.8, 15.8)
+    ax.set_ylim(-15.8, 15.8)
+    ax.invert_yaxis()
+    ax.axis('off')
+    ax.set_aspect(20 / 22)
 
-    fig.colorbar(ScalarMappable(norm=norm, cmap=cmap), ax=ax1, orientation='horizontal', label=cbarlabel, pad=0.05)
+    return ax
 
-    ax1.set_xlim(-15.8, 15.8)
-    ax1.set_ylim(-15.8, 15.8)
-    ax1.invert_yaxis()
+def XYComparisonPlot(*runs : list[dict], cmap=plt.cm.coolwarm, hist_bins=50, vmin=0.6, vmax=1.4) -> plt.figure :
+    """Compare the results of two XY runs, normalized to their respective Cal A signal"""
+
+    from matplotlib.colors import Normalize
+    from matplotlib.gridspec import GridSpec
+    from matplotlib.colorbar import ColorbarBase
+
+    assert len(runs) == 2, "please only compare two runs at a time"
+
+    fig = plt.figure()
+    gs = GridSpec(
+        2,
+        4,
+        figure=fig,
+        width_ratios=[1, 1, 0.8, 0.05],
+        height_ratios = [1, 1],
+    )
+    gs.update(left=0.05, right=0.95, wspace=0.05, hspace=0.02)
+
+    positions_normalized, pixels_normalized = [], []
+    result_dir = '/cr/data01/filip/xy-calibration/results'
+    for run in runs:
+        xy, CalAs = run['XY'], run['CalA_open_shutter']
+        try:
+            CalA_signal = np.zeros(440)
+            for CalA in CalAs:
+                CalA_signal += np.loadtxt(f"{result_dir}/out_{CalA}.txt", usecols=[2])
+
+        except (IndexError, AssertionError):
+            print("Malformed CalA data received, please make sure you pass \
+                in two CalAs (pre/post-XY), which have 440 pixels of data")
+            return fig
+
+        pixels = np.loadtxt(f"{result_dir}/out_{xy}.txt", usecols=[2])
+        positions = pd.read_csv(f"{result_dir}/outPositionsComb_{xy}.txt", usecols=['x', 'y', 'FDeventSum'])
+
+        pixels /= CalA_signal                                   # normalize pixels to calA pixels
+        positions['FDeventSum'] /= np.sum(CalA_signal)          # normalize positions to calA sum
+
+        positions_normalized.append(positions)
+        pixels_normalized.append(pixels)
+
+    pixel_ratio = pixels_normalized[0] / pixels_normalized[1]
+    positions_combined = positions_normalized[0].merge(positions_normalized[1] ,on =['x','y']).drop_duplicates().dropna()
+    positions_ratio = positions_combined.FDeventSum_x / positions_combined.FDeventSum_y
+    mean_positions = uncertainties.ufloat(np.mean(positions_ratio), np.std(positions_ratio))
+    mean_pixels = uncertainties.ufloat(np.mean(pixel_ratio), np.std(pixel_ratio))
+
+    ax1 = fig.add_subplot(gs[:, 0])
+    ax2 = fig.add_subplot(gs[:, 1])
+    ax3 = fig.add_subplot(gs[0, 2])
+    ax4 = fig.add_subplot(gs[1, 2], sharex=ax3)
+    ax5 = fig.add_subplot(gs[:, 3])
+
+    # set up colorbar for position and pixel comparison
+    norm = Normalize(vmin=vmin, vmax=vmax)
+    date1, date2 = runs[0]['date'], runs[1]['date']
+    ColorbarBase(ax5, cmap=cmap, norm=norm, orientation='vertical', 
+                 label=fr"$\tilde{{\mathrm{{XY}}}}_\mathrm{{{date1}}}\,/\,\tilde{{\mathrm{{XY}}}}_\mathrm{{{date2}}}$")
+
+    # set up aperture position comparison
+    AperturePlot(ax1)
+    c0 = ax1.scatter(positions_combined.x, positions_combined.y, c=positions_ratio,
+                    norm=norm,
+                    marker="o", cmap=cmap, s = 3.5)
     ax1.axis('off')
-    ax1.set_aspect(20 / 22)
 
-    return ax1, ax2
+    # set up camera pixel comparison
+    PixelPlot(pixel_ratio, ax=ax2, cmap=cmap, vmin=vmin, vmax=vmax, norm=norm)
+
+    # histograms for comparison
+    bins = np.linspace(vmin, vmax, hist_bins)
+    bin_centers = 0.5 * (bins[1:] + bins[:-1])
+    ax3.hist(pixel_ratio, bins=bins, density=True, histtype='step',
+             color='r', ls='solid')
+    n1, _, patches = ax3.hist(pixel_ratio, bins=bins, density=True)
+    ax3.text(0.02, 0.98,
+             fr"$\langle\tilde{{\mathrm{{XY}}}}^\mathrm{{pix.}}_\mathrm{{{date1}}}\,/\,\tilde{{\mathrm{{XY}}}}^\mathrm{{pix.}}_\mathrm{{{date2}}}\rangle = {mean_pixels.format('S')}$",
+             horizontalalignment='left',
+             verticalalignment='top',
+             transform=ax3.transAxes,
+             fontdict={'fontsize' : 7},
+             )
+
+    for x, p in zip(bin_centers, patches):
+        plt.setp(p, 'facecolor', cmap(norm(x)))
+
+    ax4.hist(positions_ratio, bins=bins, density=True, histtype='step',
+             color='k', ls='--')
+    n2, _, patches = ax4.hist(positions_ratio, bins=bins, density=True)
+    ax4.text(0.02, 0.98,
+            fr"$\langle\tilde{{\mathrm{{XY}}}}^\mathrm{{pos.}}_\mathrm{{{date1}}}\,/\,\tilde{{\mathrm{{XY}}}}^\mathrm{{pos.}}_\mathrm{{{date2}}}\rangle = {mean_positions.format('S')}$",
+            horizontalalignment='left',
+            verticalalignment='top',
+            transform=ax4.transAxes,
+            fontdict={'fontsize' : 7},
+            )
+    for x, p in zip(bin_centers, patches):
+        plt.setp(p, 'facecolor', cmap(norm(x)))
+
+    
+
+    ax3.set_ylim(1e-2, 1.2 * max(n1))
+    ax4.set_ylim(1e-2, 1.2 * max(n2))  
+    # ax3.legend(fontsize=7, loc='upper left')
+    # ax4.legend(fontsize=7, loc='upper left')
+    ax3.set_yticks([])
+    ax4.set_yticks([])
+
+    return fig

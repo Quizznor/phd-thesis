@@ -70,14 +70,16 @@ class Formatter(ColoredFormatter):
 def create_stream_logger(name : str, loglevel=logging.DEBUG) -> logging.Logger :
     """create a simple logger that streams to stdout"""
 
-    logger = logging.getLogger(name)
-    logger.setLevel(loglevel)
-    ch = logging.StreamHandler()
-    ch.setLevel(0)
-    ch.setFormatter(Formatter())
-    logger.addHandler(ch)
+    logger = logging.getLogger(f"{name:<14}")
+
+    if not logger.hasHandlers():
+        logger.setLevel(loglevel)
+        ch = logging.StreamHandler()
+        ch.setLevel(0)
+        ch.setFormatter(Formatter())
+        logger.addHandler(ch)
 
     return logger
 
-utils_logger = create_stream_logger('utils         ')
+utils_logger = create_stream_logger('utils')
 utils_logger.info('import logging')
