@@ -136,7 +136,7 @@ def XYComparisonPlot(*runs : list[dict], cmap=plt.cm.coolwarm, hist_bins=50, vmi
     AperturePlot(ax1)
     c0 = ax1.scatter(positions_combined.x, positions_combined.y, c=positions_ratio,
                     norm=norm,
-                    marker="o", cmap=cmap, s = 3.5)
+                    marker="o", cmap=cmap, s = 4)
     ax1.axis('off')
 
     # set up camera pixel comparison

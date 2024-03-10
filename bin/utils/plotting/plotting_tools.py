@@ -1,4 +1,4 @@
-from typing import Union, Iterable
+from typing import Union, Iterable, Any
 from ..binaries import pd
 from ..binaries import np
 from . import plt
@@ -127,28 +127,5 @@ def performance_plot(kernels : Iterable[callable], input : callable, n_range : I
 def bootstrap_ci_interval() -> tuple([Iterable, Iterable]) : 
     raise NotImplementedError
 
-def __test_box_series() -> None :
-    fig = plt.figure()
-    fig.suptitle('Box series plot')
-    y = np.random.normal(size=800)
-    box_series(range(800), y)
-
-def __test_performance_plot() -> None :
-    def c_(arr):
-        return np.c_[arr, arr]
-
-    def stack(arr):
-        return np.stack([arr, arr]).T
-
-    def vstack(arr):
-        return np.vstack([arr, arr]).T
-
-    def column_stack(arr):
-        return np.column_stack([arr, arr])
-    
-    performance_plot([c_, stack, vstack, column_stack], np.random.rand, [2**k for k in range(20)])
-
-
-if __name__ == '__main__':
-    __test_box_series()
-    __test_performance_plot()
+def shaded_hist(data : Any, cmap : str, ) -> None : 
+    raise NotImplementedError
