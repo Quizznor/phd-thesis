@@ -1,13 +1,56 @@
-from typing import Iterable, Callable
+from typing import Iterable, Callable, Any
+from time import perf_counter_ns
 from . import uncertainties
 from . import np
 
-def __dir__() -> list[str] :
-    """spoof dir function for a clean namespace"""
+class ProgressBar():
 
-    _globals = globals()
+    def __init__(self, data : Iterable, /, **kwargs) -> None :
+        self.print_every = kwargs.get('print_every', 1)
+        self.newline = kwargs.get('newline', True)
+        self.enum = kwargs.get('enum', -1)
+        self.desc = kwargs.get('desc', 'running')
+        self.bar_length = kwargs.get('bar_length', 20)
 
-    return _globals
+        try:
+            self.len = len(data)
+            self.data = enumerate(data, self.enum) if self.enum != -1 else iter(data)
+        except TypeError:
+            from .. import create_stream_logger
+            logger = create_stream_logger('ProgressBar')
+            logger.warning('Consider using enum=True instead of passing a generator, please')
+            self.len = np.inf
+            self.data = data
+
+    def __iter__(self) -> 'ProgressBar' :
+        self.start_time = perf_counter_ns()
+        self.__index = 0
+        return self
+    
+    def __next__(self) -> Any :
+
+        self.__index += 1
+        if self.__index % self.print_every == 0 and self.__index <= self.len:
+            elapsed = perf_counter_ns() - self.start_time
+            iterations_per_ns = self.__index / elapsed
+            eta_ns = (self.len - self.__index) / iterations_per_ns
+
+            step_info = f"{self.desc}: {self.__index:{len(str(self.len))}}/{self.len}" \
+            + f"[{'*' * int(self.__index / self.len * self.bar_length): <{self.bar_length}}]" \
+            + f" || {self.format(elapsed)}>{self.format(eta_ns)}, {iterations_per_ns * 1e9: >12.2f} it/s"
+            print(step_info, end=f'\n' if self.newline else '\r')
+        elif self.__index > self.len: print()
+        
+        return next(self.data)
+    
+    @staticmethod
+    def format(nanoseconds : int) -> str :
+        seconds = nanoseconds * 1e-9
+        hours   = seconds // 3600
+        minutes = (seconds % 3600) // 60
+        seconds = int(seconds % 60)
+
+        return f"{int(hours):02}:{int(minutes):02}:{int(seconds):02}"
 
 def kd1d_estimate(samples : Iterable, **kwargs : dict) -> Callable :
     """approximate a pdf from an underlaying sample of datapoints
