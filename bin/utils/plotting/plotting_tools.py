@@ -17,6 +17,7 @@ def __dir__() -> list[str] :
         
     del _globals['Union']
     del _globals['Iterable']
+    del _globals['Any']
     del _globals['plt']
     del _globals['so']
     del _globals['pd']
@@ -124,8 +125,35 @@ def performance_plot(kernels : Iterable[callable], input : callable, n_range : I
 
     plt.legend()
 
-def bootstrap_ci_interval() -> tuple([Iterable, Iterable]) : 
-    raise NotImplementedError
+def shaded_hist(data : Any, cmap : str, **kwargs) -> None :
 
-def shaded_hist(data : Any, cmap : str, ) -> None : 
-    raise NotImplementedError
+    def get_outline_kwargs(kwargs) -> dict :
+        outline_kwargs = {
+            'c' : kwargs.get('c', 'k'),
+            'ls' : kwargs.get('ls', 'solid'),
+            'lw' : kwargs.get('lw', 1),
+            'bins' : kwargs.get('bins', None),
+            'histtype' : 'step'
+        }
+
+        return get_outline_kwargs
+
+    # outline
+    _, bins, _ = plt.hist(data, **get_outline_kwargs(kwargs))
+
+    # shade
+    cmap = plt.get_cmap(cmap)
+
+    norm = kwargs.get('norm', 'linear')
+    if isinstance(norm, str):
+        match norm:
+            case 'linear':
+                from matplotlib.colors import Normalize
+                vmin, vmax = 
+
+
+
+    bin_centers = 0.5 * (bins[1:] + bins[:-1])
+    _, _, patches = plt.hist(data, bins=bins)
+    for x, b in zip(bin_centers, patches):
+        plt.setp(b, 'facecolor', cmap(norm(x)))

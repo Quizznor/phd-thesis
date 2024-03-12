@@ -28,13 +28,14 @@ def AperturePlot(ax=None, filterStructure=True) -> plt.axes :
 
     return ax
 
-def PixelPlot(pixel_data : np.ndarray, cmap=plt.cm.viridis, vmin=None, vmax=None, ax=None, norm=None) -> plt.axes :
+def PixelPlot(pixel_data : np.ndarray, cmap=plt.cm.viridis, vmin=None, vmax=None, ax=None, norm=None, title=None) -> plt.axes :
     """Plot a pixel array to the standard FD display mode of hexagonal grids"""
 
     from matplotlib.patches import RegularPolygon
     from matplotlib.colors import Normalize
 
     ax = ax if ax is not None else plt.gca()
+    ax.set_title(title if title is not None else '', pad=12)
     norm = norm if norm is not None else Normalize(vmin=vmin, vmax=vmax)
 
     vmin = vmin if vmin is not None else np.nanmin(pixel_data)
@@ -138,16 +139,19 @@ def XYComparisonPlot(*runs : list[dict], cmap=plt.cm.coolwarm, hist_bins=50, vmi
                     norm=norm,
                     marker="o", cmap=cmap, s = 4)
     ax1.axis('off')
+    ax1.set_title('Aperture view')
 
     # set up camera pixel comparison
-    PixelPlot(pixel_ratio, ax=ax2, cmap=cmap, vmin=vmin, vmax=vmax, norm=norm)
+    _min, _max, mean, std = pixel_ratio.min(), pixel_ratio.max(), pixel_ratio.mean(), pixel_ratio.std()
+    pixel_contrast_boost = np.interp(pixel_ratio, (mean - 2 * std, mean + 2 * std), (vmin, vmax))
+    PixelPlot(pixel_contrast_boost, ax=ax2, cmap=cmap, vmin=vmin, vmax=vmax, norm=norm, title='Camera view (contrast boost)')
 
     # histograms for comparison
     bins = np.linspace(vmin, vmax, hist_bins)
     bin_centers = 0.5 * (bins[1:] + bins[:-1])
-    ax3.hist(pixel_ratio, bins=bins, density=True, histtype='step',
+    ax3.hist(np.clip(pixel_ratio, vmin, vmax), bins=bins, density=True, histtype='step',
              color='r', ls='solid')
-    n1, _, patches = ax3.hist(pixel_ratio, bins=bins, density=True)
+    n1, _, patches = ax3.hist(np.clip(pixel_ratio, vmin, vmax), bins=bins, density=True)
     ax3.text(0.02, 0.98,
              fr"$\langle\tilde{{\mathrm{{XY}}}}^\mathrm{{pix.}}_\mathrm{{{date1}}}\,/\,\tilde{{\mathrm{{XY}}}}^\mathrm{{pix.}}_\mathrm{{{date2}}}\rangle = {mean_pixels.format('S')}$",
              horizontalalignment='left',
@@ -159,9 +163,9 @@ def XYComparisonPlot(*runs : list[dict], cmap=plt.cm.coolwarm, hist_bins=50, vmi
     for x, p in zip(bin_centers, patches):
         plt.setp(p, 'facecolor', cmap(norm(x)))
 
-    ax4.hist(positions_ratio, bins=bins, density=True, histtype='step',
+    ax4.hist(np.clip(positions_ratio, vmin, vmax), bins=bins, density=True, histtype='step',
              color='k', ls='--')
-    n2, _, patches = ax4.hist(positions_ratio, bins=bins, density=True)
+    n2, _, patches = ax4.hist(np.clip(positions_ratio, vmin, vmax), bins=bins, density=True)
     ax4.text(0.02, 0.98,
             fr"$\langle\tilde{{\mathrm{{XY}}}}^\mathrm{{pos.}}_\mathrm{{{date1}}}\,/\,\tilde{{\mathrm{{XY}}}}^\mathrm{{pos.}}_\mathrm{{{date2}}}\rangle = {mean_positions.format('S')}$",
             horizontalalignment='left',
