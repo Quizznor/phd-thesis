@@ -35,7 +35,7 @@ class ProgressBar():
             iterations_per_ns = self.__index / elapsed
             eta_ns = (self.len - self.__index) / iterations_per_ns
 
-            step_info = f"{self.desc}: {self.__index:{len(str(self.len))}}/{self.len}" \
+            step_info = f"{self.desc}: {self.__index:{len(str(self.len))}}/{self.len} " \
             + f"[{'*' * int(self.__index / self.len * self.bar_length): <{self.bar_length}}]" \
             + f" || {self.format(elapsed)}>{self.format(eta_ns)}, {iterations_per_ns * 1e9: >12.2f} it/s"
             print(step_info, end=f'\n' if self.newline else '\r')
