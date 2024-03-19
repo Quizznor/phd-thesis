@@ -61,6 +61,7 @@ Projects/StationSoftware/DAQ/
 Projects/XYScanner/xy-calibration/
 Projects/XYScanner/S4A
 Projects/ONNXNetwork/
+*.root
 
 # LaTeX
 *.aux

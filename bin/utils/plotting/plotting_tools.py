@@ -5,6 +5,7 @@ from . import plt
 from . import so
 
 import datetime
+from matplotlib.colors import Normalize
 
 def __dir__() -> list[str] :
     """spoof dir function for a clean namespace"""
@@ -125,18 +126,18 @@ def performance_plot(kernels : Iterable[callable], input : callable, n_range : I
 
     plt.legend()
 
-def shaded_hist(data : Any, cmap : str, **kwargs) -> None :
+def shaded_hist(data : Any, cmap : str, **kwargs) -> Normalize :
 
     def get_outline_kwargs(kwargs) -> dict :
         outline_kwargs = {
-            'c' : kwargs.get('c', 'k'),
+            'color' : kwargs.get('c', 'k'),
             'ls' : kwargs.get('ls', 'solid'),
             'lw' : kwargs.get('lw', 1),
             'bins' : kwargs.get('bins', None),
             'histtype' : 'step'
         }
 
-        return get_outline_kwargs
+        return outline_kwargs
 
     # outline
     _, bins, _ = plt.hist(data, **get_outline_kwargs(kwargs))
@@ -146,14 +147,26 @@ def shaded_hist(data : Any, cmap : str, **kwargs) -> None :
 
     norm = kwargs.get('norm', 'linear')
     if isinstance(norm, str):
+
+        vmin = kwargs.get('vmin', np.min(data))
+        vmax = kwargs.get('vmax', np.max(data))
+
         match norm:
             case 'linear':
-                from matplotlib.colors import Normalize
-                vmin, vmax = 
-
-
+                norm = Normalize(vmin, vmax, clip=False)
+            case 'log':
+                from matplotlib.colors import LogNorm
+                norm = LogNorm(vmin, vmax, clip=False)
+            # ...
+            case _:
+                raise NameError(f"{norm=} is not a supported option")
 
     bin_centers = 0.5 * (bins[1:] + bins[:-1])
     _, _, patches = plt.hist(data, bins=bins)
     for x, b in zip(bin_centers, patches):
         plt.setp(b, 'facecolor', cmap(norm(x)))
+
+    return norm
+
+    # optional bar
+    
