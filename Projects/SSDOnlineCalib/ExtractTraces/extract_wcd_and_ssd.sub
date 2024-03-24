@@ -3,16 +3,20 @@ Executable      = /cr/users/filip/Projects/SSDOnlineCalib/ExtractTraces/extract_
 
 error           = /cr/users/filip/Projects/SSDOnlineCalib/ExtractTraces/trace_extraction-$(DATE)-$(STATION).log
 
-STATION         = Constanza
+STATION         = Nadia
 DATE            = 2023_03
 
 arguments       = "$(STATION) $(DATE) $(Process)"
 request_memory  = 2G
 max_idle        = 150
-max_materialize = 50
+# max_materialize = 50
 
-# Constanza 2023_03                                  
-queue 1661
+# # Constanza 2023_03
+# queue 1661
+
+# Nadia 2023_03
+queue 1434
 
 # # NuriaJr 2022_11
 # queue 800
+

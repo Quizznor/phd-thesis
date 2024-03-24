@@ -1,0 +1,18 @@
+{
+    "alloc_samples": 0,
+    "args": null,
+    "elapsed_time_sec": 9.502602577209473,
+    "entrypoint_dir": "/cr/users/filip/Projects/totRateMaps",
+    "filename": "/cr/users/filip/Projects/totRateMaps",
+    "files": {},
+    "gpu": false,
+    "growth_rate": 0.0,
+    "max_footprint_fname": null,
+    "max_footprint_lineno": null,
+    "max_footprint_mb": 0,
+    "max_footprint_python_fraction": 0,
+    "memory": false,
+    "program": "/cr/users/filip/Projects/totRateMaps/_ipython-input-19-profile",
+    "samples": [],
+    "stacks": []
+}
