@@ -1,11 +1,13 @@
-JobBatchName    = tot(d)_rate_calculation
+JobBatchName    = tot(d)_rate_calculation_$(STATION)
 Executable      = /cr/users/filip/Projects/totRateMaps/do_calculations.py
 error           = /cr/users/filip/Projects/totRateMaps/do_calculations.err
 #output          = /cr/users/filip/Projects/totRateMaps/do_calculations.out
 
+STATION         = NuriaJr
+
 should_transfer_files = YES
 transfer_input_files = /cr/users/filip/bin/utils
-arguments       = $(Process)
+arguments       = "$(STATION) $(Process)"
 request_memory  = 2G
 max_idle        = 150
 # max_materialize = 20

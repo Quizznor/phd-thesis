@@ -11,6 +11,8 @@ class UubRandom():
     dates = {
         'NuriaJr' : '2022_11',
         'Constanza' : '2023_03',
+        'Nadia' : '2023_03',
+        'Svenja' : '2022_11'
     }
     fmt = {
         'wcd' : np.dtype([('timestamp', 'I'), 
@@ -24,8 +26,6 @@ class UubRandom():
                         ('baseline', 'H'), 
                         ('trace', ('h', 2048))])
     }
-
-
 
     def __init__(self, station : str, detectors : str = 'all') -> None :
 

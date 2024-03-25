@@ -9,8 +9,9 @@ class ProgressBar():
         self.print_every = kwargs.get('print_every', 1)
         self.newline = kwargs.get('newline', True)
         self.enum = kwargs.get('enum', -1)
-        self.desc = kwargs.get('desc', 'running')
-        self.bar_length = kwargs.get('bar_length', 20)
+        self.bar_length = kwargs.get('len', 20)
+        self.desc = kwargs.get('desc', '')
+        if self.desc != '': self.desc += ': '
 
         try:
             self.len = len(data)
@@ -35,7 +36,7 @@ class ProgressBar():
             iterations_per_ns = self.__index / elapsed
             eta_ns = (self.len - self.__index) / iterations_per_ns
 
-            step_info = f"{self.desc}: {self.__index:{len(str(self.len))}}/{self.len} " \
+            step_info = f"{self.desc}{self.__index:{len(str(self.len))}}/{self.len} " \
             + f"[{'*' * int(self.__index / self.len * self.bar_length): <{self.bar_length}}]" \
             + f" || {self.format(elapsed)}>{self.format(eta_ns)}, {iterations_per_ns * 1e9: >12.2f} it/s"
             print(step_info, end=f'\n' if self.newline else '\r')

@@ -17,6 +17,7 @@ alias "root"="root -l"
 alias "pp"="cd /cr/users/filip/Projects"
 alias "pps"="cd /cr/users/filip/Projects/SSDOnlineCalib"
 alias "ppx"="cd /cr/users/filip/Projects/XYScanner/xy-calibration/"
+alias "uub"="cd /cr/data02/AugerPrime/UUB/UubRandoms/"
 
 # set environment for ssh, some other stuff
 export TERM=xterm

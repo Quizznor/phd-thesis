@@ -7,19 +7,35 @@ from utils.Auger.SD.UubRandoms import *
 from itertools import product
 from utils.binaries import *
 
+
 def time_over_threshold(traces : np.ndarray, threshold : float = 0.2, multiplicity : int = 12) -> bool :
+    
+    pmt_multiplicity_check = lambda sums : sum(sums > multiplicity) > 1
 
-    windows = np.lib.stride_tricks.sliding_window_view(traces, (3, 120))[0]
+    first_120_bins = traces[:, :120]
+    pmt_running_sum = (first_120_bins >= threshold).sum(axis=1)
 
-    for pmt1, pmt2, pmt3 in windows:
+    for i in range(120, traces.shape[1] + 1):
+        if pmt_multiplicity_check(pmt_running_sum) : return True            # check multiplicity for each window
+        if i == traces.shape[1]: return False                               # we've reached the end of the trace
 
-        pmt1_active = (pmt1 > threshold).sum() >= multiplicity
-        pmt2_active = (pmt2 > threshold).sum() >= multiplicity
-        pmt3_active = (pmt3 > threshold).sum() >= multiplicity
+        new_over_threshold = np.array(traces[:, i] > threshold, dtype=int)
+        old_over_threshold = np.array(traces[:, i - 120] > threshold, dtype=int)
+        pmt_running_sum += new_over_threshold - old_over_threshold
 
-        if sum([pmt1_active, pmt2_active, pmt3_active]) > 1:
-            return True
-    else: return False
+        
+# def time_over_threshold(traces : np.ndarray, threshold : float = 0.2, multiplicity : int = 12) -> bool :
+
+#     windows = np.lib.stride_tricks.sliding_window_view(traces, (3, 120))[0]
+#     for pmt1, pmt2, pmt3 in windows:
+
+#         pmt1_active = (pmt1 > threshold).sum() >= multiplicity
+#         pmt2_active = (pmt2 > threshold).sum() >= multiplicity
+#         pmt3_active = (pmt3 > threshold).sum() >= multiplicity
+
+#         if sum([pmt1_active, pmt2_active, pmt3_active]) > 1:
+#             return True
+#     else: return False
 
 def time_over_threshold_deconvoluted(traces : np.ndarray, threshold : float = 0.2, multiplicity : int = 12) -> bool : 
 
@@ -35,14 +51,14 @@ def time_over_threshold_deconvoluted(traces : np.ndarray, threshold : float = 0.
 
     return time_over_threshold(np.array(deconvoluted_trace), threshold, multiplicity)
 
-STATION = 'Constanza'
+STATION = sys.argv[1]
 
 # 300 scanning points
 multiplicities = range(2, 14)
 threshold = np.linspace(0.01, .25, 25)
 params = list(product(multiplicities, threshold))
 
-m, t = params[int(sys.argv[1])]
+m, t = params[int(sys.argv[2])]
 tot_sum, totd_sum = 0, 0
 total_time = 0
 
