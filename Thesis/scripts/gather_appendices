@@ -7,10 +7,13 @@ DOCSTRING4="\\\appendix"
 
 case $HOSTNAME in
     "beep-boop")
-        TARGET=/home/quizznor/projects/phd-thesis/Thesis/app/appendix.tex
+        TARGET="/home/quizznor/projects/phd-thesis/Thesis/app/appendix.tex"
+        ;;
+    "rook")
+        TARGET="/home/quizznor/Projects/phd-thesis/Thesis/app/appendix.tex"
         ;;
     *"crcws"*)
-        TARGET=/cr/users/filip/Thesis/app/appendix.tex
+        TARGET="/cr/users/filip/Thesis/app/appendix.tex"
         ;;
 esac
 

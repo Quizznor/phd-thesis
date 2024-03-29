@@ -6,10 +6,13 @@ DOCSTRING3="% via make by ../scripts/gather_chapters\n"
 
 case $HOSTNAME in
     "beep-boop")
-        TARGET=/home/quizznor/projects/phd-thesis/Thesis/chap/chapters.tex
+        TARGET="/home/quizznor/projects/phd-thesis/Thesis/chap/chapters.tex"
+        ;;
+    "rook")
+        TARGET="/home/quizznor/Projects/phd-thesis/Thesis/chap/chapters.tex"
         ;;
     *"crcws"*)
-        TARGET=/cr/users/filip/Thesis/chap/chapters.tex
+        TARGET="/cr/users/filip/Thesis/chap/chapters.tex"
         ;;
 esac
 
