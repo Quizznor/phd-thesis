@@ -12,6 +12,7 @@ export USERNAME=filip
 alias "re"="screen -Dr"
 alias "alert"="source $HOME/bin/alert.sh"
 alias "bye"="$HOME/bin/kill_ssh.sh && exit"
+alias "crc2"="LC_BYOBU=0 ssh crcws02"
 alias "root"="root -l"
 
 alias "pp"="cd /cr/users/filip/Projects"
