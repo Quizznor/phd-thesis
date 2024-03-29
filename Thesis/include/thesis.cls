@@ -27,6 +27,7 @@
 \usepackage{xparse}
 \usepackage{listings}
 \usepackage{upgreek}
+\usepackage{hyperref}
 
 \lstdefinelanguage{numpy}{
   keywords = {
@@ -321,7 +322,7 @@
   \stopcontents
 }
 
-\usepackage{hyperref}
+%\usepackage{hyperref}
 \hypersetup{
   pdfsubject = {Ph.D. thesis},
   pdftitle = {\@title},
