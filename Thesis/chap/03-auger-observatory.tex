@@ -13,8 +13,8 @@ an unprecedented accuracy and precision.
 
 We begin this chapter in \cref{sec:science-case} by formulating open questions 
 that the \PAO aims to answer. Design details for the \FD and for the \SD are 
-given in \cref{sec:fd} and \cref{sec:sd} respectively. After a discussion on the
-local \DAQ process and the centralized event detection in \cref{sec:cdas}, we 
+given in \cref{sec:fd} and \cref{sec:sd} respectively. After a discussion of the
+local \DAQ processes and the centralized event detection in \cref{sec:cdas}, we 
 finish by detailing the procedure of the event reconstruction and higher level 
 analysis in \cref{sec:rec}.
 
@@ -25,9 +25,9 @@ The flux of cosmic rays with energies exceeding the ankle, $\SI{5e18}{\eV}$, is
 very low, and measures on average 6 events per \SI{}{\km\squared\year}
 \cite{Fenu2023}. It is evident that one needs a large detector and a lot of time
 in order to make statistically relevant statements about the physics of \UHECRs.
-Altough only one of the initially planned two data taking sites came to reality 
-\cite[for white paper see][]{Zavrtanik2000}, the Pierre Auger observatory has 
-been be a world-leading experiment in terms of measured exposure from the 
+Altough only one of the initially planned two data taking sites \cite[for PAO 
+white paper see][]{Zavrtanik2000} came to reality, the Pierre Auger observatory 
+has been be a world-leading experiment in terms of measured exposure from the 
 beginning of \DAQ in January 2004 \cite{Abraham2004}, and will continue to yield
 results until decomission after 2030 \cite{Castellina2023}.
 
@@ -39,12 +39,12 @@ this thesis, but the continued effort and daily work done by the Auger
 collaboration.
 
 \subsection{Flux supression at highest energies}
-\label{ssec}
+\label{ssec:flux-supression}
 
 \subsection{Validity of shower simulations}
 
 
-\subsection{Exotic events}
+\subsection{Exotic air shower events}
 \subsubsection{Photon showers}
 \subsubsection{Neutrino showers}
 \subsubsection{GZ effect}
@@ -60,13 +60,53 @@ to observe \UV-emission of \EAS. However, since the solar irradiance
 lunar irradiance (\SI{16}{\nano\watt\per\meter\squared} @
 \SIrange[range-phrase={--}]{180}{300}{\nano\meter} \cite{Lean1989}) in the 
 \UV-band far outshine the emission of \UV-light by cosmic rays 
-(\SI{0.32}{\nano\watt\per\meter\squared} @ \SI{337}{\nano\meter} 
-\cref{app:cr-uv-irradiance}), the \FD can only operate in the astronomical night
-during third to first quarter moon. This consequently drops the duty cycle to 
-approximately 20\%\todo{cite}.
+(\SI{0.32}{\nano\watt\per\meter\squared} @ \SI{337}{\nano\meter}, for details 
+see \cref{app:cr-uv-irradiance}), the \FD can only operate in the astronomical 
+night during third to first quarter moon. This consequently drops the duty cycle 
+to approximately 13\% \cite{Abraham2010}.
 
-\subsection{Telescope and camera design}
+Ignoring three exceptions (see \autoref{ssec:heat}), all telescopes are grouped
+at four \FD sites, where a collection of six identical setups offer a $180^\circ
+\times30^\circ$ view (Azimuth $\times$ Elevation) over the \SD array. 
+\autoref{fig:auger-map} shows the location of these sites relative to the \SD.
+
+\todo{auger map}
+
+\subsection{Telescope design}
 \label{ssec:fd-design}
+
+The \FD components located on the optical axis are (in the order that light 
+traverses them):
+
+\begin{itemize}
+  \item \textbf{Shutter:} \\
+  Consists of two massive metal doors that block the light propagation. Several 
+  mechanisms automatically close the shutters to shield the telescope from e.g.
+  atmospheric influences like wind and rain, or an unacceptably high light flux.
+  \item \textbf{UV Filter:} \\
+  Visible background light is irrelevant to the phenomena observed by the \FD
+  and can, in some cases, damage electronics. A MUG6 UV-filter is installed in 
+  the light path for this reason. It separates the climate controlled inside of 
+  the \FD buildings from the outside.
+  \item \textbf{Curtain:} \\
+  A secondary failsafe, that prevents high-intensity light from reaching the 
+  sensitive electronics. During nominal operation the curtain sits outside of
+  the light path. It can be deployed in emergency situations, or during daytime
+  work and maintenance.
+  \item \textbf{Mirror:} \\
+  asdasd
+  \item \textbf{Camera:} see next subsection.
+\end{itemize}
+
+A schematic overview of the setup 
+
+\subsection{Camera design}
+
+
+\subsection{HEAT}
+\label{ssec:heat}
+
+
 
 \subsection{Calibration of measurements}
 \label{ssec:fd-calibration}
