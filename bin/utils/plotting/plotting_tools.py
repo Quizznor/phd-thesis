@@ -127,6 +127,7 @@ def performance_plot(kernels : Iterable[callable], input : callable, n_range : I
     plt.legend()
 
 def shaded_hist(data : Any, cmap : str, **kwargs) -> Normalize :
+    """wrapper for the standard plt.hist, which plots the individual bins in a cmap depending on the x-value"""
 
     def get_outline_kwargs(kwargs) -> dict :
         outline_kwargs = {
@@ -168,5 +169,17 @@ def shaded_hist(data : Any, cmap : str, **kwargs) -> Normalize :
 
     return norm
 
-    # optional bar
-    
+def preliminary(fig : plt.Figure = None, fontsize : float = 60):
+    """helper that plots a big, fat 'preliminary' on top of your figure"""
+    import matplotlib.patheffects as patheffects
+    if fig is None: fig = plt.gcf()
+
+    fig.text(0.5, 0.5, "Preliminary",
+         c='red',
+         rotation=15,
+         horizontalalignment='center',
+         verticalalignment='center',
+         fontsize=fontsize,
+         path_effects=[patheffects.withStroke(foreground='k', linewidth=2)],
+         zorder=np.inf,
+    )
