@@ -7,7 +7,6 @@ from utils.Auger.SD.UubRandoms import *
 from itertools import product
 from utils.binaries import *
 
-
 def time_over_threshold(traces : np.ndarray, threshold : float = 0.2, multiplicity : int = 12) -> bool :
     
     pmt_multiplicity_check = lambda sums : sum(sums > multiplicity) > 1
@@ -59,10 +58,17 @@ threshold = np.linspace(0.01, .25, 25)
 params = list(product(multiplicities, threshold))
 
 m, t = params[int(sys.argv[2])]
+try:
+    already_calculated = np.loadtxt(f'/cr/users/filip/Data/totRateMap/{STATION}.txt', usecols=[0, 1])
+    for _m, _t in already_calculated:
+        if _m == m and _t == t: sys.exit(f"calculation already exists for {m, t}")
+except FileNotFoundError:
+    pass
+
 tot_sum, totd_sum = 0, 0
 total_time = 0
 
-for File in tools.ProgressBar(UubRandom('NuriaJr', 'wcd'), newline=False):
+for File in tools.ProgressBar(UubRandom(f'{STATION}', 'wcd'), newline=False):
     traces = File['traces']
     vem_peak = File['vem_peak']
 

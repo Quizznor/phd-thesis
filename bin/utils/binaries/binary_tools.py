@@ -36,9 +36,14 @@ class ProgressBar():
             iterations_per_ns = self.__index / elapsed
             eta_ns = (self.len - self.__index) / iterations_per_ns
 
+            if np.round(iterations_per_s := iterations_per_ns * 1e9, 2) == 0:
+                iterations_per_time = f"{iterations_per_s * 3600: >12.2f} it/h"
+            else:
+                iterations_per_time = f"{iterations_per_s: >12.2f} it/s"
+
             step_info = f"{self.desc}{self.__index:{len(str(self.len))}}/{self.len} " \
             + f"[{'*' * int(self.__index / self.len * self.bar_length): <{self.bar_length}}]" \
-            + f" || {self.format(elapsed)}>{self.format(eta_ns)}, {iterations_per_ns * 1e9: >12.2f} it/s"
+            + f" || {self.format(elapsed)}>{self.format(eta_ns)}, {iterations_per_time}"
             print(step_info, end=f'\n' if self.newline else '\r')
         elif self.__index > self.len: print()
         

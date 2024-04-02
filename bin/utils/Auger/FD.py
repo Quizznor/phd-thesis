@@ -40,6 +40,8 @@ def PixelPlot(pixel_data : np.ndarray, cmap=plt.cm.viridis, vmin=None, vmax=None
     vmin = vmin if vmin is not None else np.nanmin(pixel_data)
     vmax = vmax if vmax is not None else np.nanmax(pixel_data)
     norm = norm if norm is not None else Normalize(vmin=vmin, vmax=vmax)
+
+    if isinstance(cmap, str): cmap = plt.get_cmap(cmap)
     
     for ipix, pixel in enumerate(pixel_data, 1):
 
