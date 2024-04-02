@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- NOTE: particles are injected with coordinate system relative to the
+           centre-bottom of the tank -->
+
+<ParticleInjector
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="/cr/data01/filip/install/share/auger-offline/config/ParticleInjectorNEU.xsd"
+  xmlns:auger="http://www.auger.org/schema/types">
+
+  <NumberOfParticles>
+    <Type> 13 </Type>  <!-- muon -->
+    <Number> 1 </Number>
+  </NumberOfParticles>
+
+  <EventTime> 2007-01-21T04:33:12.012345678 </EventTime>
+  <StationId> 119 </StationId>
+
+  <Position>
+    <Fixed unit='m'> 0 0 2 </Fixed>  <!-- vertical centered -->
+  </Position>
+
+  <Direction>
+    <Fixed> 0 0 -1 </Fixed>  <!-- down -->
+  </Direction>
+
+  <Energy>
+    <Discrete>
+      <x unit="GeV"> 1 </x>
+      <y> 1 </y>
+    </Discrete>
+  </Energy>
+
+  <PropagateToTank> no </PropagateToTank>
+
+  <DumpConfiguration/>
+
+</ParticleInjector>

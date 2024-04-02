@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- Configuration of Module SdSimulationCalibrator -->
+
+<SdSimulationCalibrator
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation='/cr/data01/filip/install/share/auger-offline/config/SdSimulationCalibrator.xsd'>
+
+  <!--
+    Pick a tank id to use to comput calibration constants
+    Ensure the tank id matches the one in the ParticleInjector module
+  -->
+
+  <singleTankId> 119 </singleTankId>
+
+  <!-- Due to the differences in the way each hardware type
+       is calibrated, the hardware must be set here:
+       "wcdLarge" for large pmts
+       "wcdSmall" for the small pmt
+       "ssd" for the ssd pmt
+       "all" for all of the above -->
+
+  <hardware> wcdLarge </hardware>
+
+  <dumpTraces> 1 </dumpTraces>
+
+</SdSimulationCalibrator>

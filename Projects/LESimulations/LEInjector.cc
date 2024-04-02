@@ -178,9 +178,17 @@ LEInjector::Run(Event& event)
   using io::Corsika::CorsikaAzimuthToAuger()
   */
 
+  // change these values to also include SSD
   const double sThickness = dStation.GetThickness();
   const double sRadius = dStation.GetRadius() + sThickness;
   const double sHeight = dStation.GetHeight() + 2*sThickness;
+
+  // Check if scintillator requires larger injection cylinder
+  const double scintRadius = dStation.GetScintillator().GetMaxRadius();
+  const double scintHeight = dStation.GetScintillator().GetMaxHeight();
+  const auto& injectionRadius = std::max(sRadius, scintRadius);
+  const auto& injectionHeight = std::max(sHeight, scintHeight);
+
 
   // Scintillator dimensions eventually will be replaced by actual SSD dimensions
   double scinLength = 1800*mm; 
@@ -216,7 +224,7 @@ LEInjector::Run(Event& event)
     const double x = scinLength/2 * RandFlat::shoot(fRandomEngine, -1, 1);
     const double y = scinWidth/2 * RandFlat::shoot(fRandomEngine, -1, 1);
    
-    const Point position = Point(x, y, sHeight, stationCS);
+    const Point position = Point(x, y, injectionHeight, stationCS);
     const Vector momentum = Vector(0, 0, -1*GeV, stationCS, Vector::kCartesian);
     const Particle particle = 
       Particle(13, utl::Particle::eBackground, position, momentum, 0, 1); // For this purpose particle's time is irrelevant 
@@ -228,8 +236,8 @@ LEInjector::Run(Event& event)
 
   else {
 
-    const double EffTopArea = kPi*Sqr(sRadius)*cos(pTheta); // pTheta is measured from the station reference plane
-    const double EffSideArea = 2*sRadius*sHeight*sin(pTheta);
+    const double EffTopArea = kPi*Sqr(injectionRadius)*cos(pTheta); // pTheta is measured from the station reference plane
+    const double EffSideArea = 2*injectionRadius*injectionHeight*sin(pTheta);
     const double ProbSeeTop = EffTopArea / (EffTopArea + EffSideArea); 
     const double rand1 = RandFlat::shoot(fRandomEngine, 0, 1);
     
@@ -238,12 +246,12 @@ LEInjector::Run(Event& event)
     if (rand1 <= ProbSeeTop) { // Particle injected on the top
 
       const double rand2 = RandFlat::shoot(fRandomEngine, 0, 1);
-      const double r = sRadius*sqrt(rand2);
+      const double r = injectionRadius*sqrt(rand2);
       const double phi = RandFlat::shoot(fRandomEngine, 0, kTwoPi);
       
       const double x = r * cos(phi);
       const double y = r * sin(phi);
-      const double z = sHeight;
+      const double z = injectionHeight;
 
       const Point position = Point(x, y, z, stationCS);
       const Vector momentum = Vector(px, py, pz, stationCS, Vector::kCartesian);
@@ -265,9 +273,9 @@ LEInjector::Run(Event& event)
       
       const double phi = pPhi + asin(1-2*rand2);
 
-      const double z = sHeight*rand3;
-      const double x = sRadius * cos(phi);
-      const double y = sRadius * sin(phi);
+      const double z = injectionHeight*rand3;
+      const double x = injectionRadius * cos(phi);
+      const double y = injectionRadius * sin(phi);
 
       const Point position = Point(x, y, z, stationCS);
       const Vector momentum = Vector(px, py, pz, stationCS, Vector::kCartesian);

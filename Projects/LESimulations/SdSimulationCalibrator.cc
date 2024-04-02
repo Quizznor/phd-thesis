@@ -81,13 +81,13 @@ namespace SdSimulationCalibratorOG {
       "-full_" + fullTrackMode +
       "-fast_" + fastMode;
 
-    const auto chargePeakFilename = "dump_charge_peak-" + basename + ".dat";
-    fDumpFile.open(chargePeakFilename);
-    if (!fDumpFile.is_open()) {
-      ERROR("Cannot open charge/peak dump file!");
-      return eFailure;
-    }
-    fDumpFile << "# pmtId phase peak charge compatPeak\n";
+    // const auto chargePeakFilename = "dump_charge_peak-" + basename + ".dat";
+    // fDumpFile.open(chargePeakFilename);
+    // if (!fDumpFile.is_open()) {
+    //   ERROR("Cannot open charge/peak dump file!");
+    //   return eFailure;
+    // }
+    // fDumpFile << "# pmtId phase peak charge compatPeak\n";
 
     if (dumpTraces) {
       const auto traceFilename = "dump_trace-" + basename + ".dat";
@@ -141,6 +141,7 @@ namespace SdSimulationCalibratorOG {
         << endc << "StdDev" << endr << hline;
     int pmtId = 0;
     unsigned int numRuns = 0;
+    std::ofstream peakStat("peak_statistics.dat");
     for (const auto& peakCharge : fPeakCharge) {
       const auto& peak = peakCharge.first;
       if (peak.GetN()) {
@@ -155,6 +156,7 @@ namespace SdSimulationCalibratorOG {
             << charge.GetAverageError() << endc
             << charge.GetStandardDeviation() << endr;
         numRuns = peak.GetN();
+        peakStat << peak.GetAverage() << ' ';
       }
       ++pmtId;
     }
@@ -265,9 +267,9 @@ namespace SdSimulationCalibratorOG {
       return;
     const int start = trace.GetStart();
     // output begin and end relative to the start of the trace dump
-    *file << baseline << ' ' << begin-start << ' ' << end-start << ' ' << nParticles;
-    for (int i = start, n = trace.GetStop()+1; i < n; ++i)
-      *file << ' ' << trace.At(i);
+    *file << baseline << ',' << begin-start << ',' << end-start << ',' << nParticles;
+    for (int i = start + 500; i < start + 1500; ++i)
+      *file << ',' << trace.At(i);
     *file << '\n';
   }
 
@@ -286,19 +288,19 @@ namespace SdSimulationCalibratorOG {
     }
 
     // this tries to mimic the muon-buffer trigger
-    const double signalThreshold = 30; // adc for both
+    const double signalThreshold = 0; // adc for both
     const int beforeSignal = fIsUUB ? 20 : 1;
     const int afterSignal = fIsUUB ? 49 : 19;
     const int uubTimeFactor = 3;
 
     for (const auto& pmt : station.PMTsRange(sdet::PMTConstants::eAnyType)) {
 
-      if (!pmt.HasSimData())
-        continue;
+      // if (!pmt.HasSimData())
+      //   continue;
       const PMTSimData& pmtSim = pmt.GetSimData();
 
-      if (!pmtSim.HasFADCTrace())
-        continue;
+      // if (!pmtSim.HasFADCTrace())
+      //   continue;
 
       const sdet::PMT& dPMT = dStation.GetPMT(pmt);
       // only process desired pmt type, unless all

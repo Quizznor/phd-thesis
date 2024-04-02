@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<EventGenerator
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation='/cr/data01/filip/install/share/auger-offline/config/EventGenerator.xsd'>
+
+  <!-- Specify what you are planning to simulate: SD, FD, Hy -->
+  <mode> SD </mode>
+
+  <eventIdentifier>
+    <libraryIdentifier> Test </libraryIdentifier>
+    <format> Library_%1%:Run_%2%:Shower_%3%:Use_%4% </format>
+    <!-- digits to reserve in SD id for shower and use -->
+    <sdIdFormat> 2 2 </sdIdFormat>
+  </eventIdentifier>
+
+  <!-- Specify how to randomize the core position -->
+  <coreRandomization>
+
+    <centerOfTile>
+
+      <northing unit="meter"> 6081531 </northing>
+      <easting unit="meter"> 461996 </easting>
+      <altitude unit="meter"> 1416 </altitude>
+      <zone> 19 </zone>
+      <band> H </band>
+
+    </centerOfTile>
+
+    <sizeOfTile>
+      <deltaNorthing unit="km"> 2 </deltaNorthing>
+      <deltaEasting unit="km"> 2 </deltaEasting>
+    </sizeOfTile>
+
+  </coreRandomization>
+
+  <!-- Time stamp of the core impact on ground -->
+  <eventTime> 2006-01-01T04:33:12.5 </eventTime>
+
+  <!-- Use core position and/or time from radio event data -->
+  <useRadioCorePosition> 0 </useRadioCorePosition>
+  <useRadioEventTime> 0 </useRadioEventTime>
+
+</EventGenerator>
