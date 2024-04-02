@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- NOTE: particles are injected with coordinate system relative to the
+     centre-bottom of the tank -->
+
+<LEInjector>  <!-- schema to come -->
+
+  <StationId> 119 </StationId>
+
+  <Filename>
+    ./malargue-ascii-geo_no_header.shw
+  </Filename>
+
+  <!-- optional mode to inject exclusively
+  1 GeV vertical muons, for purposes of x-checking
+  the whole chain -->
+  <VerticalMuonMode> 0 </VerticalMuonMode>
+
+</LEInjector>

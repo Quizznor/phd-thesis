@@ -3,7 +3,7 @@ Executable      = /cr/users/filip/Projects/totRateMaps/do_calculations.py
 error           = /cr/users/filip/Projects/totRateMaps/do_calculations.err
 #output          = /cr/users/filip/Projects/totRateMaps/do_calculations.out
 
-STATION         = Constanza
+STATION         = Nadia
 
 should_transfer_files = YES
 transfer_input_files = /cr/users/filip/bin/utils

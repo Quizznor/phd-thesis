@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!DOCTYPE bootstrap [
+  <!-- alias for example SD config files -->
+  <!ENTITY detConfig SYSTEM '@CONFIGDIR@/standardSdIdealDetConfig.xml'>
+  <!ENTITY recModConfig SYSTEM '@CONFIGDIR@/standardSdRecModuleConfig.xml'>
+  <!ENTITY simModConfig SYSTEM '@CONFIGDIR@/standardSdSimModuleConfig.xml'>
+]>
+
+<bootstrap
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation='@SCHEMALOCATION@/bootstrap.xsd'
+  xmlns:xlink="http://www.auger.org/schema/types">
+
+  &detConfig;
+  &recModConfig;
+  &simModConfig;
+
+  <centralConfig>
+
+    <configLink
+      id         = "ModuleSequence"
+      type       = "XML"
+      xlink:href = "./ModuleSequence.xml"/>
+
+    <configLink
+      id         = "ParticleInjector"
+      type       = "XML"
+      xlink:href = "./ParticleInjectorNEU.xml"/>
+
+    <configLink
+      id         = "EventGenerator"
+      type       = "XML"
+      xlink:href = "./EventGenerator.xml"/>
+
+    <configLink
+      id         = "SStationListXMLManager"
+      type       = "XML"
+      xlink:href = "./OneUpgradedStation.xml"/>
+
+    <configLink
+      id         = "SdSimulationCalibrator"
+      type       = "XML"
+      xlink:href = "./SdSimulationCalibrator.xml"/>
+
+    <configLink
+      id         = "LEInjector"
+      type       = "XML"
+      xlink:href = "./LEInjector.xml"/>
+
+  </centralConfig>
+
+  <parameterOverrides>
+
+    <configLink id="SdSimulationCalibrator">
+      <SdSimulationCalibrator>
+        <hardware> wcdLarge </hardware>
+      </SdSimulationCalibrator>
+    </configLink>
+
+    <configLink id="G4StationSimulator">
+      <G4StationSimulator>
+        <fullTrackMode> 0 </fullTrackMode>
+        <fastMode> 1 </fastMode>
+      </G4StationSimulator>
+    </configLink>
+
+    <configLink id="ParticleInjector">
+      <ParticleInjector>
+        <NumberOfParticles>
+          <Type> 13 </Type>
+          <Number> 1 </Number>
+        </NumberOfParticles>
+        <Position>
+          <Fixed unit='m'> 0.0 0.0 2.0 </Fixed>
+        </Position>
+        <Direction>
+          <Fixed> 0 0 -1 </Fixed>
+        </Direction>
+        <Energy>
+          <Discrete>
+            <x unit="GeV"> 1 </x>
+            <y> 1 </y>
+          </Discrete>
+        </Energy>
+        <PropagateToTank> no </PropagateToTank>
+      </ParticleInjector>
+    </configLink>
+
+  </parameterOverrides>
+
+</bootstrap>

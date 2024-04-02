@@ -62,6 +62,7 @@ Projects/XYScanner/xy-calibration/
 Projects/XYScanner/S4A
 Projects/ONNXNetwork/
 *.pickle
+*.shw
 *.root
 
 # LaTeX
