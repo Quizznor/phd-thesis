@@ -183,3 +183,12 @@ def preliminary(fig : plt.Figure = None, fontsize : float = 60):
          path_effects=[patheffects.withStroke(foreground='k', linewidth=2)],
          zorder=np.inf,
     )
+
+def save(fig : plt.Figure, path : str) -> None :
+    base = '/cr/users/filip/plots/'
+    import os
+
+    if not os.path.exists(os.path.dirname(base + path)):
+        os.system('mkdir -p {base}/{path}')
+
+    fig.savefig(base + path, bbox_inches='tight')
