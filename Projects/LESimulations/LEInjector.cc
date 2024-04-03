@@ -188,14 +188,6 @@ LEInjector::Run(Event& event)
   const double scintHeight = dStation.GetScintillator().GetMaxHeight();
   const auto& injectionRadius = std::max(sRadius, scintRadius);
   const auto& injectionHeight = std::max(sHeight, scintHeight);
-
-
-  // Scintillator dimensions eventually will be replaced by actual SSD dimensions
-  double scinLength = 1800*mm; 
-  int nScinBars = 27;
-  double barWidth = 80*mm;
-  double scinWidth =  nScinBars*barWidth;
-
    
   /*
   We define a virtual cylinder of radius = sRadius and h = sHeight where the particles
@@ -219,74 +211,54 @@ LEInjector::Run(Event& event)
   (These ideas were taken from CachedShowerRegenerator module).
   */
 
-  if (fVerticalMuonMode) {
-    // to inject vertical muons all over the scintillator
-    const double x = scinLength/2 * RandFlat::shoot(fRandomEngine, -1, 1);
-    const double y = scinWidth/2 * RandFlat::shoot(fRandomEngine, -1, 1);
-   
-    const Point position = Point(x, y, injectionHeight, stationCS);
-    const Vector momentum = Vector(0, 0, -1*GeV, stationCS, Vector::kCartesian);
+  const double EffTopArea = kPi*Sqr(injectionRadius)*cos(pTheta); // pTheta is measured from the station reference plane
+  const double EffSideArea = 2*injectionRadius*injectionHeight*sin(pTheta);
+  const double ProbSeeTop = EffTopArea / (EffTopArea + EffSideArea); 
+  const double rand1 = RandFlat::shoot(fRandomEngine, 0, 1);
+  
+  if (rand1 <= ProbSeeTop) { // Particle injected on the top
+
+    const double rand2 = RandFlat::shoot(fRandomEngine, 0, 1);
+    const double r = injectionRadius*sqrt(rand2);
+    const double phi = RandFlat::shoot(fRandomEngine, 0, kTwoPi);
+    
+    const double x = r * cos(phi);
+    const double y = r * sin(phi);
+    const double z = injectionHeight;
+
+    const Point position = Point(x, y, z, stationCS);
+    const Vector momentum = Vector(px, py, pz, stationCS, Vector::kCartesian);
     const Particle particle = 
-      Particle(13, utl::Particle::eBackground, position, momentum, 0, 1); // For this purpose particle's time is irrelevant 
+      Particle(particleId, utl::Particle::eBackground, position, momentum, 0, 1);
 
     station.AddParticle(particle);
-    
-  } // in case of VerticalMuonMode = ON
-
-
-  else {
-
-    const double EffTopArea = kPi*Sqr(injectionRadius)*cos(pTheta); // pTheta is measured from the station reference plane
-    const double EffSideArea = 2*injectionRadius*injectionHeight*sin(pTheta);
-    const double ProbSeeTop = EffTopArea / (EffTopArea + EffSideArea); 
-    const double rand1 = RandFlat::shoot(fRandomEngine, 0, 1);
-    
-    
-    
-    if (rand1 <= ProbSeeTop) { // Particle injected on the top
-
-      const double rand2 = RandFlat::shoot(fRandomEngine, 0, 1);
-      const double r = injectionRadius*sqrt(rand2);
-      const double phi = RandFlat::shoot(fRandomEngine, 0, kTwoPi);
+  }
       
-      const double x = r * cos(phi);
-      const double y = r * sin(phi);
-      const double z = injectionHeight;
+  else { // Particle injected on the side
+    
+    // For the X and Y component we need to find the angle between
+    // the (tank) X-Y axis and the incoming particle direction. Then add
+    // an angle sampled from an arcsin distribution
+    
 
-      const Point position = Point(x, y, z, stationCS);
-      const Vector momentum = Vector(px, py, pz, stationCS, Vector::kCartesian);
-      const Particle particle = 
-        Particle(particleId, utl::Particle::eBackground, position, momentum, 0, 1);
+    const double rand2 = RandFlat::shoot(fRandomEngine, 0, 1);
+    const double rand3 = RandFlat::shoot(fRandomEngine, 0, 1);
+    
+    const double phi = pPhi + asin(1-2*rand2);
 
-      station.AddParticle(particle);
+    const double z = injectionHeight*rand3;
+    const double x = injectionRadius * cos(phi);
+    const double y = injectionRadius * sin(phi);
+
+    const Point position = Point(x, y, z, stationCS);
+    const Vector momentum = Vector(px, py, pz, stationCS, Vector::kCartesian);
+    const Particle particle = 
+      Particle(particleId, utl::Particle::eBackground, position, momentum, 0, 1);
+
+    station.AddParticle(particle);
     }
-      
-    else { // Particle injected on the side
-      
-      // For the X and Y component we need to find the angle between
-      // the (tank) X-Y axis and the incoming particle direction. Then add
-      // an angle sampled from an arcsin distribution
-      
 
-      const double rand2 = RandFlat::shoot(fRandomEngine, 0, 1);
-      const double rand3 = RandFlat::shoot(fRandomEngine, 0, 1);
-      
-      const double phi = pPhi + asin(1-2*rand2);
-
-      const double z = injectionHeight*rand3;
-      const double x = injectionRadius * cos(phi);
-      const double y = injectionRadius * sin(phi);
-
-      const Point position = Point(x, y, z, stationCS);
-      const Vector momentum = Vector(px, py, pz, stationCS, Vector::kCartesian);
-      const Particle particle = 
-        Particle(particleId, utl::Particle::eBackground, position, momentum, 0, 1);
-
-      station.AddParticle(particle);
-  
-    }   
-  }   
-return eSuccess;
+  return eSuccess;
 } // end  LEInjector::Run()
   
 

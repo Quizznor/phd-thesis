@@ -13,7 +13,7 @@
       <!-- EventGenerator module is only needed to set detector time -->
       <module> EventGeneratorOG </module>
 
-      <loop numTimes="10" pushEventToStack="yes">
+      <loop numTimes="1" pushEventToStack="yes">
 
         <!-- <module> ParticleInjectorNEU </module> -->
         <module> LEInjectorCustom  </module>

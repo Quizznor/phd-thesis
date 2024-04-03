@@ -60,10 +60,18 @@
 
     <configLink id="G4StationSimulator">
       <G4StationSimulator>
+        <visualization>
+          <geometry> 0 </geometry>
+          <trajectories> 0 </trajectories>
+          <!-- DAWNFILE or VRML2FILE -->
+          <renderfile> VRML2FILE </renderfile>
+        </visualization>
         <fullTrackMode> 0 </fullTrackMode>
         <fastMode> 1 </fastMode>
       </G4StationSimulator>
     </configLink>
+
+    
 
     <configLink id="ParticleInjector">
       <ParticleInjector>
@@ -72,7 +80,7 @@
           <Number> 1 </Number>
         </NumberOfParticles>
         <Position>
-          <Fixed unit='m'> 0.0 0.0 2.0 </Fixed>
+          <Fixed unit='m'> 1.0 0.0 2.0 </Fixed>
         </Position>
         <Direction>
           <Fixed> 0 0 -1 </Fixed>
