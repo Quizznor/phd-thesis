@@ -81,13 +81,13 @@ namespace SdSimulationCalibratorOG {
       "-full_" + fullTrackMode +
       "-fast_" + fastMode;
 
-    const auto chargePeakFilename = "dump_charge_peak-" + basename + ".dat";
-    fDumpFile.open(chargePeakFilename);
-    if (!fDumpFile.is_open()) {
-      ERROR("Cannot open charge/peak dump file!");
-      return eFailure;
-    }
-    fDumpFile << "# pmtId phase peak charge compatPeak\n";
+    // const auto chargePeakFilename = "dump_charge_peak-" + basename + ".dat";
+    // fDumpFile.open(chargePeakFilename);
+    // if (!fDumpFile.is_open()) {
+    //   ERROR("Cannot open charge/peak dump file!");
+    //   return eFailure;
+    // }
+    // fDumpFile << "# pmtId phase peak charge compatPeak\n";
 
     if (dumpTraces) {
       const auto traceFilename = "dump_trace-" + basename + ".dat";
@@ -126,7 +126,7 @@ namespace SdSimulationCalibratorOG {
     fSignature = station.GetSimData().GetSimulatorSignature();
     fIsUUB = dStation.IsUUB();
 
-    ProcessStation(station, dStation);
+    ProcessStation(station, dStation, );
 
     return eSuccess;
   }
@@ -216,57 +216,19 @@ namespace SdSimulationCalibratorOG {
   }
 
 
-  pair<int, int>
-  FindSignal(const TimeDistributionI& trace, const double baseline, const double threshold)
-  {
-    const double trigger = baseline + threshold;
-    const int a = trace.GetStart();
-    const int b = trace.GetStop() + 1;
-    int begin;
-    for (begin = a; begin < b; ++begin)
-      if (trace.At(begin) >= trigger)
-        break;
-    // run to the end?
-    if (begin == b)
-      return make_pair(0, 0);  // not found
-    int end;
-    for (end = begin + 1; end < b; ++end)
-      if (trace.At(end) < trigger)
-        break;
-    return make_pair(begin, end);
-  }
-
-
-  pair<double, double>
-  ProcessTrace(const TimeDistributionI& trace, const int begin, const int end, const double baseline,
-               const int nParticles)
-  {
-    const double val = trace.At(begin) - baseline;
-    double peak = val;
-    double charge = val;
-    for (int i = begin+1; i < end; ++i) {
-      const double val = trace.At(i) - baseline;
-      charge += val;
-      if (val > peak)
-        peak = val;
-    }
-
-    return make_pair(peak, charge / nParticles);
-  }
-
-
   inline
   void
   DumpTrace(std::ofstream* const file,
-            const TimeDistributionI& trace, const int begin, const int end, const double baseline,
-            const int nParticles)
+            const TimeDistributionI& trace, 
+            const double baseline,
+            const int pmtId)
   {
     if (!file)
       return;
     const int start = trace.GetStart();
     // output begin and end relative to the start of the trace dump
-    *file << baseline << ' ' << begin-start << ' ' << end-start << ' ' << nParticles;
-    for (int i = start, n = trace.GetStop()+1; i < n; ++i)
+    *file << baseline << ','<< pmtId;
+    for (int i = start + 400; i < start + 1600; ++i)
       *file << ' ' << trace.At(i);
     *file << '\n';
   }
@@ -285,11 +247,11 @@ namespace SdSimulationCalibratorOG {
       exit(1);
     }
 
-    // this tries to mimic the muon-buffer trigger
-    const double signalThreshold = 30; // adc for both
-    const int beforeSignal = fIsUUB ? 20 : 1;
-    const int afterSignal = fIsUUB ? 49 : 19;
-    const int uubTimeFactor = 3;
+    // // this tries to mimic the muon-buffer trigger
+    // const double signalThreshold = 30; // adc for both
+    // const int beforeSignal = fIsUUB ? 20 : 1;
+    // const int afterSignal = fIsUUB ? 49 : 19;
+    // const int uubTimeFactor = 3;
 
     for (const auto& pmt : station.PMTsRange(sdet::PMTConstants::eAnyType)) {
 
@@ -311,52 +273,11 @@ namespace SdSimulationCalibratorOG {
 
       const auto index = pmt.GetId();
 
-      const bool isWCD = (pmt.GetType() == sdet::PMTConstants::eWaterCherenkovLarge);
-
       const double baseline = pmtCalib.GetBaseline(sdet::PMTConstants::eHighGain);
 
       const auto& trace = pmtSim.GetFADCTrace();
 
-      const auto beginEnd = FindSignal(trace, baseline, signalThreshold);
-      const auto begin = beginEnd.first;
-      const auto end = beginEnd.second;
-      if (!begin && !end)
-        continue;  // no signal found
-
-      const int signalBegin = max(begin - beforeSignal, trace.GetStart());
-      const int signalEnd = min(begin + afterSignal, trace.GetStop()+1);
-
-      DumpTrace(fDumpTraceFile, trace, signalBegin, signalEnd, baseline, fNParticles);
-
-      const auto peakCharge = ProcessTrace(trace, signalBegin, signalEnd, baseline, fNParticles);
-      const auto& peak = peakCharge.first;
-      const auto& charge = peakCharge.second;
-      ResizeArrays(index + 1);
-      fPeakCharge[index].first(peak);
-      fPeakCharge[index].second(charge);
-      if (isWCD) {
-        fWCDPeakCharge.first(peak);
-        fWCDPeakCharge.second(charge);
-      }
-
-      if (!fIsUUB || !isWCD) {
-        fDumpFile << index << " -1 " << peak << ' ' << charge << " -1\n";
-      } else {
-        // this is only for UUB and WCD
-        // increase statistics by downsampling with all 3 possible phases
-        for (int phase = 0; phase < 3; ++phase) {
-          const auto compatTrace = sdet::UUBDownsampleFilter(trace, phase);
-          const auto compatPeakCharge =
-            ProcessTrace(compatTrace, signalBegin/uubTimeFactor, signalEnd/uubTimeFactor, baseline, fNParticles);
-          const auto& compatPeak = compatPeakCharge.first;
-          fCompatibilityPeak[index](compatPeak);
-          fPeakRatio[index](peak/compatPeak);
-          fWCDCompatibilityPeak(compatPeak);
-          fWCDPeakRatio(peak/compatPeak);
-          fDumpFile << index << ' ' << phase << ' ' << peak << ' ' << charge << ' ' << compatPeak << '\n';
-        }
-      }
-
+      DumpTrace(fDumpTraceFile, trace, baseline, index);
     }
   }
 
