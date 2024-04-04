@@ -54,24 +54,16 @@
 
     <configLink id="SdSimulationCalibrator">
       <SdSimulationCalibrator>
-        <hardware> wcdLarge </hardware>
+        <hardware> ssd </hardware>
       </SdSimulationCalibrator>
     </configLink>
 
     <configLink id="G4StationSimulator">
       <G4StationSimulator>
-        <visualization>
-          <geometry> 0 </geometry>
-          <trajectories> 0 </trajectories>
-          <!-- DAWNFILE or VRML2FILE -->
-          <renderfile> VRML2FILE </renderfile>
-        </visualization>
         <fullTrackMode> 0 </fullTrackMode>
         <fastMode> 1 </fastMode>
       </G4StationSimulator>
     </configLink>
-
-    
 
     <configLink id="ParticleInjector">
       <ParticleInjector>

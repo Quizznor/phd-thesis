@@ -13,10 +13,10 @@
       <!-- EventGenerator module is only needed to set detector time -->
       <module> EventGeneratorOG </module>
 
-      <loop numTimes="1" pushEventToStack="yes">
+      <loop numTimes="10" pushEventToStack="yes">
 
-        <!-- <module> ParticleInjectorNEU </module> -->
-        <module> LEInjectorCustom  </module>
+        <module> ParticleInjectorNEU </module>
+        <!-- <module> LEInjectorCustom  </module> -->
         <module> G4StationSimulatorOG </module>
         <module> SdPMTSimulatorOG </module>
         <module> SdFilterFADCSimulatorMTU </module>
