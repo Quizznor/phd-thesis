@@ -184,10 +184,12 @@ def preliminary(fig : plt.Figure = None, fontsize : float = 60):
          zorder=np.inf,
     )
 
-def save(fig : plt.Figure, path : str) -> None :
+def save(fig : plt.Figure = None, path : str = '') -> None :
     base = '/cr/users/filip/plots/'
-    import os
+    
+    fig = fig if fig is not None else plt.gcf()
 
+    import os
     if not os.path.exists(os.path.dirname(base + path)):
         os.system('mkdir -p {base}/{path}')
 

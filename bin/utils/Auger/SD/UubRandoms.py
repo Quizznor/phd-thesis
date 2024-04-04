@@ -3,7 +3,9 @@ from typing import Union
 import bz2
 import os
 
-tuple_or_array = Union[tuple, np.ndarray]
+# maybe make this asynchronous at some point?
+
+TUPLE_OR_ARRAY = Union[tuple, np.ndarray]
 
 class UubRandom():
 
@@ -48,7 +50,7 @@ class UubRandom():
         self.__index = 0
         return self
     
-    def __next__(self) -> tuple_or_array :
+    def __next__(self) -> TUPLE_OR_ARRAY  :
 
         if self.__index == self.__len__(): raise StopIteration
         data = self[self.__index]
@@ -59,7 +61,7 @@ class UubRandom():
         basename = [f.split('.')[0] for f in os.listdir(self.path)]
         return len(np.unique(basename))
 
-    def __getitem__(self, index : int) -> tuple_or_array :
+    def __getitem__(self, index : int) -> TUPLE_OR_ARRAY  :
         return self.read(index)
 
     def read(self, index : int) -> np.ndarray :
