@@ -69,7 +69,7 @@ Make-depend: $(USER_SRCS)
 	$(CPP) $(CPPFLAGS) -MM $^ >$@
 
 clean:
-	- rm -f *.o  *.so *.ps core $(USER_XMLS) Make-depend
+	- rm -f *.o  *.so *.ps core $(USER_XMLS) Make-depend *.dat
 
 #############################################################
 # 'make run' will run the thing

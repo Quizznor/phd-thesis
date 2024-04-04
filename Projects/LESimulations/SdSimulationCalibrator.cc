@@ -33,8 +33,13 @@
 #include <utl/TabularStream.h>
 
 #include <fwk/RunController.h>
+#include <fwk/RandomEngineRegistry.h>
 
 #include <sstream>
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
 using namespace utl;
 using namespace sevt;
@@ -43,12 +48,14 @@ using namespace evt;
 using namespace det;
 using namespace std;
 
-
 namespace SdSimulationCalibratorOG {
 
   VModule::ResultFlag
   SdSimulationCalibrator::Init()
   {
+
+    srand (time(NULL));
+
     auto topBranch = CentralConfig::GetInstance()->GetTopBranch("SdSimulationCalibrator");
 
     topBranch.GetChild("singleTankId").GetData(fSingleTankId);
@@ -126,7 +133,8 @@ namespace SdSimulationCalibratorOG {
     fSignature = station.GetSimData().GetSimulatorSignature();
     fIsUUB = dStation.IsUUB();
 
-    ProcessStation(station, dStation, );
+    const int particleId = rand();
+    ProcessStation(station, dStation, particleId);
 
     return eSuccess;
   }
@@ -135,83 +143,6 @@ namespace SdSimulationCalibratorOG {
   VModule::ResultFlag
   SdSimulationCalibrator::Finish()
   {
-    TabularStream tab(" r r r | . . . | . . .");
-    tab << "PMT" << endc << "N" << endc << "NPar" << endc << "<Peak>" << endc
-        << "Err<>" << endc << "StdDev" << endc << "<Charge>" << endc << "Err<>"
-        << endc << "StdDev" << endr << hline;
-    int pmtId = 0;
-    unsigned int numRuns = 0;
-    for (const auto& peakCharge : fPeakCharge) {
-      const auto& peak = peakCharge.first;
-      if (peak.GetN()) {
-        const auto& charge = peakCharge.second;
-        tab << pmtId << endc
-            << peak.GetN() << endc
-            << fNParticles << endc
-            << peak.GetAverage() << endc
-            << peak.GetAverageError() << endc
-            << peak.GetStandardDeviation() << endc
-            << charge.GetAverage() << endc
-            << charge.GetAverageError() << endc
-            << charge.GetStandardDeviation() << endr;
-        numRuns = peak.GetN();
-      }
-      ++pmtId;
-    }
-    tab << delr;
-
-    // Pull some info from the ParticleInjector for documentation purposes.
-    // NB this expects one to use ParticleInjectorNEU!
-    auto injB = CentralConfig::GetInstance()->GetTopBranch("ParticleInjector");
-    const double muEnergy = injB.GetChild("Energy").GetChild("Discrete").GetChild("x").Get<double>();
-
-    ostringstream info;
-    info << "The simulated calibration constants were set as follows:\n\n"
-         << tab << "\n\n"
-            "The following XML snipped should be pasted into "
-            "Framework/SDetector/SdSimCalibrationConstants.xml.in "
-            "with the other PMT calibrations from the same simModule:\n\n"
-            "  <!-- " << fSignature << " tank sim, " << numRuns << " runs, " << fNParticles << " particle(s) per run, "
-            "energy = " << muEnergy / GeV << " GeV -->\n"
-            "  <simModule name='" << fSignature << "'>\n"
-            "    <electronics isUUB='" << fIsUUB << "'>\n";
-
-    for (int i = 1, n = fPeakCharge.size(); i < n; ++i) {
-      const bool isWCD = (1 <= i && i <= 3);
-      const auto& peakCharge = isWCD ? fWCDPeakCharge : fPeakCharge[i];
-      const auto& peak = peakCharge.first;
-      if (!peak.GetN())
-        continue;
-      info << "      <PMT id='" << i << "'>" << (isWCD ? "<!-- note: all WCD PMTs are averaged together -->" : "") << '\n';
-      const auto& charge = peakCharge.second;
-      info << "        <peak> " << peak.GetAverage() << " </peak> "
-              "<!-- err=" << peak.GetAverageError() << " std=" << peak.GetStandardDeviation();
-      if (isWCD)
-        info << " pmt" << i << '=' << fPeakCharge[i].first.GetAverage();
-      info << " -->\n"
-              "        <charge> " << charge.GetAverage() << " </charge> "
-              "<!-- err=" << charge.GetAverageError() << " std=" << charge.GetStandardDeviation();
-      if (isWCD)
-        info << " pmt" << i << '=' << fPeakCharge[i].second.GetAverage();
-      info << " -->\n";
-      if (fIsUUB && isWCD) {
-        const auto& compatPeak = fWCDCompatibilityPeak;
-        const auto& peakRatio = fWCDPeakRatio;
-        info << "        <compatibilityPeak> " << compatPeak.GetAverage() << " </compatibilityPeak> "
-                "<!-- err=" << compatPeak.GetAverageError() << " std=" << compatPeak.GetStandardDeviation()
-             << " pmt" << i << '=' << fCompatibilityPeak[i].GetAverage() << " -->\n"
-                "        <!-- FBW/compatibility peak ratio=" << peakRatio.GetAverage() << " err=" << peakRatio.GetAverageError() << " "
-                "std=" << peakRatio.GetStandardDeviation() << " pmt" << i << '=' << fPeakRatio[i].GetAverage() << " -->\n";
-      }
-      info << "      </PMT>\n";
-    }
-    info << "    </electronics>\n"
-            "  </simModule>\n";
-
-    INFO(info);
-
-    Clear();
-
     return eSuccess;
   }
 
@@ -221,21 +152,21 @@ namespace SdSimulationCalibratorOG {
   DumpTrace(std::ofstream* const file,
             const TimeDistributionI& trace, 
             const double baseline,
-            const int pmtId)
+            const int pmtId,
+            const int pId)
   {
     if (!file)
       return;
     const int start = trace.GetStart();
-    // output begin and end relative to the start of the trace dump
-    *file << baseline << ','<< pmtId;
+    *file << pId << ',' << pmtId << ',' << baseline;
     for (int i = start + 400; i < start + 1600; ++i)
-      *file << ' ' << trace.At(i);
+      *file << ',' << trace.At(i);
     *file << '\n';
   }
 
 
   void
-  SdSimulationCalibrator::ProcessStation(const sevt::Station& station, const sdet::Station& dStation)
+  SdSimulationCalibrator::ProcessStation(const sevt::Station& station, const sdet::Station& dStation, const int pId)
   {
     fNParticles = station.GetSimData().GetNParticles();
 
@@ -246,12 +177,6 @@ namespace SdSimulationCalibratorOG {
       ERROR("Simulation calibrator is throwing more than one particle. Only use with smallPMT!");
       exit(1);
     }
-
-    // // this tries to mimic the muon-buffer trigger
-    // const double signalThreshold = 30; // adc for both
-    // const int beforeSignal = fIsUUB ? 20 : 1;
-    // const int afterSignal = fIsUUB ? 49 : 19;
-    // const int uubTimeFactor = 3;
 
     for (const auto& pmt : station.PMTsRange(sdet::PMTConstants::eAnyType)) {
 
@@ -277,34 +202,13 @@ namespace SdSimulationCalibratorOG {
 
       const auto& trace = pmtSim.GetFADCTrace();
 
-      DumpTrace(fDumpTraceFile, trace, baseline, index);
+      DumpTrace(fDumpTraceFile, trace, baseline, index, pId);
     }
   }
-
-
-  void
-  SdSimulationCalibrator::ResizeArrays(const unsigned int n)
-  {
-    if (n > fPeakCharge.size()) {
-      fPeakCharge.resize(n);
-      fCompatibilityPeak.resize(n);
-      fPeakRatio.resize(n);
-    }
-  }
-
 
   void
   SdSimulationCalibrator::Clear()
   {
-    fPeakCharge.clear();
-    fCompatibilityPeak.clear();
-    fPeakRatio.clear();
-    fWCDPeakCharge.first.Clear();
-    fWCDPeakCharge.second.Clear();
-    fWCDCompatibilityPeak.Clear();
-    fWCDPeakRatio.Clear();
-
-    fDumpFile.close();
   }
 
 }

@@ -55,7 +55,10 @@ Papers
 plots/
 
 # Offline
+Make-depend
 *.o
+*.xml
+**/userAugerOffline
 
 # git repositories / large files
 Data/SDMonitHistos

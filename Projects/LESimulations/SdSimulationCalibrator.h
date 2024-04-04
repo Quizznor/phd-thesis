@@ -4,6 +4,8 @@
 #include <fwk/VModule.h>
 #include <utl/Accumulator.h>
 #include <utl/TimeDistribution.h>
+#include <utl/Particle.h>
+#include <utl/TimeStamp.h>
 #include <vector>
 #include <fstream>
 
@@ -14,6 +16,10 @@ namespace sevt {
 namespace sdet {
   class Station;
 }
+
+// namespace utl {
+//   class RandomEngine;
+// }
 
 namespace SdSimulationCalibratorOG {
 
@@ -35,7 +41,7 @@ namespace SdSimulationCalibratorOG {
     fwk::VModule::ResultFlag Finish() override;
 
   private:
-    void ProcessStation(const sevt::Station& station, const sdet::Station& dStation);
+    void ProcessStation(const sevt::Station& station, const sdet::Station& dStation, const int);
 
     void ResizeArrays(const unsigned int n);
 
@@ -68,7 +74,6 @@ namespace SdSimulationCalibratorOG {
     std::ofstream* fDumpTraceFile = nullptr;
 
     REGISTER_MODULE("SdSimulationCalibratorOG", SdSimulationCalibrator);
-
   };
 
 }

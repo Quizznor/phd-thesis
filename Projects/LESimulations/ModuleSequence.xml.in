@@ -15,8 +15,8 @@
 
       <loop numTimes="10" pushEventToStack="yes">
 
-        <module> ParticleInjectorNEU </module>
-        <!-- <module> LEInjectorCustom  </module> -->
+        <!-- <module> ParticleInjectorNEU </module> -->
+        <module> LEInjectorCustom  </module> -->
         <module> G4StationSimulatorOG </module>
         <module> SdPMTSimulatorOG </module>
         <module> SdFilterFADCSimulatorMTU </module>
