@@ -10,5 +10,8 @@ import uncertainties
 binaries_logger.info('import uncertainties')
 import pandas as pd
 binaries_logger.info('import pandas as pd')
+binaries_logger.warn('pandas support to be dropped at some point!')
+# import polars as pl
+# binaries_logger.info('import polars as pl')
 from . import binary_tools as tools
 binaries_logger.info('import binaries.tools as tools')
