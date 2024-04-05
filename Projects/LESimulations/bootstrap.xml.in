@@ -54,7 +54,7 @@
 
     <configLink id="SdSimulationCalibrator">
       <SdSimulationCalibrator>
-        <hardware> wcdLarge </hardware>
+        <hardware> all </hardware>
       </SdSimulationCalibrator>
     </configLink>
 
