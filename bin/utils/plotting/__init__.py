@@ -13,7 +13,7 @@ def set_plt_style(styles : str = 'single') -> None :
     fontsize = 9.5
     labelsize = 13.0
     markersize = 2.0
-    use_tex = 'tex' in opts
+
     if 'single' in opts:
         figuresize = [6.6, 3.3]
     elif 'double' in opts:
@@ -24,7 +24,10 @@ def set_plt_style(styles : str = 'single') -> None :
         plotting_logger.warn(f'I dont know what to do with the arguments youve given me: {opts}')
         figuresize = [2.5, 2.5]
 
-    plt.style.use(['science', 'ieee', 'no-latex'] if not use_tex else ['science', 'ieee'])
+    styles = ['science', 'ieee']
+    if not 'tex' in opts: styles += ['no-latex']
+
+    plt.style.use(styles)
     plt.rcParams['font.size'] = fontsize
     plotting_logger.debug(f'font size set to {fontsize}')
     plt.rcParams['axes.labelsize'] = labelsize
@@ -33,7 +36,7 @@ def set_plt_style(styles : str = 'single') -> None :
     plotting_logger.debug(f'figure size set to {figuresize}')
     plt.rcParams['lines.markersize'] = markersize
     plotting_logger.debug(f'markersize set to {markersize}')
-    plt.rcParams['text.usetex'] = use_tex
+    plt.rcParams['text.usetex'] = 'tex' in opts
     plt.rcParams['text.latex.preamble'] = \
         r'\usepackage{lipsum}' \
         + r'\usepackage{amsmath}' \
@@ -41,7 +44,33 @@ def set_plt_style(styles : str = 'single') -> None :
         + r'\usepackage{siunitx}' \
         + r'\DeclareSIUnit\sr{sr}'\
         + r'\DeclareSIUnit\year{yr}'
-    plotting_logger.debug(f'usetex set to {use_tex}')
+    plotting_logger.debug(f'usetex set to {"tex" in opts}')
+
+    from matplotlib import cycler
+    if 'dark' in opts: 
+
+        plotting_logger.debug(f'using dark mode!')
+
+        # DARK COLORS
+        TEXT_COLOR = "white"
+        BG_COLOR = "#171717"
+        colors = ['lightgray', 'r', 'b', 'g']
+        
+        plt.rcParams['axes.edgecolor'] = TEXT_COLOR
+        plt.rcParams["axes.facecolor"] = BG_COLOR
+        plt.rcParams["figure.facecolor"] = BG_COLOR
+        plt.rcParams["text.color"] = TEXT_COLOR
+        plt.rcParams["axes.labelcolor"] = TEXT_COLOR
+        plt.rcParams["xtick.color"] = TEXT_COLOR
+        plt.rcParams["ytick.color"] = TEXT_COLOR
+    else:
+        colors = ['k', 'r', 'b', 'g']
+    
+    from matplotlib import cycler
+    plt.rcParams['axes.prop_cycle'] = cycler(
+        color=colors,
+        ls=['-', '--', ':', '-.'])
+
 
 import matplotlib.pyplot as plt
 plotting_logger.info('import matplotlib.pyplot as plt')
