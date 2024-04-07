@@ -97,7 +97,7 @@ namespace SdSimulationCalibratorOG {
     // fDumpFile << "# pmtId phase peak charge compatPeak\n";
 
     if (dumpTraces) {
-      const auto traceFilename = "/cr/tempdata01/filip/LESimulations/dump_trace-" + basename + ".dat";
+      const auto traceFilename = "/cr/tempdata01/filip/LESimulations/run4/dump_trace-" + basename + ".dat";
       fDumpTraceFile = new std::ofstream(traceFilename);
       if (!fDumpTraceFile->is_open()) {
         ERROR("Cannot open trace dump file!");
@@ -159,7 +159,7 @@ namespace SdSimulationCalibratorOG {
       return;
     const int start = trace.GetStart();
     *file << pId << ',' << pmtId << ',' << baseline;
-    for (int i = start + 400; i < start + 1600; ++i)
+    for (int i = start + 600; i < start + 1000; ++i)
       *file << ',' << trace.At(i);
     *file << '\n';
   }
