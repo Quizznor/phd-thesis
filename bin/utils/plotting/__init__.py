@@ -52,9 +52,9 @@ def set_plt_style(styles : str = 'single') -> None :
         plotting_logger.debug(f'using dark mode!')
 
         # DARK COLORS
-        TEXT_COLOR = "white"
+        TEXT_COLOR = "gray"
         BG_COLOR = "#171717"
-        colors = ['lightgray', 'r', 'b', 'g']
+        colors = ['gray', 'r', 'b', 'g']
         
         plt.rcParams['axes.edgecolor'] = TEXT_COLOR
         plt.rcParams["axes.facecolor"] = BG_COLOR
