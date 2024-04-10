@@ -1,0 +1,250 @@
+quit()
+1//2
+3//2
+4//2
+0//2
+2//2
+4//2
+quit()
+import os
+test = os.listdir("/lsdf/auger/tmp/hahn/test_production/napoli/ub/QGSJET-II.04/proton/19_19.5/00/")
+print(len(test))
+quit()
+True and False
+quit()
+not (True and True)
+not (True and False)
+not (False and False)
+not (False and True)
+quit()
+10/30
+quit()
+20281 // 500
+quit()
+20281//500
+quit()
+ceil(5/3)
+import numpy as np
+np.ceil(5/3)
+quit()
+a = (0,1)
+b = (3,5)
+print(a+b
+)
+quit()
+bool(0)
+bool(1)
+quit()
+test = "test_bla_bla_model_100.SavedModel"
+print(test.rfind('_'))
+test[test.rfind('_'):]
+test[test.rfind('_') + 1:]
+test[test.rfind('_') + 1:test.rfind('.')]
+test.rfind('_') + 1:test.rfind('.')]
+int(None)
+quit()
+print("[" + 30 * "-" + 10 * " " + "]")
+print("[" + 30 * "-" + 70 * " " + "]")
+quit()
+False or print("hallo")
+True or print("hallo")
+quit()
+for window in range(0,1000,12):
+print(window)
+	print(window)
+for window in range(0,1000,12):
+	print(window)
+quit()
+for window in [range(x,x+12) for x in range(10)]:
+	print(window)
+for window in [xrange(x,x+12) for x in range(10)]:
+	print(window)
+import numpy as np
+for window in [np.arange(x,x+12,1) for x in range(10)]:
+	print(window)
+quit()
+import numpy as np
+a = np.linspace(0,140, 20)
+print(a)
+print(a > 10)
+a[a > 10]
+quit()
+import numpy as np
+data = np.loadtxt("/cr/users/filip/data/first_simulation/unit_tests_summary.csv", dtype=str)
+data = np.loadtxt("/cr/users/filip/data/first_simulation/trigger_tests/unit_tests_summary.csv", dtype=str)
+print(data.shape)
+FNs = data[:,9]
+FNs = data[:,8]
+print(FNs)
+to_int = [int(i) for i in FNs]
+print(to_int)
+to_int = np.array(to_int)
+print(to_int.sum()
+)
+quit()
+a = 3.005
+round(a)
+a
+b = round(a)
+print(b)
+quit()
+import numpy as np
+a = np.linspace(0,10,100)
+for i in range(a):
+print(i)
+for i in range(a):
+	print(i)
+quit()
+import numpy as np
+quit()
+a = True
+a or b
+a = False
+a or b
+quit()
+from pyik.adst import *
+quit()
+init_from_disk = "/cr/data01/filip/fourth_model/model_1/"
+init_from_disk.rfind("_")
+quit
+quit()
+a = [5,6,7,8]
+for b in a:
+	b += 1
+print(a)
+quit()#
+b = 5
+a or b
+a = 6
+a or b
+a ^ b
+quit/(
+(
+))
+quit()
+import numpy as np
+test = np.loadtxt("/tempdata01/filip/protons/19_19.5/DAT551235_00_adst.csv")
+print(test.shape)
+quit()
+a = {"b" = 5, "c" = 14, "h" = 25}
+a = {"b"=5, "c" = 14, "h" = 25}
+a = {b = 5, "c" = 14, "h" = 25}
+a = {"b" : 5, "c" : 14, "h" : 25}
+a()
+print(a.vals())
+print(a.values())
+quit()
+import numpy as np
+a = [[1,2,3],[4,5],[]]
+print(a.shape)
+a = np.array(a)
+a = np.array(a, dtype=object)
+print(a.shape)
+quit()
+a = {"a" : 4, "b" : 3, "c" : 61}
+print(a.values)
+print(a.values())
+print(*a.values())
+print([*a.values()])
+quit()
+import numpy as np#
+import numpy as np
+a = np.array([1,2,3],[4,5,6])
+a = np.array([[1,2,3],[4,5,6]])
+print(np.sum(a, axis = 0))
+print(np.sum(a, axis = 1))
+print(np.mean(np.sum(a, axis = 1)))
+quit()
+import linecache
+quit()
+a = 1
+if a:
+	print("hello"
+)
+a = 0
+a and print("hello")
+1 and print("hello")
+2 and print("hello")
+quit()
+import numpy
+print(numpy.random.poisson(4665*8.3e-9*2048,100))
+quit()
+t = 21
+print(t/3)
+quit()
+21 // 3
+quit()
+signal_start = 694
+signal_stop = 734
+print(range(signal_start,signal_stop))
+print(*range(signal_start,signal_stop))
+signal_range = range(signal_start, signal_stop))
+signal_range = range(signal_start, signal_stop)
+print(signal_range)
+print(54 in signal_range)
+print(700 in signal_range)
+import numpy as np
+quit/(
+)
+quit()
+import numpy as np
+quit()
+a = 2
+a << 2
+a >> 2
+a >> 1
+a >> 1 >> 1
+quit()
+a = 2
+print(a >> 1)
+quit()
+import numpy as np
+a = np.geomspace(0, 1000, 1000)
+a = np.geomspace(1, 1000, 1000)
+print(a)
+print(a[::-1])
+quit()
+a = None
+print(a)
+quit/(
+()
+)
+clear
+quit()
+import numpy as np
+a = np.NaN
+a
+a or print("a")
+quit()
+print(type(range(5))
+)
+quit()
+import colour
+exit()
+import pandas
+import seaborn
+import sys
+print(sys.path)
+quit()
+import sys
+print(sys.path)
+quit()
+import TriggerStudyBinaries_v5
+from TriggerStudyBinaries_v5 import *
+import sys
+print(sys.path)
+quit()
+import sys
+print(sys.path)
+quit()
+import TriggerStudyBinaries_v1
+uit()
+quit()
+import sys
+print(sys.path)
+quit()
+""
+if (""): print("a")
+if ("a"): print("a")
+quit()
+import ten

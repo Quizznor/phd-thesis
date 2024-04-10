@@ -54,7 +54,7 @@ def set_plt_style(styles : str = 'single') -> None :
         # DARK COLORS
         TEXT_COLOR = "gray"
         BG_COLOR = "#171717"
-        colors = ['gray', 'r', 'b', 'g']
+        colors = ['gray', 'r', 'steelblue', 'g']
         
         plt.rcParams['axes.edgecolor'] = TEXT_COLOR
         plt.rcParams["axes.facecolor"] = BG_COLOR
