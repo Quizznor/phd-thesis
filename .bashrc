@@ -36,7 +36,7 @@ export LD_LIBRARY_PATH="/cr/data01/filip/irods/dependencies/usr/lib/x86_64-linux
 #fi
 
 # condor submitting etc.
-alias "cq"="condor_q"
+alias "cq"="condor_q -all"
 alias "qq"="condor_q -hold"
 alias "crm"="$HOME/bin/condor_remove.sh"
 alias "cs"="$HOME/bin/condor_submit.sh"

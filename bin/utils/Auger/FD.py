@@ -78,7 +78,7 @@ def PixelPlot(pixel_data : np.ndarray, cmap=plt.cm.viridis,
 
     return ax
 
-def XYComparisonPlot(*runs : list[dict], cmap=plt.cm.coolwarm, hist_bins=50, vmin=0.6, vmax=1.4) -> plt.figure :
+def XYComparisonPlot(*runs : list[dict], cmap=plt.cm.coolwarm, hist_bins=50, vmin=0.6, vmax=1.4, contrast_boost=False) -> plt.figure :
     """Compare the results of two XY runs, normalized to their respective Cal A signal"""
 
     from matplotlib.colors import Normalize
@@ -114,16 +114,16 @@ def XYComparisonPlot(*runs : list[dict], cmap=plt.cm.coolwarm, hist_bins=50, vmi
         pixels = np.loadtxt(f"{result_dir}/out_{xy}.txt", usecols=[2])
         positions = pd.read_csv(f"{result_dir}/outPositionsComb_{xy}.txt", usecols=['x', 'y', 'FDeventSum'])
 
-        pixels /= CalA_signal                                   # normalize pixels to calA pixels
-        positions['FDeventSum'] /= np.sum(CalA_signal)          # normalize positions to calA sum
+        # divide by 50 due to 50 flashes
+        pixels /= CalA_signal / 50                                 # normalize pixels to calA pixels
+        positions['FDeventSum'] /= np.sum(CalA_signal) / 50        # normalize positions to calA sum
 
         positions_normalized.append(positions)
         pixels_normalized.append(pixels)
 
     pixel_ratio = pixels_normalized[0] / pixels_normalized[1]
-    positions_combined = positions_normalized[0].merge(positions_normalized[1] ,on =['x','y']).drop_duplicates().dropna()
-    positions_ratio = positions_combined.FDeventSum_x / positions_combined.FDeventSum_y
-    mean_positions = uncertainties.ufloat(np.mean(positions_ratio), np.std(positions_ratio))
+    positions_ratio = build_xy_ratio(positions_normalized[0], positions_normalized[1])
+    mean_positions = uncertainties.ufloat(np.mean(positions_ratio['ratio']), np.std(positions_ratio['ratio']))
     mean_pixels = uncertainties.ufloat(np.mean(pixel_ratio), np.std(pixel_ratio))
 
     ax1 = fig.add_subplot(gs[:, 0])
@@ -140,16 +140,25 @@ def XYComparisonPlot(*runs : list[dict], cmap=plt.cm.coolwarm, hist_bins=50, vmi
 
     # set up aperture position comparison
     AperturePlot(ax1)
-    c0 = ax1.scatter(positions_combined.x, positions_combined.y, c=positions_ratio,
+    c0 = ax1.scatter(positions_ratio.x, positions_ratio.y, 
+                    c=positions_ratio['ratio'],
                     norm=norm,
-                    marker="o", cmap=cmap, s = 4)
+                    marker="o", 
+                    cmap=cmap, 
+                    s = 4)
     ax1.axis('off')
     ax1.set_title('Aperture view')
+    ax1.plot([-650, 650], [1350, 1350], c='k', ls='--', clip_on=False)
 
     # set up camera pixel comparison
-    _min, _max, mean, std = pixel_ratio.min(), pixel_ratio.max(), pixel_ratio.mean(), pixel_ratio.std()
-    pixel_contrast_boost = np.interp(pixel_ratio, (mean - 2 * std, mean + 2 * std), (vmin, vmax))
-    PixelPlot(pixel_contrast_boost, ax=ax2, cmap=cmap, vmin=vmin, vmax=vmax, norm=norm, title='Camera view (contrast boost)')
+    if contrast_boost:
+        _min, _max, mean, std = pixel_ratio.min(), pixel_ratio.max(), pixel_ratio.mean(), pixel_ratio.std()
+        pixel_plot_ratios = np.interp(pixel_ratio, (mean - 2 * std, mean + 2 * std), (vmin, vmax))
+    else:
+        pixel_plot_ratios = pixel_ratio
+
+    PixelPlot(pixel_plot_ratios, ax=ax2, cmap=cmap, vmin=vmin, vmax=vmax, norm=norm, title='Camera view' + (' (contrast boost)' if contrast_boost else ''))
+    ax2.plot([-7, 7], [-18, -18], c='r', clip_on=False)
 
     # histograms for comparison
     bins = np.linspace(vmin, vmax, hist_bins)
@@ -168,9 +177,9 @@ def XYComparisonPlot(*runs : list[dict], cmap=plt.cm.coolwarm, hist_bins=50, vmi
     for x, p in zip(bin_centers, patches):
         plt.setp(p, 'facecolor', cmap(norm(x)))
 
-    ax4.hist(np.clip(positions_ratio, vmin, vmax), bins=bins, density=True, histtype='step',
+    ax4.hist(np.clip(positions_ratio['ratio'], vmin, vmax), bins=bins, density=True, histtype='step',
              color='k', ls='--')
-    n2, _, patches = ax4.hist(np.clip(positions_ratio, vmin, vmax), bins=bins, density=True)
+    n2, _, patches = ax4.hist(np.clip(positions_ratio['ratio'], vmin, vmax), bins=bins, density=True)
     ax4.text(0.02, 0.98,
             fr"$\langle\tilde{{\mathrm{{XY}}}}^\mathrm{{pos.}}_\mathrm{{{date1}}}\,/\,\tilde{{\mathrm{{XY}}}}^\mathrm{{pos.}}_\mathrm{{{date2}}}\rangle = {mean_positions.format('S')}$",
             horizontalalignment='left',
@@ -181,7 +190,6 @@ def XYComparisonPlot(*runs : list[dict], cmap=plt.cm.coolwarm, hist_bins=50, vmi
     for x, p in zip(bin_centers, patches):
         plt.setp(p, 'facecolor', cmap(norm(x)))
 
-    
 
     ax3.set_ylim(1e-2, 1.2 * max(n1))
     ax4.set_ylim(1e-2, 1.2 * max(n2))  
@@ -191,3 +199,41 @@ def XYComparisonPlot(*runs : list[dict], cmap=plt.cm.coolwarm, hist_bins=50, vmi
     ax4.set_yticks([])
 
     return fig
+
+def build_xy_ratio(data1, data2):
+
+    pd.options.mode.chained_assignment = None
+
+    # multiple flashes at position 0
+    d1_zeros = data1.loc[data1['x'] + data1['y'] == 0]
+    d2_zeros = data2.loc[data2['x'] + data2['y'] == 0]
+
+    data1 = pd.concat([data1, d1_zeros, d1_zeros]).drop_duplicates(keep=False)
+    data2 = pd.concat([data2, d2_zeros, d2_zeros]).drop_duplicates(keep=False)
+
+    ratios = pd.DataFrame({'x' : 0, 'y' : 0, 'ratio' : d1_zeros['FDeventSum'].mean() / d2_zeros['FDeventSum'].mean()}, index=[0])
+
+    # all other flashes
+    smaller_dataset = data1 if len(data1) < len(data2) else data2
+    larger_dataset = data2 if len(data1) < len(data2) else data1
+    factor = lambda x: x if len(data1) < len(data2) else 1/x
+
+    for i, (_, row) in enumerate(smaller_dataset.iterrows(), 1):
+    
+        try:
+
+            y_distances = (larger_dataset['y'] - row.loc['y']).abs()
+            closest_y = larger_dataset.iloc[y_distances.argmin()]['y']
+
+            same_row = larger_dataset[larger_dataset['y'] == closest_y]
+            same_row['x_distances'] = (same_row['x'] - row.loc['x']).abs()
+
+            closest_xy = same_row.iloc[same_row['x_distances'].argmin()]
+
+            ratio = factor(row['FDeventSum']/closest_xy['FDeventSum'])
+            this_ratio = pd.DataFrame({'x' : row['x'], 'y' : row['y'], 'ratio' : ratio}, index=[i])
+            ratios = pd.concat([ratios, this_ratio], ignore_index=True)
+        except ValueError:
+            pass
+
+    return ratios
