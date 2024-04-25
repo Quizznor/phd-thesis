@@ -1,5 +1,6 @@
-from ..binaries import pd
-from ..binaries import uncertainties
+from ...binaries import uncertainties
+from ...binaries import pd
+from ...plotting import plt
 from . import AperturePlot, PixelPlot
 
 def XYComparisonPlot(*runs : list[dict], cmap=plt.cm.coolwarm, hist_bins=50, vmin=0.6, vmax=1.4, contrast_boost=False) -> plt.figure :
@@ -164,3 +165,25 @@ def build_xy_ratio(data1, data2):
             pass
 
     return ratios
+
+def get_run_numbers(telescope : str, date : str) -> dict : 
+
+    import pickle
+    with open('/cr/users/filip/bin/utils/Auger/FD/xy_measurements.pkl', 'rb') as f:
+        data = pickle.load(f)
+
+    try:
+        requested_telescope = data[telescope]
+        for measurement in requested_telescope:
+            if measurement['date'] == date:
+                return measurement
+        else:
+            raise KeyError
+
+    except KeyError:
+        from ... import create_stream_logger
+        import logging
+
+        logger = create_stream_logger('XY-logger', logging.ERROR)
+        logger.error(f'requested dataset does not exist! {telescope = }, {date = }')
+        return {}

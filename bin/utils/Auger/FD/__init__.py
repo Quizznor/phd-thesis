@@ -1,5 +1,5 @@
-from ..plotting import plt
-from ..binaries import np
+from ...plotting import plt
+from ...binaries import np
 
 def AperturePlot(ax=None, filterStructure=True) -> plt.axes :
     """Add aperture, corrector, lens structure of FD telescopes to a given axis"""
