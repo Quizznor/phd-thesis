@@ -71,6 +71,32 @@ def set_plt_style(styles : str = 'single') -> None :
         color=colors,
         ls=['-', '--', ':', '-.'])
 
+def preliminary(fig : plt.Figure = None, fontsize : float = 60):
+    """helper that plots a big, fat 'preliminary' on top of your figure"""
+    import matplotlib.patheffects as patheffects
+    if fig is None: fig = plt.gcf()
+
+    fig.text(0.5, 0.5, "Preliminary",
+         c='red',
+         rotation=15,
+         horizontalalignment='center',
+         verticalalignment='center',
+         fontsize=fontsize,
+         path_effects=[patheffects.withStroke(foreground='k', linewidth=2)],
+         zorder=10000,
+    )
+
+def save(fig : plt.Figure = None, path : str = '') -> None :
+    base = '/cr/data01/filip/plots/'
+    
+    fig = fig if fig is not None else plt.gcf()
+
+    import os
+    if not os.path.exists(os.path.dirname(base + path)):
+        os.system('mkdir -p {base}/{path}')
+
+    fig.savefig(base + path, bbox_inches='tight')
+
 
 import matplotlib.pyplot as plt
 plotting_logger.info('import matplotlib.pyplot as plt')

@@ -6,7 +6,7 @@
 
 int main(int argc, char *argv[]) 
 {
-  ofstream outFile("t3_histos.txt", ios_base::trunc);
+  ofstream outSSDFile("/cr/users/filip/t3_histos.ssd", ios_base::trunc);
   EventPos pos; IoSd input(argc - 1, argv + 1);
 
   std::vector<UInt_t> positions = {1840, 1823, 660, 1845, 643, 1839, 659, 1844};
