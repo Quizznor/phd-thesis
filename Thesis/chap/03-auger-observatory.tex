@@ -69,72 +69,130 @@ Ignoring three exceptions (see \autoref{ssec:heat}), all telescopes are grouped
 at four \FD sites, where a collection of six identical setups offer a $180^\circ
 \times30^\circ$ view (Azimuth $\times$ Elevation) over the \SD array. 
 \autoref{fig:auger-map} shows the location of these sites relative to the \SD.
+Commonly, these sites are referred to via their names \CO, \LA, \LM, and \LL.
 
-\todo{auger map}
 \begin{figure}[t]
   \centering
-  \subfloat[]{\includegraphics[width=0.48\textwidth]{auger-observatory/auger_array-small-gs.jpg}
+  \subfloat[]{\includegraphics[width=0.48\textwidth]{auger-observatory/auger_array-small.png}
   \label{fig:auger-map}
   }\hspace{0.2cm}
-  \subfloat[]{\includegraphics[width=0.48\textwidth]{}
-  \label{fig:LABEL}
+  \subfloat[]{\includegraphics[width=0.48\textwidth]{auger-observatory/fd_schematic.png}
+  \label{fig:fd-schematic}
   }
   \caption[]{\subref{fig:auger-map} Overview of the \PAO. The black dots give the 
   location of \WCDs. The blue lines indicate the location and FOV of the \FD. 
-  HEAT (red) overlooks the Infill area of the \SD-array \subref{fig:LABEL} }
+  HEAT (red) overlooks the Infill area of the \SD-array. From \cite{darkoWebsite}. 
+  \subref{fig:fd-schematic} A schematic view inside a single telescope, or bay, 
+	of an \FD building, adopted from \cite{}.\todo{find source}}
   \label{fig:pao-images}
 \end{figure}
-
 
 
 \subsection{Telescope design}
 \label{ssec:fd-design}
 
-The \FD components located on the optical axis are (in the order that light 
-traverses them):
+The \FD telescopes are designed following the schematic of a Schmidt camera with 
+corrector plates. The individual components located on the optical axis are, in 
+the order that light traverses them:
 
 \begin{itemize}
   \item \textbf{Shutter:} \\
-  Consists of two massive metal doors that block the light propagation. Several 
-  mechanisms automatically close the shutters to shield the telescope from e.g.
-  atmospheric influences like wind and rain, or an unacceptably high light flux.
+  The shutter consists of two massive metal doors that block the light 
+  propagation. Several mechanisms automatically close the shutters to shield the 
+  telescope from e.g. atmospheric influences like wind and rain, or an 
+  unacceptably high light flux.
   \item \textbf{UV Filter:} \\
-  Visible background light is irrelevant to the phenomena observed by the \FD
-  and can, in some cases, damage electronics. A MUG6 UV-filter is installed in 
-  the light path for this reason. It separates the climate controlled inside of 
-  the \FD buildings from the outside.
+  A MUG6 UV-filter is installed in the light path in order to block visible 
+  light from entering the telescope, and potentially damaging the sensitive 
+  electronics. It separates the climate controlled inside of the \FD buildings 
+  from the outside.
+  \item \textbf{Corrector:} \\
+  A ring of aspheric corrector lenses is located at the edge of the aperture,
+  the ring has an inside diameter of \SI{1.7}{\meter} and serves to increase 
+  the light collection area, while minimizing spherical aberration in the 
+  camera.
   \item \textbf{Curtain:} \\
-  A secondary failsafe, that prevents high-intensity light from reaching the 
-  sensitive electronics. During nominal operation the curtain sits outside of
-  the light path. It can be deployed in emergency situations, or during daytime
+  The curtain provides a secondary failsafe, that prevents high-intensity light 
+  from reaching the electronics. During nominal operation the curtain sits outside 
+  of the light path. It can be deployed in emergency situations, or during daytime
   work and maintenance.
   \item \textbf{Mirror:} \\
-  asdasd
+  The mirrors are a set of hexagonally (square, in the case of \LL) segmented 
+  mirrors aligned in a concave $\SI{3.6}{\meter}\times\SI{3.6}{\meter}$ shape, 
+  which reflects and concentrates incoming light towards the camera.
   \item \textbf{Camera:} see next subsection.
 \end{itemize}
 
-A schematic overview of the setup 
+A schematic overview of the setup in each telescope bay is given in
+\cref{fig:fd-schematic}.
 
-\subsection{Camera design}
+\subsection{Camera and Readout Electronics}
+
+The camera is made up of 440 highly sensitive \PMTs that make up the individual
+pixels. They are arranged in 22 rows and 20 columns. Each pixel has a solid angle 
+acceptance of $\Omega = \SI{5.94e-4}{\sr}$. Reflective star shapes with threefold 
+symmetry are mounted between pixels. They are commonly referred to as Mercedes 
+stars, due to their characteristic shape, and increase both light collection as 
+well as ensure a good point resolution between adjacent pixels.
+
+The pixel data is read out at a sampling frequency of \SI{10}{\mega\hertz} 
+(\SI{20}{\mega\hertz} in the case of \HE). \todo{continue}
 
 
-\subsection{HEAT}
+\subsection{High Elevation Auger Telescope (HEAT)}
 \label{ssec:heat}
 
+Three additional telescopes, called \HEs are located close to the Coihueco site.
+The construction of these telescopes is identical to the telescopes discussed
+above. However, in the case of \HE, the entire telescope frame can be rotated,
+which allows the observation of the upper atmosphere, and effectively extends the 
+energy scale seen by the \FD to lower energies.
 
 
-\subsection{Calibration of measurements}
+\subsection{Telescope Calibration}
 \label{ssec:fd-calibration}
 
+The UV-telescopes observe the longitudinal shower profile as an EAS develops. As 
+shown in \autoref{chap:cosmic-rays}, this enables the \FD to estimate the total 
+energy of the primary particle, by relating it to the count of photons observed 
+in the telescope.
+
+The individual pixel PMTs show a drop \todo{is this correct?} in voltage when exposed to UV light. This
+voltage gets converted to \ADC via \todo{what?}. The exact \ADC value that a 
+given voltage corresponds to is completely determined by the PMT gain, and
+fluctuates over the course of a measurement night. Thus in order to obtain a 
+physically meaningful observable the conversion factor of \ADC $\rightarrow$ 
+photon number needs to be known. This is achieved by illuminating the \FD camera 
+with a light source of known intensity, and measuring the camera response. 
+
 \subsubsection{Drum calibration}
+
+
+
 \subsubsection{XY-scanner}
+
+
+
+\subsubsection{Calibration A}
+
+In order to track the relative drift between absolute calibration campaigns,
+an LED located in the center of the mirror shoots a known amount of light
+directly at the camera. It is performed twice each night, once before \DAQ, and 
+once more after \DAQ.
+
+The importance of this so-called Calibration A becomes apparent when examining the
+response of the \FD cameras, as e.g. shown in \autoref{fig:calibration-a-signal}.
+
+
+\todo{cal a plot}
+
 
 \section{The Surface Detector}
 \label{sec:sd}
 
 \todo[inline]{roughly mention design, duty cycle}
 
-\section{Central Data Acquisition System}
+\section{Central Data Acquisition System (CDAS)}
 \label{sec:cdas}
 
 

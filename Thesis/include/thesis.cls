@@ -18,6 +18,8 @@
 \usepackage{mparhack}
 \usepackage[printonlyused, withpage]{acronym}
 \newcommand{\word}[2]{\acro{#1}{\textit{#2}}}
+
+
 \usepackage[dvipsnames, table]{xcolor}
 \usepackage{changes}
 \usepackage{blindtext}
@@ -241,7 +243,7 @@
         \end{tikzpicture}
         \hfill
         \begin{minipage}[t][1.3cm][b]{\textwidth-\qrlength-2.6\titlesep}
-            \centering\fontsize{25pt}{0pt}\selectfont\Contour{\ifnum\thechapter=0\fontsize{50}{0}\selectfont\else Part\ \thechapter:\ \fi#1}
+            \centering\fontsize{25pt}{0pt}\selectfont\Contour{\ifnum\thechapter=0\fontsize{50}{0}\selectfont\else\fi#1}
         \end{minipage}
     }
     [%

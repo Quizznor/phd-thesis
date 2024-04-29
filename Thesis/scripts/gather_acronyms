@@ -1,0 +1,54 @@
+#!/bin/bash
+
+DOCSTRING1="%! TEX root = ../main.tex\n"
+DOCSTRING2="% this file was automatically created"
+DOCSTRING3="% via make by ../scripts/gather_acronyms.tex\n"
+DOCSTRING4="\let\oldbaselinestretch=\\\baselinestretch%"
+DOCSTRING5="\\\renewcommand{\\\baselinestretch}{1.5}%"
+DOCSTRING6="\pagestyle{plain}\n"
+DOCSTRING7="\chapter*{Acronyms}"
+DOCSTRING8="\label{chapter:acronyms}\n"
+DOCSTRING9="This is a list of alphabetically sorted acronyms used throughout this work.\n"
+
+
+case $HOSTNAME in
+	"beep-boop")
+		BASE="/home/quizznor/projects/phd-thesis/Thesis/include/"
+		;;
+	"rook")
+		BASE="/home/quiznor/Projects/phd-thesis/Thesis/include/"
+		;;
+	*"crcws"*)
+		BASE="/cr/users/filip/Thesis/include/"
+		;;
+	"debian")
+		BASE="/home/filip/Desktop/phd-thesis/Thesis/include/"
+esac
+
+TARGET="$BASE/acronyms.tex"
+
+echo -e $DOCSTRING1 > "$BASE/acronyms.tex"
+echo -e $DOCSTRING2 >> "$BASE/acronyms.tex"
+echo -e $DOCSTRING3 >> "$BASE/acronyms.tex"
+echo -e $DOCSTRING4 >> "$BASE/acronyms.tex"
+echo -e $DOCSTRING5 >> "$BASE/acronyms.tex"
+echo -e $DOCSTRING6 >> "$BASE/acronyms.tex"
+echo -e $DOCSTRING7 >> "$BASE/acronyms.tex"
+echo -e $DOCSTRING8 >> "$BASE/acronyms.tex"
+echo -e $DOCSTRING9 >> "$BASE/acronyms.tex"
+
+echo -e "\\\begin{acronym}[AAAAA]" >> "$BASE/acronyms.tex" 
+echo -e "% some of the plural acros here are clearly bogus" > "$BASE/definitions.tex"
+while read line; do
+  FIELD=($line)
+  SHORT="${FIELD[0]}"
+  LONG="${FIELD[@]:1}"
+
+  echo -e \\\\"acro{$SHORT}{$LONG}" >> "$BASE/acronyms.tex"
+  echo -e \\\\"newcommand{"\\\\"$SHORT}{"\\\\"ac{$SHORT}}" >> "$BASE/definitions.tex"
+  echo -e \\\\"newcommand{"\\\\"$SHORT"s}{\\\\"acp{$SHORT}}" >> "$BASE/definitions.tex"
+
+done < "$BASE/acronyms.source"
+echo -e "\\\end{acronym}\n" >> "$BASE/acronyms.tex"
+echo -e "\let\\\baselinestretch=\oldbaselinestretch" >> "$BASE/acronyms.tex"
+echo -e "\\input{include/definitions.tex}" >> "$BASE/acronyms.tex"

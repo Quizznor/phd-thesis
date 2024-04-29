@@ -106,6 +106,8 @@ for key in ['ssh', './copy_data_to_iap.sh', './copy_to_iap.sh']:
 
 ##################################################################################
 
+plt.rcParams["figure.figsize"] = [11, 2.5]
+
 for i, cmd in enumerate(cmds, 0):
     
     tooltip = make_tooltip(i)
@@ -118,7 +120,6 @@ for i, cmd in enumerate(cmds, 0):
     line = tool.kd1d_estimate(data, bandwidth=3e5)
     X = np.linspace(min(data), max(data), 10000)
 
-    plt.rcParams["figure.figsize"] = [11, 2.5]
     plt.plot(X, line(X), lw=3, c="#009999")
     plt.xlim(phd_start.timestamp(), phd_end.timestamp())
     plt.xticks([])
