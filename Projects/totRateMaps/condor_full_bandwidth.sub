@@ -3,13 +3,13 @@ Executable      = /cr/users/filip/Projects/totRateMaps/do_calculations_full_band
 error           = /cr/users/filip/Projects/totRateMaps/do_calculations.err
 #output          = /cr/users/filip/Projects/totRateMaps/do_calculations.out
 
-STATION         = Constanza
+STATION         = Nadia
 
 should_transfer_files = YES
 transfer_input_files = /cr/users/filip/bin/utils
 arguments       = "$(STATION) $(Process)"
 request_memory  = 2G
 max_idle        = 150
-# max_materialize = 20
+max_materialize = 50
                                                 
 queue 1000

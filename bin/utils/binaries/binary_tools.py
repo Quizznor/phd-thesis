@@ -7,7 +7,7 @@ class ProgressBar():
 
     def __init__(self, data : Iterable, /, **kwargs) -> None :
         self.print_every = kwargs.get('print_every', 1)
-        self.newline = kwargs.get('newline', True)
+        self.newline = kwargs.get('newline', False)
         self.enum = kwargs.get('enum', -1)
         self.bar_length = kwargs.get('len', 20)
         self.desc = kwargs.get('desc', '')

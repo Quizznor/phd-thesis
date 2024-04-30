@@ -22,12 +22,13 @@ alias "uub"="cd /cr/data02/AugerPrime/UUB/UubRandoms/"
 
 # set environment for ssh, some other stuff
 export TERM=xterm
-export OFFLINE="/cr/data01/filip/set_offline_env.sh"
-export ONNXLIBPATH="${ONNXPATH}/build/Linux/MinSizeRel"
-export ONNXINCPATH="${ONNXPATH}/include/onnxruntime/core/session"
-export PATH="${PATH}:/cr/users/filip/bin"
-export PATH="${PATH}:/cr/data01/filip/irods/dependencies/usr/bin"
-export LD_LIBRARY_PATH="/cr/data01/filip/irods/dependencies/usr/lib/x86_64-linux-gnu"
+export OFFLINE="/cr/data01/filip/offline/bd0e9e/set_offline_env.sh"
+export CPLUS_INCLUDE_PATH=/usr/include/c++/11/tr1/
+#export ONNXLIBPATH="${ONNXPATH}/build/Linux/MinSizeRel"
+#export ONNXINCPATH="${ONNXPATH}/include/onnxruntime/core/session"
+#export PATH="${PATH}:/cr/users/filip/bin"
+#export PATH="${PATH}:/cr/data01/filip/irods/dependencies/usr/bin"
+#export LD_LIBRARY_PATH="/cr/data01/filip/irods/dependencies/usr/lib/x86_64-linux-gnu"
 
 #if [ -z "$LE_LIBRARY_PATH" ]; then
 #	export LD_LIBRARY_PATH="/cr/users/filip/anaconda3/lib"

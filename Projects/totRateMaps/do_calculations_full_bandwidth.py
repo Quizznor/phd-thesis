@@ -59,7 +59,7 @@ params = list(product(multiplicities, threshold))
 
 m, t = params[int(sys.argv[2])]
 try:
-    already_calculated = np.loadtxt(f'/cr/users/filip/Data/totRateMap/{STATION}_FBW.txt', usecols=[0, 1])
+    already_calculated = np.loadtxt(f'/cr/data01/filip/Data/totRateMap/{STATION}_FBW.txt', usecols=[0, 1])
     for _m, _t in already_calculated:
         if _m == m and _t == t: sys.exit(f"calculation already exists for {m, t}")
 except FileNotFoundError:
@@ -81,5 +81,5 @@ for File in tools.ProgressBar(UubRandom(f'{STATION}', 'wcd'), newline=False):
         totd_sum += time_over_threshold_deconvoluted(calibrated, t, m)
         total_time += 2048 * 8.33e-9
 
-with open(f'/cr/users/filip/Data/totRateMap/{STATION}_FBW.txt', 'a+') as file:
+with open(f'/cr/data01/filip/Data/totRateMap/{STATION}_FBW.txt', 'a+') as file:
     file.write(f"{m} {t} {tot_sum} {totd_sum} {total_time}\n")
