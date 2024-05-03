@@ -175,14 +175,17 @@ with a light source of known intensity, and measuring the camera response.
 
 \subsubsection{Calibration A}
 
-In order to track the relative drift between absolute calibration campaigns,
-an LED located in the center of the mirror shoots a known amount of light
-directly at the camera. It is performed twice each night, once before \DAQ, and 
-once more after \DAQ.
+In order to track the relative drift between absolute calibration campaigns, an 
+LED located in the center of the mirror shoots a known amount of light directly 
+at the \FD camera. It is performed twice each night, once before \DAQ, and once 
+more after \DAQ.
 
 The importance of this so-called Calibration A becomes apparent when examining the
 response of the \FD cameras, as e.g. shown in \autoref{fig:calibration-a-signal}.
-
+Comparing measurements across a larger timespan, it can be seen that the Cal A
+before \DAQ systematically has less recovered signal, i.e. measures fewer \ADC
+than the post-\DAQ run, while in both runs the cameras are exposed to the same 
+amount of light.
 
 \todo{cal a plot}
 
