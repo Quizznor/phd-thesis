@@ -167,6 +167,7 @@ with a light source of known intensity, and measuring the camera response.
 
 \subsubsection{Drum calibration}
 
+The first absolute calibration of the \FD telescopes is the Drum calibration. 
 
 
 \subsubsection{XY-scanner}
@@ -185,7 +186,12 @@ response of the \FD cameras, as e.g. shown in \autoref{fig:calibration-a-signal}
 Comparing measurements across a larger timespan, it can be seen that the Cal A
 before \DAQ systematically has less recovered signal, i.e. measures fewer \ADC
 than the post-\DAQ run, while in both runs the cameras are exposed to the same 
-amount of light.
+amount of light. Moreover, the recovered signal after extended downtimes is lower
+than at the end of a measurement period.
+
+This is a consequence of the \PMT electronics being turned off between measurment 
+cycles. Each time this occurs, \PMTs first have to warm up again, until full
+collection efficiency for incoming photons is reached.
 
 \todo{cal a plot}
 
