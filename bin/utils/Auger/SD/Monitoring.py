@@ -9,6 +9,7 @@ import os
 class Monit():
 
     monit_path = '/cr/auger02/Prod/monit/Sd/'
+    monit_path2 = '/cr/data01/filip/Data/monit'
 
     def __init__(self, years : list[int], months : list[int], days : list[int], /, *, starting_branch=None, verbosity=logging.INFO) -> None :
 
@@ -18,17 +19,23 @@ class Monit():
         if isinstance(days, int): days = [days]
         
         self.logger = create_stream_logger("SD.Monitor", loglevel=verbosity)
-        to_path = lambda y, m, d : f"{self.monit_path}/{y:04}/{m:02}/mc_{y:04}_{m:02}_{d:02}_00h00.root"
-        files = [to_path(YYYY, MM, DD) for YYYY, MM, DD in product(years, months, days)]
-        self.logger.info(f'received {len(files)} file(s) as input')
-        temp = set([file for file in files if not os.path.isfile(file)])
-        for file in temp: self.logger.warning(f"I cannot find {file}!")
+        self.logger.info(f'received {len(list(product(years, months, days)))} file(s) as input')
+
+        full_file_paths = []
+        for y, m, d in product(years, months, days):
+            if os.path.isfile(f"{self.monit_path}/{y:04}/{m:02}/mc_{y:04}_{m:02}_{d:02}_00h00.root"):
+                full_file_paths.append(f"{self.monit_path}/{y:04}/{m:02}/mc_{y:04}_{m:02}_{d:02}_00h00.root")
+            elif os.path.isfile(f"{self.monit_path2}/mc_{y:04}_{m:02}_{d:02}_00h00.root"):
+                full_file_paths.append(f"{self.monit_path2}/mc_{y:04}_{m:02}_{d:02}_00h00.root")
+            else:
+                self.logger.error(f"I cannot find the monit file for {y:04}-{m:02}-{d:02} !!!")
+                raise FileNotFoundError
         
         """
         opening individual files is faster than concatenate, iterate etc.,
         because we dont immediately load everything into memory at once
         """
-        self.__streams = [uproot.open(f"{file}:{starting_branch}") for file in set(files) - temp]
+        self.__streams = [uproot.open(f"{file}:{starting_branch}") for file in full_file_paths]
 
         """these keys surely generalize to the entire dataset..."""
         temp, self._keys = self.__streams[0].keys(), {}
@@ -78,5 +85,5 @@ class Monit():
             except KeyError:
                 continue
 
-    def keys(self) -> str :
-        return json.dumps(self._keys, indent=2)
+    def keys(self) -> typing.NoReturn :
+        print(json.dumps(self._keys, indent=2))

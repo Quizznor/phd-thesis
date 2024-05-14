@@ -125,3 +125,8 @@ def bootstrap_ci(fctn : callable, popt : list, pcov : list, x_vals : list, ci : 
         err_down = np.minimum(err_down, fctn(x_vals, *params))
 
     return err_up, err_down
+
+def closest(array : list[Any], value, index = False) -> Any :
+    """return the element closest to value from a collection of values in array"""
+    closest_index = np.argmin(np.abs(np.array(array) - value))
+    return closest_index if index else array[closest_index]
