@@ -1,9 +1,9 @@
 JobBatchName    = tot(d)_rate_calculation_$(STATION)_FBW
 Executable      = /cr/users/filip/Projects/totRateMaps/do_calculations_full_bandwidth.py
-error           = /cr/users/filip/Projects/totRateMaps/do_calculations.err
+error           = /cr/data01/filip/Data/logs/do_FBW_calculations-$(Process).err
 #output          = /cr/users/filip/Projects/totRateMaps/do_calculations.out
 
-STATION         = Nadia
+STATION         = Svenja
 
 should_transfer_files = YES
 transfer_input_files = /cr/users/filip/bin/utils
