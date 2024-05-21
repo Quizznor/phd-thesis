@@ -1,0 +1,14 @@
+[DEFAULT]
+base = /cr/users/filip/Projects/TestingWorld/
+build = /tmp/filip/ape-build/
+ 
+[ape]
+mirrors = de mx
+jobs = 1
+logs = %(base)s/logs
+distfiles = %(base)s/distfiles 
+
+# force GNU compilers for older systems
+cc = gcc
+cxx = g++
+

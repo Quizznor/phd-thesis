@@ -7,8 +7,8 @@
 int main(int argc, char *argv[]) 
 {
     
-  ofstream outSSDFile("/cr/data01/filip/Data/muonAcquisition/T3events/day/t3_histos.ssd", ios_base::trunc);
-  ofstream outWCDFile("/cr/data01/filip/Data/muonAcquisition/T3events/day/t3_histos.wcd", ios_base::trunc);
+  ofstream outSSDFile("/cr/data01/filip/Data/muonAcquisition/T3events/night/t3_histos.ssd", ios_base::trunc);
+  ofstream outWCDFile("/cr/data01/filip/Data/muonAcquisition/T3events/night/t3_histos.wcd", ios_base::trunc);
   EventPos pos; IoSd input(argc - 1, argv + 1);
 
   std::vector<UInt_t> positions = {1840, 1823, 660, 1845, 643, 1839, 659, 1844};
@@ -47,6 +47,8 @@ int main(int argc, char *argv[])
       {
         histo += to_string(ssdPeakHisto[i]) + ' ';
       }
+      const auto& ssdPmt = stationCalib->DA[5];
+      std::cout << ssdPmt << '\n';
 
       // calibration histograms for WCD PMTs
       const auto wcdPeakHisto = calibrationHistograms->Peak;
