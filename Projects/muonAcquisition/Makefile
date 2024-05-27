@@ -4,7 +4,7 @@
 hdf5 := $(shell auger-offline-config --cppflags | awk -v FS='External' '/Geant4/{print $$1}')
 
 CPPFLAGS := -I. -I./src -I/usr/include $(shell auger-offline-config --cppflags) \
-						$(hdf5)External/hdf5/1.10.1/include
+            $(hdf5)External/hdf5/1.10.1/include
 CXXFLAGS := -v -ggdb3 -Wall -Wextra -Wtype-limits -std=c++17 -O0 \
             -fno-inline -fno-omit-frame-pointer -fsanitize=address \
 

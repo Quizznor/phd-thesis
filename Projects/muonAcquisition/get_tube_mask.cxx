@@ -47,6 +47,8 @@ int main(int argc, char *argv[])
       {
         histo += to_string(ssdPeakHisto[i]) + ' ';
       }
+      const auto& ssdPmt = stationCalib->DA[5];
+      std::cout << ssdPmt << '\n';
 
       // calibration histograms for WCD PMTs
       const auto wcdPeakHisto = calibrationHistograms->Peak;

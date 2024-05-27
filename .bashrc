@@ -5,8 +5,7 @@
 ## MANUAL CHANGES ############################################################
 
 trap - DEBUG
-
-export USERNAME=filip
+#export USERNAME=filip
 
 # workflow
 alias "re"="screen -Dr"
@@ -22,8 +21,11 @@ alias "uub"="cd /cr/data02/AugerPrime/UUB/UubRandoms/"
 
 # set environment for ssh, some other stuff
 export TERM=xterm
+export PATH="${PATH}:/cr/users/filip/bin"
+#export CPLUS_INCLUDE_PATH=/usr/include/c++/ahashdaha:$CPLUS_INCLUDE_PATH
+
 export OFFLINE="/cr/data01/filip/offline/bd0e9e/set_offline_env.sh"
-export CPLUS_INCLUDE_PATH=/usr/include/c++/11/tr1/
+#export CPLUS_INCLUDE_PATH=/usr/include/c++/11/tr1/
 #export ONNXLIBPATH="${ONNXPATH}/build/Linux/MinSizeRel"
 #export ONNXINCPATH="${ONNXPATH}/include/onnxruntime/core/session"
 #export PATH="${PATH}:/cr/users/filip/bin"
