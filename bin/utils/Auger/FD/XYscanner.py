@@ -1,5 +1,6 @@
 from ...binaries import uncertainties
 from ...binaries import pd
+from ...binaries import np
 from ...plotting import plt
 from . import AperturePlot, PixelPlot
 
