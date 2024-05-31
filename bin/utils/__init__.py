@@ -5,6 +5,14 @@ import logging
 import time
 import re
 
+from dataclasses import dataclass
+
+@dataclass
+class CONSTANTS():
+
+    AUGER_FD_ROOT : str = '/cr/users/filip/bin/utils/Auger/FD'
+    
+
 class Formatter(logging.Formatter):
     """Custom logging class to allow for stylized formatting, and (rough) runtime analysis"""
 

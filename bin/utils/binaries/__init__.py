@@ -15,3 +15,5 @@ binaries_logger.warn('pandas support to be dropped at some point!')
 # binaries_logger.info('import polars as pl')
 from . import binary_tools as tools
 binaries_logger.info('import binaries.tools as tools')
+
+from dataclasses import dataclass
