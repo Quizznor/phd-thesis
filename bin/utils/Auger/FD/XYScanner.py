@@ -2,7 +2,173 @@ from ...binaries import uncertainties
 from ...binaries import pd
 from ...binaries import np
 from ...plotting import plt
+from matplotlib import colors
 from . import AperturePlot, PixelPlot
+from ... import CONSTANTS
+
+class XYComparisonGrid():
+
+    data_path : str = f'{CONSTANTS.AUGER_FD_ROOT}/xy_measurements.pkl'
+    n_bays : dict = {t : 6 if t != 'HE' else 3 for t in['LL', 'LM', 'LA', 'CO', 'HE']}
+
+    def __init__(self, telescopes = ['LL', 'LM', 'LA', 'CO', 'HE'], dates = None) -> None :
+
+        import pickle
+        with open(f'{CONSTANTS.AUGER_FD_ROOT}/xy_measurements.pkl', 'rb') as f:
+            measurements = pickle.load(f)
+
+        self.n_rows, self.n_cols, dates = self.get_rows_and_cols(measurements, telescopes, dates)
+        self.xlabels = [[f'{t}{n}' for n in range(1, self.n_bays[t] + 1)] for t in telescopes]
+        self.xlabels = [bay for site in self.xlabels for bay in site]
+        self.ylabels = sorted(dates)
+
+        print('columns (sites):', self.xlabels)
+        print('rows    (dates):', self.ylabels)
+
+        self.grid_data = {bay : {date : [] for date in self.ylabels} for bay in self.xlabels}
+        for bay in self.xlabels:
+
+            try:
+                first_measurement = measurements[bay][0]
+                date = self.get_month(first_measurement['date'])
+
+                self.grid_data[bay][date] = first_measurement
+
+                if len(measurements[bay]) == 1: continue
+
+                last_date_entry = None
+                for measurement in measurements[bay][1:]:
+                    tmp = self.get_month(measurement['date'])
+                    self.grid_data[bay][tmp] = [measurement, first_measurement]
+                    if tmp == last_date_entry: raise ValueError(f'Multiple runs found for {tmp}')
+                    last_date_entry = tmp
+            except KeyError: continue
+
+    def plot(self) -> plt.Figure :
+
+        from matplotlib.gridspec import GridSpec
+        from matplotlib.colorbar import ColorbarBase
+        from itertools import product
+
+        fig = plt.figure(figsize=(2 * self.n_cols + 0.2, 2 * self.n_rows))
+        gs = GridSpec(
+            self.n_rows,
+            self.n_cols + 1,
+            figure=fig,
+            width_ratios = [1 for _ in range(self.n_cols)] + [0.2],
+            height_ratios = [1 for _ in range(self.n_rows)]
+        )
+
+        gs.update(left=0.05, right=0.95, wspace=0.02, hspace=0.02)
+        
+        data = [self.grid_data[self.xlabels[j]][self.ylabels[i]] for i, j in product(range(self.n_rows), range(self.n_cols))]
+        axes = iter([fig.add_subplot(gs[i, j]) for i, j in product(range(self.n_rows), range(self.n_cols))])
+        data, types, _range = self.compute_data(data)
+        self.ratio_norm = colors.CenteredNorm(1, _range)
+        
+        for i, j in product(range(self.n_rows), range(self.n_cols)):
+            self.draw_axis(i, j, next(axes), next(data), next(types))
+       
+        cax = fig.add_subplot(gs[:, -1])
+        ColorbarBase(cax, cmap=plt.cm.coolwarm, norm=self.ratio_norm, orientation='vertical')
+
+        return fig
+
+    def draw_axis(self, row, col, ax, data, type) -> None :
+
+        if col == 0: 
+            ax.set_ylabel(self.ylabels[row])
+        if row == 0:
+            ax.set_title(self.xlabels[col])
+
+        if len(data) != 0:
+            kwargs = {'norm' : self.ratio_norm if type else None,
+                      'cmap' : plt.cm.coolwarm if type else None}
+            PixelPlot(data, ax=ax, axis_off = False, **kwargs)
+        
+        self.hide_axis(ax) 
+
+    def compute_data(self, data) -> tuple[list, list, float, float] :
+
+        standard_deviations = []
+        types, computed_data = [], []
+        for runs in data:
+            match len(runs):
+                case 0:
+                    computed_data.append([])
+                    types.append(0)
+
+                case 2:
+                    xy_pixels1 = self.read_data_and_normalize(runs[0])
+                    xy_pixels2 = self.read_data_and_normalize(runs[1])
+                    ratio = xy_pixels1 / xy_pixels2
+                    computed_data.append(ratio)
+                    types.append(1)
+
+                    standard_deviations.append(ratio.std())
+
+                case 4:
+                    xy_pixels = self.read_data_and_normalize(runs)
+                    computed_data.append(xy_pixels)
+                    types.append(0)
+                    
+        return iter(computed_data), iter(types), 5 * np.mean(standard_deviations)
+    
+    @staticmethod
+    def hide_axis(ax : plt.Axes) -> None :
+        ax.spines[['right', 'top', 'left', 'bottom']].set_visible(False)
+        ax.set_xticks([])
+        ax.set_yticks([])
+
+    @staticmethod
+    def get_month(date_str) -> str :
+        return '-'.join(date_str.split('-')[:-1])
+    
+    @staticmethod
+    def read_data_and_normalize(run) -> tuple[np.ndarray, np.ndarray] :
+
+        result_dir = '/cr/data01/filip/xy-calibration/results'
+        xy, CalAs = run['XY'], run['CalA_open_shutter']
+        try:
+            CalA_signal = np.zeros(440)
+            
+            n_CalA = 0
+            for CalA in CalAs:
+                if CalA is None: continue
+
+                CalA_signal += np.loadtxt(f"{result_dir}/out_{CalA}.txt", usecols=[2])
+                n_CalA += 1
+
+            CalA_signal /= n_CalA
+
+        except (IndexError, AssertionError):
+            print("Malformed CalA data received, please make sure you pass \
+                in two CalAs (pre/post-XY), which have 440 pixels of data")
+
+        pixels = np.loadtxt(f"{result_dir}/out_{xy}.txt", usecols=[2]) / (CalA_signal / 50)
+        return np.array(pixels)
+
+    @staticmethod
+    def get_rows_and_cols(measurements, telescopes, dates) -> tuple[int, int, list[str]] :
+
+        n_cols = sum([6 if t != 'HE' else 3 for t in telescopes])
+
+        if dates is None:
+            times, n_rows = [], 0
+            for telescope in measurements.values():
+                for runs in telescope:
+                    times.append('-'.join(runs['date'].split('-')[:-1]))
+
+            times = np.unique(times)
+            n_rows += len(times)
+
+        return n_rows, n_cols, list(times)
+    
+    def __getitem__(self, keys) -> list :
+        if len(keys) != 2: raise ValueError(f"Please provide ['telescope', 'date']")
+
+        return self.grid_data[keys[0]][keys[1]]
+
 
 def XYComparisonPlot(*runs : list[dict], cmap=plt.cm.coolwarm, hist_bins=50, vmin=0.6, vmax=1.4, contrast_boost=False) -> plt.figure :
     """Compare the results of two XY runs, normalized to their respective Cal A signal"""
@@ -188,7 +354,7 @@ def get_run_numbers(telescope : str, date : str) -> dict :
         logger = create_stream_logger('XY-logger', logging.ERROR)
         logger.error(f'requested dataset does not exist! {telescope = }, {date = }')
         return {}
-    
+
 def update_runlist_files() -> None :
 
     import pickle

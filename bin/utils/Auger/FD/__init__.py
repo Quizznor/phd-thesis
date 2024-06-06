@@ -26,17 +26,18 @@ def AperturePlot(ax=None, filterStructure=True) -> plt.axes :
 
     return ax
 
-def PixelPlot(pixel_data : np.ndarray, cmap=plt.cm.viridis, 
-              vmin=None, vmax=None, ax=None, norm=None, 
-              title=None, markpixels=[], markcolor='red', **kwargs) -> plt.axes :
+def PixelPlot(pixel_data : np.ndarray, ax=None, title=None,
+              vmin=None, vmax=None, norm=None, cmap=None,
+              markpixels=[], markcolor='red', **kwargs) -> plt.axes :
     """Plot a pixel array to the standard FD display mode of hexagonal grids"""
 
     from matplotlib.patches import RegularPolygon
     from matplotlib.colors import Normalize
 
     ax = ax if ax is not None else plt.gca()
-    ax.set_title(title if title is not None else '', pad=12)
+    ax.set_title(title if title is not None else ax.get_title())
 
+    cmap = cmap if cmap is not None else plt.cm.viridis
     vmin = vmin if vmin is not None else np.nanmin(pixel_data)
     vmax = vmax if vmax is not None else np.nanmax(pixel_data)
     norm = norm if norm is not None else Normalize(vmin=vmin, vmax=vmax)
@@ -71,7 +72,7 @@ def PixelPlot(pixel_data : np.ndarray, cmap=plt.cm.viridis,
     ax.set_xlim(-15.8, 15.8)
     ax.set_ylim(-15.8, 15.8)
     ax.invert_yaxis()
-    ax.axis('off')
     ax.set_aspect(20 / 22)
 
+    if kwargs.get('axis_off', True): ax.axis('off')
     return ax
