@@ -39,7 +39,7 @@ export OFFLINE="/cr/data01/filip/offline/bd0e9e/set_offline_env.sh"
 #fi
 
 # condor submitting etc.
-alias "cq"="condor_q -all"
+alias "cq"="condor_q -all --global"
 alias "qq"="condor_q -hold"
 alias "crm"="$HOME/bin/condor_remove.sh"
 alias "cs"="$HOME/bin/condor_submit.sh"

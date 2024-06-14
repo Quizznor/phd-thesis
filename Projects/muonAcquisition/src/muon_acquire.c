@@ -204,6 +204,7 @@ int main(int argc,char *argv[])
          cf->MonitParams.Dac[3],
          cf->MonitParams.Dac[4],
          cf->MonitParams.Dac[5]);
+         
   muonAcquire_config(&(str.cfg),argv[1],argv[2],argv[3],argv[4]);
   if(muonAcquire_init(&str,cf)==0){
     muonAcquire_run(&str);

@@ -1,10 +1,28 @@
 #!/bin/python3
 
 import sys
+import numpy as np
+from itertools import product
 sys.path.append('/cr/users/filip/bin/')
 
+STATION = sys.argv[1]
+
+# 11800 scanning points
+multiplicities = range(5, 45)
+threshold = np.linspace(0.05, 3.00, 295)
+params = list(product(multiplicities, threshold))
+
+print(len(params))
+
+m, t = params[int(sys.argv[2])]
+try:
+    already_calculated = np.loadtxt(f'/cr/data01/filip/Data/SSDtotRateMap/{STATION}_SSD.txt', usecols=[0, 1])
+    for _m, _t in already_calculated:
+        if _m == m and _t == t: sys.exit(f"calculation already exists for {m, t}")
+except FileNotFoundError:
+    pass
+
 from utils.Auger.SD.UubRandoms import *
-from itertools import product
 from utils.binaries import *
 
 def time_over_threshold(trace : np.ndarray, threshold : float = 0.2, multiplicity : int = 12) -> bool :
@@ -34,23 +52,6 @@ def time_over_threshold(trace : np.ndarray, threshold : float = 0.2, multiplicit
 #     deconvoluted_trace.append(deconvoluted_pmt)
 
 #     return time_over_threshold(np.array(deconvoluted_trace), threshold, multiplicity)
-
-STATION = sys.argv[1]
-
-# 11800 scanning points
-multiplicities = range(5, 45)
-threshold = np.linspace(0.05, 3.00, 295)
-params = list(product(multiplicities, threshold))
-
-print(len(params))
-
-m, t = params[int(sys.argv[2])]
-try:
-    already_calculated = np.loadtxt(f'/cr/data01/filip/Data/SSDtotRateMap/{STATION}_SSD.txt', usecols=[0, 1])
-    for _m, _t in already_calculated:
-        if _m == m and _t == t: sys.exit(f"calculation already exists for {m, t}")
-except FileNotFoundError:
-    pass
 
 tot_sum, totd_sum = 0, 0
 total_time = 0
