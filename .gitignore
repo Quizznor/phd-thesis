@@ -4,7 +4,7 @@
 .lesshst
 .plan
 .profile
-.python_history
+.python_history*
 .selected_editor
 .wget-hsts
 .Xauthority
