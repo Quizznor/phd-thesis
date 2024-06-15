@@ -31,6 +31,11 @@ f
 
 """
 
+def print_history(history):
+    max_key_len = max([len(key) for key in history.keys()])
+    for key, item in history.items():
+        print(f"{key: <{max_key_len}}: {item * '|': >{116-max_key_len}}")
+
 pickle_location = f"/cr/users/{os.getlogin()}/bin/history.pickle"
 
 # # main script for stats keeping
@@ -42,25 +47,28 @@ if __name__ == "__main__":
     except FileNotFoundError:
         history = {}
 
-    # make it possible to just print and exit
-    if sys.argv[1] == "list":
-        print(history)
-        sys.exit()
-    # don't save stuff written from vscode
-    elif sys.argv[1].startswith("__vsc") or 'node' in sys.argv[1]:
-        sys.exit()
-    # don't save stats on login / logout
-    elif sys.argv[1] == "/cr/users/filip/bin/exit.sh" or sys.argv[1].startswith('PATH'):
-        sys.exit()
-    # whatever calls these things
-    elif sys.argv[1] in ['[', '[[', "'", '"', 'builtin', 'unset', 'trap']:
-        sys.exit()
-    # keep stats on everything else
-    else:
-        try:
-            history[sys.argv[1]] += 1
-        except KeyError:
-            history[sys.argv[1]] = 1
+    try:
+        # make it possible to just print and exit
+        if sys.argv[1] == "list":
+            print_history(history)
+            sys.exit()
+        # don't save stuff written from vscode
+        elif sys.argv[1].startswith("__vsc") or 'node' in sys.argv[1]:
+            sys.exit()
+        # don't save stats on login / logout
+        elif sys.argv[1] == "/cr/users/filip/bin/exit.sh" or sys.argv[1].startswith('PATH'):
+            sys.exit()
+        # whatever calls these things
+        elif sys.argv[1] in ['[', '[[', "'", '"', 'builtin', 'unset', 'trap']:
+            sys.exit()
+        # keep stats on everything else
+        else:
+            try:
+                history[sys.argv[1]] += 1
+            except KeyError:
+                history[sys.argv[1]] = 1
 
-        with open(pickle_location, "wb") as f:
-            pickle.dump(history, f, pickle.HIGHEST_PROTOCOL)
+            with open(pickle_location, "wb") as f:
+                pickle.dump(history, f, pickle.HIGHEST_PROTOCOL)
+    except IndexError:
+        pass

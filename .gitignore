@@ -54,6 +54,11 @@ Data/
 Papers
 plots/
 
+# zsh
+.histfile
+.zsh_history
+.oh-my-zsh
+
 # Offline
 Make-depend
 *.o
