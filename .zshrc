@@ -3,6 +3,7 @@
 
 export TERM=xterm
 export ZSH_COMPDUMP=$ZSH/cache/.zcompdump-$HOST
+export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#ff00ff,bold,underline"
 
 alias ls="ls -liS"
 alias "crc2"="LC_BYOBU=0 ssh crcws02"
@@ -23,7 +24,7 @@ function keep_stats() {
 
 function chpwd() {
     emulate -L zsh
-    ls -lF
+    ls -ClF
 }
 
 autoload -Uz add-zsh-hook
