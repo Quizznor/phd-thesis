@@ -3,7 +3,8 @@
 echo $@
 source $OFFLINE
 
-userAugerOffline --bootstrap $BOOTSTRAP
+cd ../Offline
+./userAugerOffline --bootstrap $1
 
 # BOOTSTRAP_TRG="/cr/work/filip/Simulations/Bootstraps/bootstrap_1337.xml"
 # BOOTSTRAP_SRC="./bootstrap.xml.in"

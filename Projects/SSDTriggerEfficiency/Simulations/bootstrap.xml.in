@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 
 <!DOCTYPE bootstrap [
-  <!ENTITY standardSdIdealDetConfig SYSTEM '/standardSdIdealDetConfig.xml'>
+  <!ENTITY standardSdIdealDetConfig SYSTEM '@CONFIGDIR@/standardSdIdealDetConfig.xml'>
   <!ENTITY standardSdSimModuleConfig SYSTEM '@CONFIGDIR@/standardSdSimModuleConfig.xml'>
   <!ENTITY standardSdRecModuleConfig SYSTEM '@CONFIGDIR@/standardSdRecModuleConfig.xml'>
 ]>
@@ -20,23 +20,23 @@
     <configLink
       id         = "ModuleSequence"
       type       = "XML"
-      xlink:href = "./ModuleSequence.xml"/>
-
+      xlink:href = "../Simulations/ModuleSequence.xml"/>
     <configLink
       id         = "EventFileReader"
       type       = "XML"
-      xlink:href = "./EventFileReader.xml"/>
+      xlink:href = "../Simulations/EventFileReader.xml"/>
 
     <configLink
       id         = "EventFileExporter"
       type       = "XML"
-      xlink:href = "./EventFileExporter.xml"/>
+      xlink:href = "../Simulations/EventFileExporter.xml"/>
 
     <configLink
       id         = "EventGenerator"
       type       = "XML"
-      xlink:href = "./EventGenerator.xml"/>
+      xlink:href = "../Simulations/EventGenerator.xml"/>
 
+<!-- 
    <configLink
        id         = "SStationListXMLManager"
        type       = "XML"
@@ -45,7 +45,7 @@
    <configLink
        id         = "SDenseStationListXMLManager"
        type       = "XML"
-       xlink:href = './SDenseStationsPurged.xml'/>
+       xlink:href = './SDenseStationsPurged.xml'/> -->
 
   </centralConfig>
 
