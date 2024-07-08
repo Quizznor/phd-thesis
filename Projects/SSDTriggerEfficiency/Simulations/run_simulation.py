@@ -16,7 +16,7 @@ replacements = {
     '@OUTPUTFILE@' : target_file,
     '@INPUTFILE@' : source_file,
     '@DETECTORSEED@' : f"{proc_no:06}",
-    '@PHYSICSSEED@' : f"{proc_no:06}",
+    '@PHYSICSSEED@' : f"{int(proc_no) + 1:06}",
     '@PATTERNPATH@' : '*',                      # TODO: will fail for some shit
     '@GROUNDDATA@' : '(1)'                      # TODO: will fail for some shit
 }

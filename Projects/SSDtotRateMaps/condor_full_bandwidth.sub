@@ -1,6 +1,6 @@
 JobBatchName    = ssd_tot(d)_rate_calculation_$(STATION)
 Executable      = /cr/users/filip/Projects/SSDtotRateMaps/do_calculations_full_bandwidth.py
-error           = /cr/tempdata01/filip/condor/SSDtotRateMaps/SSDtotRateMaps-$(Process).err
+error           = /cr/tempdata01/filip/condor/SSDtotRateMaps/SSDtotRateMaps-$(Process).out
 output          = /cr/tempdata01/filip/condor/SSDtotRateMaps/SSDtotRateMaps-$(Process).out
 
 STATION         = Nadia

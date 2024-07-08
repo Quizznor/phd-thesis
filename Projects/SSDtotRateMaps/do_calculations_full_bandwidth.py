@@ -12,8 +12,6 @@ multiplicities = range(5, 45)
 threshold = np.linspace(0.05, 3.00, 295)
 params = list(product(multiplicities, threshold))
 
-print(len(params))
-
 m, t = params[int(sys.argv[2])]
 try:
     already_calculated = np.loadtxt(f'/cr/data01/filip/Data/SSDtotRateMap/{STATION}_SSD.txt', usecols=[0, 1])

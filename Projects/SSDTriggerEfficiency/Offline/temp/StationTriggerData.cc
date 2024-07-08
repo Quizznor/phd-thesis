@@ -1,4 +1,5 @@
-#include "StationTriggerData.h"
+#include <sevt/StationTriggerData.h>
+
 
 namespace sevt {
 
@@ -24,8 +25,6 @@ namespace sevt {
       return eMuon;
     if (IsRDThreshold())
       return eRDThreshold;
-    if (IsForced())
-      return eForced;
 
     return eNone;
   }
@@ -87,10 +86,6 @@ namespace sevt {
       fPLDTrigger = ePLDLatchRD;
       fErrorCode = eNoError;
       break;
-    case eForced:
-      fWindowMicroSecond = 0;
-      fPLDTrigger = ePLDRandom;
-      fErrorCode = eNoError;
     }
   }
 
@@ -106,7 +101,6 @@ namespace sevt {
     "Muon",
     "Silent",
     "RD Threshold",
-    "Forced"
   };
 
 }

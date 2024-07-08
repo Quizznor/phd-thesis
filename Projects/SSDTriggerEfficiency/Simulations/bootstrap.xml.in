@@ -36,16 +36,15 @@
       type       = "XML"
       xlink:href = "../Simulations/EventGenerator.xml"/>
 
-<!-- 
    <configLink
        id         = "SStationListXMLManager"
        type       = "XML"
-       xlink:href = "./StationListAllStations.xml"/>
+       xlink:href = "../Simulations/CustomStationList.xml"/>
 
    <configLink
        id         = "SDenseStationListXMLManager"
        type       = "XML"
-       xlink:href = './SDenseStationsPurged.xml'/> -->
+       xlink:href = '../Simulations/SDenseStationsPurged.xml'/>
 
   </centralConfig>
 
@@ -126,6 +125,12 @@
         <WeightedStationSimulationParticleLimit> 10000 </WeightedStationSimulationParticleLimit>
       </CachedShowerRegenerator>
     </configLink> -->
+
+    <configLink id="CachedShowerRegenerator">
+      <CachedShowerRegenerator>
+        <WeightedStationSimulationParticleLimit> 1000 </WeightedStationSimulationParticleLimit>
+      </CachedShowerRegenerator>
+    </configLink>
    
 
   </parameterOverrides>

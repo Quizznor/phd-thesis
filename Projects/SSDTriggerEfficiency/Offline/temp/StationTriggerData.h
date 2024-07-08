@@ -29,8 +29,7 @@ namespace sevt {
       eRandom                         = 6,
       eMuon                           = 7,  // muons are here just for backward compatibility
       eSilent                         = 8,
-      eRDThreshold                    = 9,
-      eForced                         = 10, // for testing purposes
+      eRDThreshold                    = 9
     };
 
     enum PLDTrigger {
@@ -41,7 +40,6 @@ namespace sevt {
       ePLDLatchTOTB      = 0x00000004,  // TOTd
       ePLDLatchTOTC      = 0x00000008,  // MOPS
       ePLDLatchRandom    = 0x00000010,  // Random trigger
-      ePLDLatchForced    = 0x00000020,  // for testing purposes
       ePLDLatchRD        = 0x00100000,  // RD trigger
       // Post-latch triggers
       ePLDThreshold      = 0x00000100,  // T1 and T2 threshold
@@ -49,7 +47,6 @@ namespace sevt {
       ePLDTOTB           = 0x00000400,  // TOTd
       ePLDTOTC           = 0x00000800,  // MOPS
       ePLDRandom         = 0x00001000,  // Random trigger
-      ePLDForced         = 0x00002000,  // for testing purposes
       ePLDRD             = 0x10000000,  // RD trigger
       // (DV) Muon: this is not a PLD bit. It is set only explicitly via
       // SetAlgorithm(). This feature is maintained on behalf of some
@@ -94,9 +91,6 @@ namespace sevt {
     bool IsRDThreshold() const
     { return fPLDTrigger & ePLDTotalRD; }
 
-    bool IsForced() const
-    { return fPLDTrigger & ePLDForced; }
-
     /// T1 events have non-zero window size
     bool
     IsT1()
@@ -119,8 +113,7 @@ namespace sevt {
         IsTimeOverThreshold() ||
         IsTimeOverThresholdDeconvoluted() ||
         IsMultiplicityOfPositiveSteps() ||
-        IsRDThreshold() ||
-        IsForced();
+        IsRDThreshold();
     }
 
     /// the only flag CDAS T3 central trigger cares about
@@ -178,7 +171,6 @@ namespace sevt {
       ePLDTotalMOPS           = (ePLDLatchTOTC | ePLDTOTC),
       ePLDTotalThresholdOrTOT = (ePLDTotalThreshold | ePLDTotalTOT),
       ePLDTotalRandom         = (ePLDLatchRandom | ePLDRandom),
-      ePLDTotalForced         = (ePLDLatchForced | ePLDForced),
       ePLDTotalRD             = (ePLDLatchRD | ePLDRD)
     };
 

@@ -40,5 +40,5 @@ cd ../Offline
 # # Delete root file
 # # rm -rf $3$4_$6.root
 
-# # ???
-# rm -rf /cr/users/filip/Simulation/calculateLTP/HybridRec.dat
+# ???
+rm -rf /cr/users/filip/Projects/SSDTriggerEfficiency/Offline/HybridRec.dat
