@@ -24,7 +24,7 @@ replacements = {
 offline_config_path = "/cr/data01/filip/offline/bd0e9e/install/share/auger-offline/config"
 replace_config_dir = lambda x: x.replace("@CONFIGDIR@", offline_config_path)
 with open(target_bootstrap, 'w') as target:
-    with open('./bootstrap.xml.in', 'r') as source:
+    with open('./bootstrap.xml', 'r') as source:
         for line in source.readlines():
             try:
                 target.write(replacements[line.strip()] + "\n")

@@ -148,8 +148,7 @@ std::vector<int> consideredStations{
 
 void ExtractDataFromAdstFiles(fs::path pathToAdst)
 {
-  // const auto csvTraceFile = pathToAdst.parent_path()/ pathToAdst.filename().replace_extension("csv"); // for testing
-  const auto csvTraceFile = pathToAdst.parent_path().parent_path() / pathToAdst.filename().replace_extension("csv");
+  const auto csvTraceFile = pathToAdst.parent_path()/ pathToAdst.filename().replace_extension("csv");
 
   // (2) start main loop
   RecEventFile     recEventFile(pathToAdst.string());
@@ -170,7 +169,7 @@ void ExtractDataFromAdstFiles(fs::path pathToAdst)
     recEventFile.ReadDetectorGeometry(detectorGeometry);
 
     // create csv file streams
-    ofstream traceFile(csvTraceFile.string(), std::ios_base::app);
+    ofstream traceFile(csvTraceFile.string(), std::ios_base::trunc);
 
     // binaries of the generated shower
     // const auto SPD = detectorGeometry.GetStationAxisDistance(Id, Axis, Core);  // in m
@@ -188,13 +187,15 @@ void ExtractDataFromAdstFiles(fs::path pathToAdst)
       const auto SPD = detectorGeometry.GetStationAxisDistance(stationId, showerAxis, showerCore);  // in m
 
       const auto genStation = sdEvent.GetSimStationById(stationId);
-      const auto nMuons = genStation->GetNumberOfMuons();
-      const auto nElectrons = genStation->GetNumberOfElectrons();
-      const auto nPhotons = genStation->GetNumberOfPhotons();
+      // const auto nMuons = genStation->GetNumberOfMuons();
+      // const auto nElectrons = genStation->GetNumberOfElectrons();
+      // const auto nPhotons = genStation->GetNumberOfPhotons();
 
       // Save trace in ADC format
-      for (unsigned int PMT = 1; PMT < 4; PMT++)
+      for (unsigned int PMT = 1; PMT < 6; PMT++)
       {
+
+        if (PMT == 4) continue;
 
         // total trace container
         VectorWrapper TotalTrace(2048,0);
@@ -215,295 +216,7 @@ void ExtractDataFromAdstFiles(fs::path pathToAdst)
         }
 
         // write all information to trace file
-        traceFile << stationId << " " << SPD << " " << showerEnergy << " " << showerZenith << " " << nMuons << " " << nElectrons << " " << nPhotons << " ";
-
-        // "digitize" component trace...
-        // this used to be converted to VEM
-        const auto signal_start = recStation.GetSignalStartSlot();
-        const auto signal_end = recStation.GetSignalEndSlot();
-        const auto trimmedAdcTrace = TotalTrace.get_trace(signal_start, signal_end);
-
-        // ... and write to disk
-        for (const auto& bin : trimmedAdcTrace)
-        {
-          traceFile << " " << bin;
-        }
-
-        traceFile << "\n";
-      }
-    }
-
-    traceFile.close();
-  }
-}
-
-void DoLtpCalculation(fs::path pathToAdst)
-{
-  std::string csvTraceFile = "/cr/tempdata01/filip/QGSJET-II/LDF/ADST/" + pathToAdst.filename().replace_extension("csv").string();
-
-  // (2) start main loop
-  RecEventFile     recEventFile(pathToAdst.string());
-  RecEvent*        recEvent = nullptr;
-  recEventFile.SetBuffers(&recEvent);
-
-  for (unsigned int i = 0; i < recEventFile.GetNEvents(); ++i) 
-  {
-    // skip if event reconstruction failed
-    if (recEventFile.ReadEvent(i) != RecEventFile::eSuccess){continue;}
-
-    // allocate memory for data
-    const SDEvent& sdEvent = recEvent->GetSDEvent();                              // contains the traces
-    const GenShower& genShower = recEvent->GetGenShower();                        // contains the shower
-    DetectorGeometry detectorGeometry = DetectorGeometry();                       // contains SPDistance
-    recEventFile.ReadDetectorGeometry(detectorGeometry);
-
-    // binaries of the generated shower
-    // const auto SPD = detectorGeometry.GetStationAxisDistance(Id, Axis, Core);  // in m
-    const auto showerZenith = genShower.GetZenith() * (180 / 3.141593);           // in °
-    const auto showerEnergy = genShower.GetEnergy();                              // in eV
-    const auto showerAxis = genShower.GetAxisSiteCS();
-    const auto showerCore = genShower.GetCoreSiteCS();
-    
-    // container for hits / misses, binned in 100m SPD
-    std::vector<int> misses(65, 0);
-    std::vector<int> hits(65, 0);
-
-    // get id of all stations that triggered (for LDF, the triggers must be switched to super low threshold)
-    std::vector<int> recreatedStationIds;
-    for (const auto& recStation : sdEvent.GetStationVector()){recreatedStationIds.push_back(recStation.GetId());}
-
-    for (const auto& consideredStationId : consideredStations)
-    {
-      // calculate shower plane distance
-      auto showerPlaneDistance = detectorGeometry.GetStationAxisDistance(consideredStationId, showerAxis, showerCore);
-      const int binIndex = floor(showerPlaneDistance / 100);
-
-      // check if the station ID appears in the triggered stations
-      if (std::find(recreatedStationIds.begin(), recreatedStationIds.end(), consideredStationId) != recreatedStationIds.end())
-      {
-        // station was triggered, add to "hits"
-        hits[binIndex] += 1;
-      }
-      else
-      {
-        // station was not triggered, add to "misses"
-        misses[binIndex] += 1;
-      }
-    }
-
-    // save shower metadata to intermediate file. Put "0" in first 
-    // column such that row 0 has the same shape as later rows
-    ofstream saveFile(csvTraceFile, std::ios_base::app);
-    saveFile << "0 " << log10(showerEnergy) << " " << showerZenith << "\n";
-
-    for (int i = 0; i < 65; i++)
-    {
-      // std::cout << "<" << (i+1) * 100 << "m: " << hits[i] << " " << misses[i] << std::endl;
-      saveFile << (i + 1) * 100 << " " << hits[i] << " " << misses[i] << "\n";
-    }
-
-    saveFile.close();
-
-  }
-}
-
-void Compare(fs::path pathToAdst)
-{
-  // const auto csvTraceFile = pathToAdst.parent_path()/ pathToAdst.filename().replace_extension("csv"); // for testing
-  const auto csvADCTraceFile = "/cr/users/filip/Trigger/OfflineComparison/tot_fuckups/ADC/" + pathToAdst.filename().replace_extension("csv").string();
-  const auto csvVEMTraceFile = "/cr/users/filip/Trigger/OfflineComparison/tot_fuckups/VEM/" + pathToAdst.filename().replace_extension("csv").string();
-
-  // create csv file streams
-  ofstream traceADCFile(csvADCTraceFile, std::ios_base::app);
-  ofstream traceVEMFile(csvVEMTraceFile, std::ios_base::app);
-
-  // (2) start main loop
-  RecEventFile     recEventFile(pathToAdst.string());
-  RecEvent*        recEvent = nullptr;
-
-  // will be assigned by root
-  recEventFile.SetBuffers(&recEvent);
-
-  for (unsigned int i = 0; i < recEventFile.GetNEvents(); ++i) 
-  {
-    // skip if event reconstruction failed
-    if (recEventFile.ReadEvent(i) != RecEventFile::eSuccess){continue;}
-
-    // allocate memory for data
-    const SDEvent& sdEvent = recEvent->GetSDEvent();                              // contains the traces
-    const GenShower& genShower = recEvent->GetGenShower();                        // contains the shower
-    DetectorGeometry detectorGeometry = DetectorGeometry();                       // contains SPDistance
-    recEventFile.ReadDetectorGeometry(detectorGeometry);
-
-    // binaries of the generated shower
-    const auto showerZenith = genShower.GetZenith() * (180 / 3.141593);           // in °
-    const auto showerEnergy = genShower.GetEnergy();                              // in eV
-    const auto showerAxis = genShower.GetAxisSiteCS();
-    const auto showerCore = genShower.GetCoreSiteCS();
-
-    for (const auto& recStation : sdEvent.GetStationVector())
-    {
-      const auto stationId = recStation.GetId();
-      const auto SPD = detectorGeometry.GetStationAxisDistance(stationId, showerAxis, showerCore);  // in m
-
-      const auto genStation = sdEvent.GetSimStationById(stationId);
-      const auto nMuons = genStation->GetNumberOfMuons();
-      const auto nElectrons = genStation->GetNumberOfElectrons();
-      const auto nPhotons = genStation->GetNumberOfPhotons();
-
-      // Save trace in ADC/VEM format
-      for (unsigned int PMT = 1; PMT < 4; PMT++)
-      {
-
-        // total trace container
-        VectorWrapper TotalTrace(2048,0);
-
-        // loop over all components (photon, electron, muons) -> NO HADRONIC COMPONENT
-        for (int component = ePhotonTrace; component <= eMuonTrace; component++)
-        {
-          const auto component_trace = recStation.GetPMTTraces((ETraceType)component, PMT);
-          auto CalibratedTrace = VectorWrapper( component_trace.GetVEMComponent() );
-
-          // make sure there exists a component of this type
-          if (CalibratedTrace.values.size() != 0)
-          {
-            const auto vem_peak = component_trace.GetPeak();
-            VectorWrapper UncalibratedTrace = CalibratedTrace * vem_peak;
-            TotalTrace = TotalTrace + UncalibratedTrace;
-          }
-        }
-
-        // write all information to trace file
-        traceADCFile << stationId << " " << SPD << " " << showerEnergy << " " << showerZenith << " " << nMuons << " " << nElectrons << " " << nPhotons << " ";
-        traceVEMFile << stationId << " " << SPD << " " << showerEnergy << " " << showerZenith << " " << nMuons << " " << nElectrons << " " << nPhotons << " ";
-
-        // "digitize" component trace...
-        // this used to be converted to VEM
-        const auto signal_start = recStation.GetSignalStartSlot();
-        const auto signal_end = recStation.GetSignalEndSlot();
-        const auto trimmedAdcTrace = TotalTrace.get_trace(signal_start, signal_end);
-        const auto VemTrace = recStation.GetVEMTrace(PMT);
-        const auto trimmedVemTrace = std::vector<float>(VemTrace.begin() + signal_start, VemTrace.begin() + signal_end);
-
-        // ... and write to disk
-        for (const auto& bin : trimmedAdcTrace)
-        {
-          traceADCFile << " " << bin;
-        }
-
-        traceADCFile << "\n";
-
-        for (const auto& bin : trimmedVemTrace)
-        {
-          traceVEMFile << " " << bin;
-        }
-
-        traceVEMFile << "\n";
-      }
-    }
-  }
-
-  traceADCFile.close();
-  traceVEMFile.close();
-}
-
-void ExtendLowSPD(fs::path pathToAdst)
-{
-  // const auto csvTraceFile = pathToAdst.parent_path()/ pathToAdst.filename().replace_extension("csv"); // for testing
-  const auto csvTraceFile = pathToAdst.parent_path().parent_path() / pathToAdst.filename().replace_extension("csv");
-  const auto energyRange = pathToAdst.parent_path().parent_path().filename().string();
-
-  int spdThreshold;
-
-  switch(std::stoi(energyRange))
-  {
-    // catches 16-17 log(E / eV)
-    case 16: 
-      spdThreshold = 500;
-      break;
-    // catches 17-18 log(E / eV)
-    case 17: 
-      spdThreshold = 800;
-      break;
-    // catches 18-19 log(E / eV)
-    case 18:
-      spdThreshold = 1100;
-      break;
-    // catches 19-19.5 log(E / eV)
-    case 19:
-      spdThreshold = 1700;
-      break;
-  }
-
-  // (2) start main loop
-  RecEventFile     recEventFile(pathToAdst.string());
-  RecEvent*        recEvent = nullptr;
-
-  // will be assigned by root
-  recEventFile.SetBuffers(&recEvent);
-
-  for (unsigned int i = 0; i < recEventFile.GetNEvents(); ++i) 
-  {
-    // skip if event reconstruction failed
-    if (recEventFile.ReadEvent(i) != RecEventFile::eSuccess){continue;}
-
-    // allocate memory for data
-    const SDEvent& sdEvent = recEvent->GetSDEvent();                              // contains the traces
-    const GenShower& genShower = recEvent->GetGenShower();                        // contains the shower
-    DetectorGeometry detectorGeometry = DetectorGeometry();                       // contains SPDistance
-    recEventFile.ReadDetectorGeometry(detectorGeometry);
-
-    // create csv file streams
-    ofstream traceFile(csvTraceFile.string(), std::ios_base::app);
-
-    // binaries of the generated shower
-    // const auto SPD = detectorGeometry.GetStationAxisDistance(Id, Axis, Core);  // in m
-    const auto showerZenith = genShower.GetZenith() * (180 / 3.141593);           // in °
-    const auto showerEnergy = genShower.GetEnergy();                              // in eV
-    const auto showerAxis = genShower.GetAxisSiteCS();
-    const auto showerCore = genShower.GetCoreSiteCS();  
-
-    Detector detector = Detector();
-
-    // loop over all triggered stations
-    for (const auto& recStation : sdEvent.GetStationVector())
-    {
-      const auto stationId = recStation.GetId();
-      const auto SPD = detectorGeometry.GetStationAxisDistance(stationId, showerAxis, showerCore);  // in m
-      const bool isClose = SPD < spdThreshold;
-
-      if (!isClose){continue;}
-
-      const auto genStation = sdEvent.GetSimStationById(stationId);
-      const auto nMuons = genStation->GetNumberOfMuons();
-      const auto nElectrons = genStation->GetNumberOfElectrons();
-      const auto nPhotons = genStation->GetNumberOfPhotons();
-
-      // Save trace in ADC/VEM format
-      for (unsigned int PMT = 1; PMT < 4; PMT++)
-      {
-
-        // total trace container
-        VectorWrapper TotalTrace(2048,0);
-
-        // loop over all components (photon, electron, muons) -> NO HADRONIC COMPONENT
-        for (int component = ePhotonTrace; component <= eMuonTrace; component++)
-        {
-          const auto component_trace = recStation.GetPMTTraces((ETraceType)component, PMT);
-          auto CalibratedTrace = VectorWrapper( component_trace.GetVEMComponent() );
-
-          // make sure there exists a component of this type
-          if (CalibratedTrace.values.size() != 0)
-          {
-            const auto vem_peak = component_trace.GetPeak();
-            VectorWrapper UncalibratedTrace = CalibratedTrace * vem_peak;
-            TotalTrace = TotalTrace + UncalibratedTrace;
-          }
-        }
-
-        // write all information to trace file
-        traceFile << stationId << " " << SPD << " " << showerEnergy << " " << showerZenith << " " << nMuons << " " << nElectrons << " " << nPhotons << " ";
-        // std::cout << stationId << " " << SPD << " " << showerEnergy << " " << showerZenith << " " << nMuons << " " << nElectrons << " " << nPhotons << std::endl;
+        traceFile << stationId << " " << PMT << " " << SPD << " " << showerEnergy << " " << showerZenith << " ";
 
         // "digitize" component trace...
         // this used to be converted to VEM
@@ -527,27 +240,8 @@ void ExtendLowSPD(fs::path pathToAdst)
 
 int main(int argc, char** argv) 
 {
-  if (std::strcmp(argv[1], "0") == 0)
-  {
-    // type '0' to extract traces from file
-    ExtractDataFromAdstFiles(argv[2]);
-  }
-  else if (std::strcmp(argv[1], "1") == 0)
-  {
-    // type '1' for LTP/LDF fitting
-    DoLtpCalculation(argv[2]);
-  }
-  else if (std::strcmp(argv[1], "2") == 0)
-  {
-    // type '2' for comparing ADC/VEM extraction
-    Compare(argv[2]);
-  }
-    else if (std::strcmp(argv[1], "3") == 0)
-  {
-    // type '3' for extending dataset to low energies
-    // same as '0' but only save stations w/ <1800m SPD
-    ExtendLowSPD(argv[2]);
-  }
+  
+  ExtractDataFromAdstFiles(argv[1]);
   return 0;
 
 }
