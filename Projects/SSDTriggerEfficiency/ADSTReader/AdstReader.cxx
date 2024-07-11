@@ -209,23 +209,16 @@ void ExtractDataFromAdstFiles(fs::path pathToAdst)
           // make sure there exists a component of this type
           if (CalibratedTrace.values.size() != 0)
           {
-            const auto vem_peak = component_trace.GetPeak();
-            VectorWrapper UncalibratedTrace = CalibratedTrace * vem_peak;
-            TotalTrace = TotalTrace + UncalibratedTrace;
+            TotalTrace = TotalTrace + CalibratedTrace;
           }
         }
 
-        // write all information to trace file
-        traceFile << stationId << " " << PMT << " " << SPD << " " << showerEnergy << " " << showerZenith << " ";
+        // write all information to file
+        traceFile << stationId << " " << PMT << " " << SPD << " " << showerEnergy << " " << showerZenith;
 
-        // "digitize" component trace...
-        // this used to be converted to VEM
-        const auto signal_start = recStation.GetSignalStartSlot();
-        const auto signal_end = recStation.GetSignalEndSlot();
-        const auto trimmedAdcTrace = TotalTrace.get_trace(signal_start, signal_end);
 
-        // ... and write to disk
-        for (const auto& bin : trimmedAdcTrace)
+        // ... and write trace to disk
+        for (const auto& bin : TotalTrace.get_trace(0, 2048))
         {
           traceFile << " " << bin;
         }

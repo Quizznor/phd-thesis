@@ -70,6 +70,7 @@ Make-depend
 *.xml
 **/userAugerOffline
 *.P
+*/AdstReader
 
 # git repositories / large files
 Projects/UUB_DAQ
