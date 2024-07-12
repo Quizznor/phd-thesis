@@ -8,4 +8,4 @@ cd ../Offline
 cd ../ADSTReader
 ./AdstReader $2
 
-rm -rf ../Offline/HybridRec.dat $1 #$2
+rm -rf ../Offline/HybridRec.dat #$@
