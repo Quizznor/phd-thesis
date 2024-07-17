@@ -25,6 +25,8 @@ namespace sevt {
       return eMuon;
     if (IsRDThreshold())
       return eRDThreshold;
+    if (IsForced())
+      return eForced;
 
     return eNone;
   }
@@ -86,6 +88,10 @@ namespace sevt {
       fPLDTrigger = ePLDLatchRD;
       fErrorCode = eNoError;
       break;
+    case eForced:
+      fWindowMicroSecond = 30;
+      fPLDTrigger = ePLDLatchForced;
+      fErrorCode = eNoError;
     }
   }
 
@@ -101,6 +107,7 @@ namespace sevt {
     "Muon",
     "Silent",
     "RD Threshold",
+    "Forced"
   };
 
 }

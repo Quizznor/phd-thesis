@@ -40,25 +40,35 @@ class Station():
         self.wcd_traces = station_data[:-1, 3:]
         self.ssd = station_data[-1, 3:]
 
-    def isT2(self) -> bool : return self.isT2WCD() or self.isT2SSD()
+    def isT2(self) -> int : return self.isToT_WCD() or self.isToT_SSD()
 
-    def isT2SSD(self) -> bool : return self.isToT(self.ssd, 'ssd')
-    
-    def isT2WCD(self) -> bool :
+    def isToT_SSD(self) -> int : 
+        
+        running_sum = (self.ssd[:120] > self.cfg.threshold['ssd']).sum()
 
-        multiplicity = (self.isToT(wcd_trace, 'wcd') for wcd_trace in self.wcd_traces)
-        return sum(multiplicity) > self.cfg.multiplicity['wcd']
-    
+        for i in range(120, len(self.ssd)):
+            if running_sum > self.cfg.occupancy['ssd']: return i
 
-    def isToT(self, trace : np.ndarray, pmt : str) -> bool : 
-
-        running_sum = (trace[:120] > self.cfg.threshold[pmt]).sum()
-
-        for i in range(120, len(trace)):
-            if running_sum > self.cfg.occupancy[pmt]: return True
-
-            running_sum += (trace[i      ] > self.cfg.threshold[pmt])
-            running_sum -= (trace[i - 120] > self.cfg.threshold[pmt])
+            running_sum += (self.ssd[i      ] > self.cfg.threshold['ssd'])
+            running_sum -= (self.ssd[i - 120] > self.cfg.threshold['ssd'])
 
         else:
-            return False
+            return 0
+    
+    def isToT_WCD(self) -> int :
+
+        pmt_multiplicity_check = lambda sums : sum(sums > self.cfg.multiplicity['wcd']) > 1
+
+        first_120_bins = self.wcd_traces[:, :120]
+        pmt_running_sum = (first_120_bins >= self.cfg.threshold['wcd']).sum(axis=1)
+
+        for i in range(120, self.wcd_traces.shape[1] + 1):
+            if pmt_multiplicity_check(pmt_running_sum) : return i
+            if i == self.wcd_traces.shape[1]: return 0
+
+            new_over_threshold = np.array(self.wcd_traces[:, i] > self.cfg.multiplicity['wcd'], dtype=int)
+            old_over_threshold = np.array(self.wcd_traces[:, i - 120] > self.cfg.multiplicity['wcd'], dtype=int)
+            pmt_running_sum += new_over_threshold - old_over_threshold
+
+
+        

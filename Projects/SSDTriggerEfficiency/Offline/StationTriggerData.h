@@ -29,7 +29,8 @@ namespace sevt {
       eRandom                         = 6,
       eMuon                           = 7,  // muons are here just for backward compatibility
       eSilent                         = 8,
-      eRDThreshold                    = 9
+      eRDThreshold                    = 9,
+      eForced                         = 10
     };
 
     enum PLDTrigger {
@@ -41,6 +42,7 @@ namespace sevt {
       ePLDLatchTOTC      = 0x00000008,  // MOPS
       ePLDLatchRandom    = 0x00000010,  // Random trigger
       ePLDLatchRD        = 0x00100000,  // RD trigger
+      ePLDLatchForced    = 0x00200000,  // Forced trigger
       // Post-latch triggers
       ePLDThreshold      = 0x00000100,  // T1 and T2 threshold
       ePLDTOTA           = 0x00000200,  // TOT
@@ -48,6 +50,7 @@ namespace sevt {
       ePLDTOTC           = 0x00000800,  // MOPS
       ePLDRandom         = 0x00001000,  // Random trigger
       ePLDRD             = 0x10000000,  // RD trigger
+      ePLDForced         = 0x20000000,  // Forced trigger
       // (DV) Muon: this is not a PLD bit. It is set only explicitly via
       // SetAlgorithm(). This feature is maintained on behalf of some
       // modules (TankSimulator).
@@ -90,6 +93,9 @@ namespace sevt {
 
     bool IsRDThreshold() const
     { return fPLDTrigger & ePLDTotalRD; }
+
+    bool IsForced() const
+    { return fPLDTrigger & ePLDTotalForced; }
 
     /// T1 events have non-zero window size
     bool
@@ -171,7 +177,8 @@ namespace sevt {
       ePLDTotalMOPS           = (ePLDLatchTOTC | ePLDTOTC),
       ePLDTotalThresholdOrTOT = (ePLDTotalThreshold | ePLDTotalTOT),
       ePLDTotalRandom         = (ePLDLatchRandom | ePLDRandom),
-      ePLDTotalRD             = (ePLDLatchRD | ePLDRD)
+      ePLDTotalRD             = (ePLDLatchRD | ePLDRD),
+      ePLDTotalForced         = (ePLDLatchForced | ePLDForced)
     };
 
     int fOffsetMicroSecond = -1;

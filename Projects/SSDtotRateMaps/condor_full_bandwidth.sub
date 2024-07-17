@@ -10,6 +10,7 @@ transfer_input_files = /cr/users/filip/bin/utils
 arguments       = "$(STATION) $(Process)"
 request_memory  = 2G
 max_idle        = 150
-max_materialize = 20
+max_materialize = 80
                                                 
-queue 11800
+# queue 11800 
+queue 2950
