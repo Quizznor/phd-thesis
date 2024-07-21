@@ -48,7 +48,7 @@ namespace DummyTankTriggerSimulatorOG {
 
     auto& sEvent = event.GetSEvent();
 
-    const auto& eventTime = event.GetHeader().GetTime();
+    // const auto& ev5entTime = event.GetHeader().GetTime();
 
     TabularStream tab("r|r|r|r|l");
     tab << "ID" << endc
@@ -59,40 +59,45 @@ namespace DummyTankTriggerSimulatorOG {
 
     for (auto& station : sEvent.StationsRange()) {
 
-      int startBin = 0;
-      int stopBin = 0;
-      bool hasPETimeDistribution = false;
+      std::cout << station.GetId() << "\n";
+      const auto sStation = station.GetSimData();
+
+
+
+      // int startBin = 0;
+      // int stopBin = 0;
+      // bool hasPETimeDistribution = false;
       
-      for (const auto& pmt : station.PMTsRange()) {
+      // for (const auto& pmt : station.PMTsRange()) {
 
-        if (!pmt.HasSimData()) continue;
-        const auto PMTSimData = pmt.GetSimData();
-        if (!PMTSimData.HasPETimeDistribution()) continue;
+      //   if (!pmt.HasSimData()) continue;
+      //   const auto PMTSimData = pmt.GetSimData();
+      //   if (!PMTSimData.HasPETimeDistribution()) continue;
 
-        // station has (at least) 1 PMT with photoelectrons at PMT level
-        // the Dummy T2 algorithm therefore selects it to as candidate
-        const auto PETimeDistribution = PMTSimData.GetPETimeDistribution();
-        // startBin = PETimeDistribution.GetFirstPEBin();                       // TODO
-        // stopBin = PETimeDistribution.GetLastPEBin();                         // TODO
-        hasPETimeDistribution = true;
-        break;
-      }
+      //   // station has (at least) 1 PMT with photoelectrons at PMT level
+      //   // the Dummy T2 algorithm therefore selects it to as candidate
+      //   const auto PETimeDistribution = PMTSimData.GetPETimeDistribution();
+      //   // startBin = PETimeDistribution.GetFirstPEBin();                       // TODO
+      //   // stopBin = PETimeDistribution.GetLastPEBin();                         // TODO
+      //   hasPETimeDistribution = true;
+      //   break;
+      // }
 
-      using namespace sdet::Trigger;
-      if (!hasPETimeDistribution)
-        Buffer(station, eventTime, StationTriggerData::eSilent, StationTriggerData::ePLDNone, 0, 0);
-      else {
-        tab << station.GetId() << endc
-            << "(" << startBin << ", " << stopBin << ")" << endc
-            << "(" << startBin << ", " << stopBin << ")" << endc
-            << startBin << endc;
-        tab << endr;
+      // using namespace sdet::Trigger;
+      // if (!hasPETimeDistribution)
+      //   Buffer(station, eventTime, StationTriggerData::eSilent, StationTriggerData::ePLDNone, 0, 0);
+      // else {
+      //   tab << station.GetId() << endc
+      //       << "(" << startBin << ", " << stopBin << ")" << endc
+      //       << "(" << startBin << ", " << stopBin << ")" << endc
+      //       << startBin << endc;
+      //   tab << endr;
 
-        Buffer(station, eventTime, 
-          StationTriggerData::eForced, 
-          StationTriggerData::ePLDForced, 
-          startBin, stopBin);
-        }
+      //   Buffer(station, eventTime, 
+      //     StationTriggerData::eForced, 
+      //     StationTriggerData::ePLDForced, 
+      //     startBin, stopBin);
+      //   }
       }
 
     DEBUGLOG(tab);
