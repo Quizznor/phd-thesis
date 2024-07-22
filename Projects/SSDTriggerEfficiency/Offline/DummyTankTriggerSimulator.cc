@@ -24,6 +24,7 @@
 #include "DummyTankTriggerSimulator.h"
 
 #include <cmath>
+#include <limits>
 
 using namespace fwk;
 using namespace det;
@@ -48,7 +49,7 @@ namespace DummyTankTriggerSimulatorOG {
 
     auto& sEvent = event.GetSEvent();
 
-    // const auto& ev5entTime = event.GetHeader().GetTime();
+    const auto& eventTime = event.GetHeader().GetTime();
 
     TabularStream tab("r|r|r|r|l");
     tab << "ID" << endc
@@ -57,48 +58,35 @@ namespace DummyTankTriggerSimulatorOG {
         << "latch" << endc
         << "" << endr;
 
+    using namespace sdet::Trigger;
     for (auto& station : sEvent.StationsRange()) {
 
-      std::cout << station.GetId() << "\n";
-      const auto sStation = station.GetSimData();
-
-
-
-      // int startBin = 0;
-      // int stopBin = 0;
-      // bool hasPETimeDistribution = false;
-      
-      // for (const auto& pmt : station.PMTsRange()) {
-
-      //   if (!pmt.HasSimData()) continue;
-      //   const auto PMTSimData = pmt.GetSimData();
-      //   if (!PMTSimData.HasPETimeDistribution()) continue;
-
-      //   // station has (at least) 1 PMT with photoelectrons at PMT level
-      //   // the Dummy T2 algorithm therefore selects it to as candidate
-      //   const auto PETimeDistribution = PMTSimData.GetPETimeDistribution();
-      //   // startBin = PETimeDistribution.GetFirstPEBin();                       // TODO
-      //   // stopBin = PETimeDistribution.GetLastPEBin();                         // TODO
-      //   hasPETimeDistribution = true;
-      //   break;
-      // }
-
-      // using namespace sdet::Trigger;
-      // if (!hasPETimeDistribution)
+      if (!station.HasSimData()) {
       //   Buffer(station, eventTime, StationTriggerData::eSilent, StationTriggerData::ePLDNone, 0, 0);
-      // else {
-      //   tab << station.GetId() << endc
-      //       << "(" << startBin << ", " << stopBin << ")" << endc
-      //       << "(" << startBin << ", " << stopBin << ")" << endc
-      //       << startBin << endc;
-      //   tab << endr;
-
-      //   Buffer(station, eventTime, 
-      //     StationTriggerData::eForced, 
-      //     StationTriggerData::ePLDForced, 
-      //     startBin, stopBin);
-      //   }
+        continue;
       }
+
+      const auto& simData = station.GetSimData();
+      if (simData.GetNParticles() == 0) {
+      //   Buffer(station, eventTime, StationTriggerData::eSilent, StationTriggerData::ePLDNone, 0, 0);
+        continue;
+      }
+
+      // is this sufficient?
+      int startBin = simData.ParticlesBegin()->GetTime();
+      int stopBin = simData.ParticlesEnd()->GetTime();
+
+      tab << station.GetId() << endc
+          << "(" << startBin << ", " << stopBin << ")" << endc
+          << "(" << startBin << ", " << stopBin << ")" << endc
+          << startBin << endc;
+      tab << endr;
+
+      Buffer(station, eventTime, 
+        StationTriggerData::eForced, 
+        StationTriggerData::ePLDForced, 
+        startBin, stopBin);
+    }
 
     DEBUGLOG(tab);
 

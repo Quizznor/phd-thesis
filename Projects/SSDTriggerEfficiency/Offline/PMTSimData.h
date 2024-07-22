@@ -46,10 +46,6 @@ namespace sevt {
     double GetTriggerVEMPeak(const bool isUUB) const { return isUUB ? fCompatibilityTriggerVEMPeak : fTriggerVEMPeak; }
     void SetTriggerVEMPeak(const double peak) { fTriggerVEMPeak = peak; }
     void SetCompatibilityTriggerVEMPeak(const double peak) { fCompatibilityTriggerVEMPeak = peak; }
-    uint GetFirstPEBin() const { return 0; }
-    uint GetLastPEBin() const { return -1; }
-    
-
 
     //! \name Photoelectron time distributions. Filled by the tank simulation
     //@{

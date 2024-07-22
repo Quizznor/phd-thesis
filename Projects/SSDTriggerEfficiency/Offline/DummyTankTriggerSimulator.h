@@ -1,5 +1,5 @@
-#ifndef _TankTriggerSimulatorOG_TankTriggerSimulator_h_
-#define _TankTriggerSimulatorOG_TankTriggerSimulator_h_
+#ifndef _DummyTankTriggerSimulatorOG_DummyTankTriggerSimulator_h_
+#define _DummyTankTriggerSimulatorOG_DummyTankTriggerSimulator_h_
 
 #include <fwk/VModule.h>
 #include <sevt/StationTriggerData.h>
