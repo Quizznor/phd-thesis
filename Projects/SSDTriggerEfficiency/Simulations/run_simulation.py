@@ -8,7 +8,7 @@ import subprocess
 # DETECTORSEED = 0
 # PHYSICSSEED = 1
 
-source_file = "/lsdf/auger/corsika/napoli/QGSJET-II.04/proton/19.5_20/DAT100012.lst"
+source_file = "/lsdf/auger/corsika/prague/QGSJET-II.04/proton/18_18.5/DAT010002"
 source_name, proc_no = source_file.split('/')[-1], int(sys.argv[1])
 
 DETECTORSEED = proc_no
@@ -23,8 +23,8 @@ replace_config_dir = lambda x: x.replace("@CONFIGDIR@", offline_config_path)
 # Prepare bootstrap
 replacements = {
     '@INPUTFILE@' : source_file,
-    '@PATTERNPATH@' : '*.lst',                      # TODO: will fail for some shit
-    '@GROUNDDATA@' : '(1).lst',                     # TODO: will fail for some shit
+    '@PATTERNPATH@' : '*',                      # TODO: will fail for some shit
+    '@GROUNDDATA@' : '(1)',                     # TODO: will fail for some shit
     '@DETECTORSEED@' : f"{DETECTORSEED:06}",
     '@PHYSICSSEED@' : f"{PHYSICSSEED:06}",
     '@NPARTICLES@' : '1000',                    # DEFAULT: 300000

@@ -66,37 +66,31 @@ namespace DummyTankTriggerSimulator {
         continue;
       }
 
-      // bool hasPhotoelectrons = false;
+      bool hasPhotoelectrons = false;
       for (const auto& pmt : station.PMTsRange(sdet::PMTConstants::eAnyType)) {        
         if (!pmt.HasSimData()) continue;
         const auto& simData =  pmt.GetSimData();
         
         if (!simData.HasPETimeDistribution()) continue;
-        // hasPhotoelectrons = true;
-
-        // const auto& trace = simData.GetPETimeDistribution();
-
-        // for (const auto& bin : trace) {
-        //   std::cout << bin << " ";
-        // }
+        hasPhotoelectrons = true;
       }
 
-      // const auto& trace = simData.GetPETimeDistribution();
-      // int startBin = trace.GetStart() * trace.GetBinning();
-      // int stopBin = trace.GetEnd() * trace.GetBinning();
-      int startBin = 0;       // change this
-      int stopBin = 120;      // change this
+      if (hasPhotoelectrons) {
+        const auto& dStation = Detector::GetInstance().GetSDetector().GetStation(station);
+        int startBin = dStation.GetLatchBin();
+        int stopBin = startBin + dStation.GetFADCTraceLength();
 
-      tab << station.GetId() << endc
-          << "(" << startBin << ", " << stopBin << ")" << endc
-          << "(" << startBin << ", " << stopBin << ")" << endc
-          << startBin << endc;
-      tab << endr;
+        tab << station.GetId() << endc
+            << "(" << startBin << ", " << stopBin << ")" << endc
+            << "(" << startBin << ", " << stopBin << ")" << endc
+            << startBin << endc;
+        tab << endr;
 
-      Buffer(station, eventTime, 
-        StationTriggerData::eRDThreshold, 
-        StationTriggerData::ePLDRD, 
-        startBin, stopBin);
+        Buffer(station, eventTime, 
+          StationTriggerData::eRDThreshold, 
+          StationTriggerData::ePLDRD, 
+          startBin, stopBin);
+      }
     }
 
     DEBUGLOG(tab);

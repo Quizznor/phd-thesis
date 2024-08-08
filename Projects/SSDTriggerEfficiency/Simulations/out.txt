@@ -1,0 +1,928 @@
+/cr/work/filip/Simulations/Bootstraps/bootstrap_12.xml /cr/work/filip/SSDTriggerEfficiency/run01/DAT010002_000012.root
+[INFO] eb/offline/Main/AugerOfflineMain.cc:176: main: 
+          ___________________
+          __       _      _     /   ,
+        /    )   /  `   /  `   /        __    _
+       /    /  _/__   _/__    /   /   /   ) /___)
+      /    /   /      /      /   /   /   / (___
+     (____/   /      /      __________________
+
+ Auger Offline Framework v3r99p99-
+ Reference: Nucl. Instrum. Meth. A 580 (2007) 1485.
+ GIT revision number : d377862eb 2024-07-31 12:15:13 +0000
+ Bug reports to : https://gitlab.com/auger-observatory/offline/offline/-/issues
+ ____________________________________________________
+
+[WARN] Utilities/Reader/Reader.cc:202: Parse: No schema (.xsd) document is available for file '/cr/data01/filip/offline/install/pf_ssd_simulation_triggers/install/share/auger-offline/config/ADSTCoordinateSystem.xml'. It will not be validated!
+[WARN] Utilities/Reader/Reader.cc:202: Parse: No schema (.xsd) document is available for file '/cr/data01/filip/offline/install/pf_ssd_simulation_triggers/install/share/auger-offline/config/UniversalityV2SignalModel.xml'. It will not be validated!
+[WARN] Utilities/Reader/Reader.cc:202: Parse: No schema (.xsd) document is available for file '/cr/data01/filip/offline/install/pf_ssd_simulation_triggers/install/share/auger-offline/config/UniversalityV2AtmosphereParameters.xml'. It will not be validated!
+[WARN] Utilities/Reader/Reader.cc:202: Parse: No schema (.xsd) document is available for file '/cr/data01/filip/offline/install/pf_ssd_simulation_triggers/install/share/auger-offline/config/UniversalityV2TimeTraceModel.xml'. It will not be validated!
+[WARN] Utilities/Reader/Reader.cc:202: Parse: No schema (.xsd) document is available for file '/cr/data01/filip/offline/install/pf_ssd_simulation_triggers/install/share/auger-offline/config/UniversalityV2TimeQuantileModel.xml'. It will not be validated!
+[INFO] Framework/CentralConfig/CentralConfig.cc:417: FillMap: The following configuration files have been overridden. Files sorted from original to newest override:
+  * Id: 'RecDataWriter', files:
+      (original   ) '/cr/data01/filip/offline/install/pf_ssd_simulation_triggers/install/share/auger-offline/config/RecDataWriterNG.xml'
+      (replaced by) '/cr/users/filip/Projects/SSDTriggerEfficiency/SdSimulationReconstruction/RecDataWriterNG.xml'
+  * Id: 'SDenseStationListXMLManager', files:
+      (original   ) '/cr/data01/filip/offline/install/pf_ssd_simulation_triggers/install/share/auger-offline/config/SDenseStationRingAt1000.xml'
+      (replaced by) '/cr/users/filip/Projects/SSDTriggerEfficiency/SdSimulationReconstruction/SDenseStationsPurged.xml'
+  * Id: 'SStationListXMLManager', files:
+      (original   ) '/cr/data01/filip/offline/install/pf_ssd_simulation_triggers/install/share/auger-offline/config/SIdealStationList.xml'
+      (replaced by) '/cr/users/filip/Projects/SSDTriggerEfficiency/SdSimulationReconstruction/SIdealUpgradedStationList.xml'
+[WARN] Framework/CentralConfig/CentralConfig.cc:727: CheckFingerprints: No configuration-time MD5 fingerprint found for the following configuration files. Checking the validity of these configuration files is impossible.
+  - SDenseStationsPurged
+  - UniversalityV2AtmosphereParameters
+  - UniversalityV2SignalModel
+  - UniversalityV2TimeQuantileModel
+  - UniversalityV2TimeTraceModel
+[WARN] Framework/CentralConfig/CentralConfig.cc:752: CheckFingerprints: Incorrect MD5 fingerprints were found for the following configuration files. This implies this configuration file has been altered.
+  - CachedShowerRegenerator
+  - CentralTriggerEventBuilder
+  - ClearParticleLists
+  - DLECorrectionWG
+  - EventChecker
+  - FastTankSimulator
+  - G4StationSimulator
+  - HdAxisFinder
+  - HybridGeometryFinder
+  - LDFFinderKG
+  - MuonProductionDepthFinder
+  - RandomEngineRegistry
+  - Risetime1000LLL
+  - standardSdIdealSManagerRegisterConfig
+  - SModelConfig
+  - SIdealUpgradedStationList
+  - ScintillatorLDFFinderKG
+  - SdAccidentalInjector
+  - SdAreaSelector
+  - SdBadStationRejector
+  - SdBaselineFinder
+  - SdBaselineFinderKG
+  - SdCompositionParameters
+  - SdEventSelector
+  - SdExcludedPeriods
+  - SdFilterFADCSimulator
+  - SdGainRatioCorrector
+  - SdHistogramFitterKG
+  - SdHistogramFitterOG
+  - SdInspector
+  - SdMonteCarloEventSelector
+  - SdPMTQualityChecker
+  - SdPMTSignalShapeQualityChecker
+  - SdPMTSimulator
+  - SdPlaneFit
+  - SdRecPlotter
+  - SdSignalRecovery
+  - SdSimCalibrationConstants
+  - SdSimulationCalibrationFiller
+  - SdSimulationCalibrator
+  - SdStationPositionCorrection
+  - SdTraceCalibrator
+  - TabulatedTankSimulator
+  - TankTriggerSimulator
+  - TopDownSelector
+  - TriggerTimeCorrection
+  - UniversalityFitterV2
+  - UseMcGeometry
+  - coordinateSystemList
+--> Running Init() of module 'CachedShowerRegeneratorOG'
+[INFO] Framework/Random/RandomEngineRegistry.cc:110: Init: Seeds of random streams: eDetector = 12, ePhysics = 13.
+--> Finished Init() of module 'CachedShowerRegeneratorOG', status: eSuccess
+--> Running Init() of module 'CentralTriggerEventBuilderOG'
+[INFO] Framework/Detector/Detector.cc:65: Detector: Could not access a configuration file for the FManagerRegister. The Detector interface will not be able to get information about the FD (this is not an error, unless you are planning to use fluorescence detector information).
+[INFO] Framework/Detector/Detector.cc:75: Detector: Could not access a configuration file for the RManagerRegister. The Detector interface will not be able to get information about Radio (this is not an error, unless you are planning to use radio detector information).
+[INFO] Framework/Detector/Detector.cc:85: Detector: Could not access a configuration file for the MManagerRegister. The Detector interface will not be able to get information about the MD (this is not an error, unless you are planning to use muon detector information).
+[INFO] Framework/Detector/Detector.cc:95: Detector: Could not access a configuration file for the CManagerRegister. The Detector interface will not be able to get information about MARTA (this is not an error, unless you are planning to use MARTA detector information).
+[INFO] Framework/Detector/Detector.cc:105: Detector: Could not access a configuration file for the AManagerRegister. The Detector interface will not be able to get information about the Atmosphere (this is not an error, unless you are planning to use the Atmosphere information).
+--> Finished Init() of module 'CentralTriggerEventBuilderOG', status: eSuccess
+--> Running Init() of module 'CentralTriggerSimulatorXb'
+--> Finished Init() of module 'CentralTriggerSimulatorXb', status: eSuccess
+--> Running Init() of module 'ClearParticleLists'
+[INFO] Modules/SdSimulation/ClearParticleLists/ClearParticleLists.cc:25: Init: ClearSEvent: 1, ClearMEvent: 1
+--> Finished Init() of module 'ClearParticleLists', status: eSuccess
+--> Running Init() of module 'DummyTankTriggerSimulator'
+--> Finished Init() of module 'DummyTankTriggerSimulator', status: eSuccess
+--> Running Init() of module 'EventBuilderOG'
+--> Finished Init() of module 'EventBuilderOG', status: eSuccess
+--> Running Init() of module 'EventCheckerOG'
+[WARN] t/ManagerRegister.h:236: GetManagerData: No managers in FManagerRegister to get ('eyeList', '') data.
+[INFO] Modules/General/EventCheckerOG/EventChecker.cc:65: Init: FDetector configuration not available, related check disabled
+--> Finished Init() of module 'EventCheckerOG', status: eSuccess
+--> Running Init() of module 'EventFileReaderOG'
+--> Finished Init() of module 'EventFileReaderOG', status: eSuccess
+--> Running Init() of module 'EventGeneratorOG'
+[INFO] Modules/General/EventGeneratorOG/EventGenerator.cc:132: Init: 
+	Usage of radio core position is set to 0
+	Usage of radio event time is set to 0
+[INFO] Modules/General/EventGeneratorOG/EventGenerator.cc:189: Init: Configuring invalidation flags.
+[INFO] Modules/General/EventGeneratorOG/EventGenerator.cc:199: Init: Detector data will be invalidated on update.
+[INFO] Modules/General/EventGeneratorOG/EventGenerator.cc:201: Init: Detector components will be invalidated on update.
+[INFO] Framework/Detector/Detector.cc:187: Update: to time 2008-01-01T04:33:12.345678000Z (UTC), 883197206:345678000.50 (GPS)
+[INFO] Modules/General/EventGeneratorOG/EventGenerator.cc:425: Init: Parameters:
+   library identifier: Test
+            Id format: Library_%1%:Run_%2%:Shower_%3%:Use_%4%
+         SD Id format: 2 2
+      event init mode: SD
+           event time: 2008-01-01T04:33:12.345678000Z (UTC), 883197206:345678000.50 (GPS)
+ -- cores around random station --
+--> Finished Init() of module 'EventGeneratorOG', status: eSuccess
+--> Running Init() of module 'G4StationSimulatorOG'
+
+**************************************************************
+ Geant4 version Name: geant4-10-04-patch-01    (28-February-2018)
+                       Copyright : Geant4 Collaboration
+                      References : NIM A 506 (2003), 250-303
+                                 : IEEE-TNS 53 (2006), 270-278
+                                 : NIM A 835 (2016), 186-225
+                             WWW : http://geant4.org/
+**************************************************************
+
+[INFO] G4COut: 
+--> Finished Init() of module 'G4StationSimulatorOG', status: eSuccess
+--> Running Init() of module 'RecDataWriterNG'
+[INFO] Modules/General/RecDataWriterNG/RecDataWriter.cc:431: ReadRootConfig: ROOT output to /cr/work/filip/SSDTriggerEfficiency/run01/DAT010002_000012.root
+[INFO] Modules/General/RecDataWriterNG/RecDataWriter.cc:203: Init: Parameters:
+             output file: /cr/work/filip/SSDTriggerEfficiency/run01/DAT010002_000012.root
+  min ASCII FD rec level: 0
+  min ASCII SD rec level: 0
+          save FD traces: 2
+          save SD traces: 1
+          save MC traces: 1
+     use weather station: 0
+    connect to databases: 1
+        store Lidar data: 1
+ store cloud camera data: 1
+   store GOES cloud data: 2
+        store all pixels: 1
+  untriggered MC profile: drop
+     untriggered MC tels: drop
+    untriggered detector: keep
+  re-bin sim. tel traces: NO
+    store photoelectrons: 1
+ Mie att. prof. sampling: 200 m
+        Laser wavelength: 355 nm
+         store particles: 1
+        Radio Save level: -1
+  save MD traces (AMIGA): 1
+[INFO] Modules/General/RecDataWriterNG/RecDataWriter.cc:214: Init: Radio will not be saved
+--> Finished Init() of module 'RecDataWriterNG', status: eSuccess
+--> Running Init() of module 'SdAccidentalInjectorKG'
+[INFO] Modules/SdSimulation/SdAccidentalInjectorKG/SdAccidentalInjector.cc:116: Init: Configuration:
+Muon rate per station [Hz]             : 2000
+Minimum energy [GeV]                   : 0.15
+Start injection [ns, rel. to core time]: -1000
+Stop  injection [ns, rel. to core time]: 10000
+--> Finished Init() of module 'SdAccidentalInjectorKG', status: eSuccess
+--> Running Init() of module 'SdBaselineFinderKG'
+[INFO] Modules/SdReconstruction/SdBaselineFinderKG/SdBaselineFinderKG.cc:108: Init: Parameters:
+ubParameters:
+    baselineEstimationLengths: [100, 100]
+    minimumPeakSize: 50
+    negativeSignalFactors: [0.5, 0.5]
+sigmaLimits:
+    upperSigma: [5, 5]
+    lowerSigma: 1
+    truncationSigma: 2
+uubParameters:
+    baselineEstimationLengths: [300, 300]
+    minimumPeakSize: 200
+    negativeSignalFactors: [2, 0.5]
+    decayConstant: [45000, 200000]
+sigmaLimits:
+    upperSigma: [10, 10]
+    lowerSigma: 1
+    truncationSigma: 4
+--> Finished Init() of module 'SdBaselineFinderKG', status: eSuccess
+--> Running Init() of module 'SdBaselineSimulatorOG'
+--> Finished Init() of module 'SdBaselineSimulatorOG', status: eSuccess
+--> Running Init() of module 'SdFilterFADCSimulatorMTU'
+[INFO] Modules/SdSimulation/SdFilterFADCSimulatorMTU/SdFilterFADCSimulator.cc:107: Init: No undershoot simulation
+--> Finished Init() of module 'SdFilterFADCSimulatorMTU', status: eSuccess
+--> Running Init() of module 'SdGainRatioCorrectorKG'
+[INFO] Modules/SdReconstruction/SdGainRatioCorrectorKG/SdGainRatioCorrector.cc:217: Init: For years [2004, 2022] there are 1639 stations with gain-ratio correction factors.
+[INFO] Modules/SdReconstruction/SdGainRatioCorrectorKG/SdGainRatioCorrector.cc:233: Init: The following stations are missing yearly corrections for certain PMTs (counts of years given in brackets): 321 (7 5 0), 516 (4 5 0), 522 (12 13 0), 631 (0 0 1), 800 (14 0 16), 1368 (14 14 0), 1373 (13 14 0), 1613 (6 0 4), 1873 (0 3 4), 1877 (2 1 0), 1878 (2 0 1), 1880 (2 0 0); a total of 12 stations.
+--> Finished Init() of module 'SdGainRatioCorrectorKG', status: eSuccess
+--> Running Init() of module 'SdHistogramFitterKG'
+[INFO] Modules/SdReconstruction/SdHistogramFitterKG/SdHistogramFitterKG.cc:77: Init: Parameters:
+peakFitRange: [0.75, 1.35]
+peakFitChi2Accept: 3.5
+peakOnlineToVEMFactor: 1.14943
+peakHistogramToVEMFactor: 1.14943
+peakOnlineToMIPFactor: 1
+peakHistogramToMIPFactor: 1
+chargeSigmaThresholdFactors: 10 8 5
+chargeFitChi2Accept: 2.5
+chargeOnlineToVEMFactor: 1.03465
+chargeHistogramToVEMFactor: 0.990099
+chargeOnlineToMIPFactor: 1
+chargeHistogramToMIPFactor: 0.862
+chargeVEMRangeUub: [1000, 2000]
+--> Finished Init() of module 'SdHistogramFitterKG', status: eSuccess
+--> Running Init() of module 'SdPMTSimulatorOG'
+[INFO] Modules/SdSimulation/SdPMTSimulatorOG/SdPMTSimulator.cc:50: Init: Will not use any fundamental components.
+[INFO] Modules/SdSimulation/SdPMTSimulatorOG/SdPMTSimulator.cc:91: Init: No PMT saturation simulation
+--> Finished Init() of module 'SdPMTSimulatorOG', status: eSuccess
+--> Running Init() of module 'SdSimulationCalibrationFillerOG'
+[INFO] Modules/SdSimulation/SdSimulationCalibrationFillerOG/SdSimulationCalibrationFiller.cc:51: Init: from top branch <SdHistogramFitterKG> of the calibrator module got the peak online-to-vem factor 1.14943 and the charge online-to-vem 1.03465
+[INFO] Modules/SdSimulation/SdSimulationCalibrationFillerOG/SdSimulationCalibrationFiller.cc:69: Init: Got inter-calibration constant for SmallPMT: version 0, beta = (0.89 +- 0.03) VEM/(FADC counts)
+--> Finished Init() of module 'SdSimulationCalibrationFillerOG', status: eSuccess
+--> Running Init() of module 'SdStationCheckerOG'
+--> Finished Init() of module 'SdStationCheckerOG', status: eSuccess
+--> Running Init() of module 'TankGPSSimulatorOG'
+--> Finished Init() of module 'TankGPSSimulatorOG', status: eSuccess
+--> Running Init() of module 'TankTriggerSimulatorOG'
+[WARN] Modules/SdSimulation/TankTriggerSimulatorOG/TankTriggerSimulator.cc:110: Init: Top branch <TankTriggerSimulatorOG> not found, trying <TankTriggerSimulator> instead.
+--> Finished Init() of module 'TankTriggerSimulatorOG', status: eSuccess
+--> Running Run() of module 'EventFileReaderOG'
+[INFO] EventIO/Corsika/CorsikaShowerFile.cc:195: CorsikaShowerFile: Reading particles at observation level: 1
+[INFO] EventIO/Corsika/CorsikaShowerFile.cc:204: CorsikaShowerFile: Using magnetic field declination from time-dependent model (If False, a hardcoded value (-4.233 deg) is taken or the value specified in the .reas file (if used)): 0
+[INFO] EventIO/Corsika/CorsikaShowerFile.cc:436: Open: Read GroundData from file /lsdf/auger/corsika/prague/QGSJET-II.04/proton/18_18.5/DAT010002
+[INFO] EventIO/Corsika/CorsikaShowerFile.cc:570: SetRunHeader: Loaded atmosphere parameters:
+ h[km] | a[g/cm2]    | b[g/cm2] | c[km]   
+-------+-------------+----------+---------
+ 0     | -136.726    | 1174.83  | 9.82816 
+ 9.4   | -31.6366    | 1204.82  | 7.5403  
+ 15.3  | 1.88902     | 1637.77  | 5.94417 
+ 31.6  | 0.000392019 | 735.961  | 7.33974 
+-------+-------------+----------+---------
+ 100   | 0.0112829   | 1        | 10000   
+[INFO] EventIO/Corsika/CorsikaShowerFile.cc:436: Open: Read ProfileData from file /lsdf/auger/corsika/prague/QGSJET-II.04/proton/18_18.5/DAT010002.long
+[INFO] EventIO/Corsika/CorsikaShowerFile.cc:926: SetHeaderTrailer: Height of the atmospheric boundary: 112.829 km. Reference height: 112.829 km. hAtmBoundary - 112.8292*km = 0.000939202 m. 
+[INFO] EventIO/Corsika/CorsikaShowerFile.cc:966: SetHeaderTrailer: Primary = proton, Energy = 2.33238e+18 eV, Height of first interaction = 22.5979 km, X_1 = 44.3723 g/cm2, Zenith = 29.9021 deg, Azimuth = 4.68031 deg, cutoff_e = 0.00025 GeV, cutoff_mu = 0.01 GeV, r_Min^thin = 5000 cm
+[INFO] EventIO/Corsika/CorsikaShowerFile.cc:1018: SetHeaderTrailer: TimeShift to core: 428566 ns
+[INFO] EventIO/Corsika/CorsikaShowerFile.cc:1629: ReadProfile: Read 2035 lines from '/lsdf/auger/corsika/prague/QGSJET-II.04/proton/18_18.5/DAT010002.long' at position 0
+[WARN] EventIO/Corsika/CorsikaShowerFile.cc:1817: ReadProfile: Corrupted longitudinal energy deposit table detected; will try to fix it.
+[WARN] EventIO/Corsika/CorsikaShowerFile.cc:1826: ReadProfile: Fixed line: 1011.5, 2.20887E+08, 8.94076E+05, 1.08075E+08, -7.62243E+03, 1.20341E+08, 0.00000E+00, 1.34285E+07, 2.00636E+07, 4.83664E+08
+[INFO] EventIO/Corsika/CorsikaShowerFile.cc:1956: ReadProfile: Nmax = 1.5417e+09, Xmax = 739.22 g/cm2, X0 = -29.127 g/cm2, zenith = 29.9021 deg (SLANT DEPTH)
+[INFO] Modules/General/EventFileReaderOG/EventFileReader.cc:147: Run: Switching to file '/lsdf/auger/corsika/prague/QGSJET-II.04/proton/18_18.5/DAT010002'.
+[INFO] Modules/General/EventFileReaderOG/EventFileReader.cc:188: Run: Event id = ''
+--> Finished running module 'EventFileReaderOG' with status eSuccess
+--> Running Run() of module 'EventGeneratorOG'
+[WARN] Framework/Detector/Detector.cc:183: Update: Already at the requested time.
+[WARN] EventIO/Corsika/CorsikaShowerFileGeometryProducer.cc:140: MakeGroundParticleCoordinateSystem: Observation level height: 1452 m is too far from Offline core height: 1400 m. Consider running shower simulation with observation level closer to the height of the array in Offline!
+[INFO] EventIO/Corsika/CorsikaShowerFileGeometryProducer.cc:169: MakeGroundParticleCoordinateSystem: CORSIKA particle ground plane is displaced by -59.983m along shower axis with respect to Offline ground level.
+[INFO] EventIO/Corsika/CorsikaShowerFileGeometryProducer.cc:208: MakeGroundParticleCoordinateSystem: Rotation (around z axis) between Auger CS and Corsika CS: 85.767 deg.
+[INFO] Modules/General/EventGeneratorOG/EventGenerator.cc:748: Run: generated event 'Library_Test:Run_10002:Shower_1:Use_1', northing = 6092316.7, easting = 449829.86 (around station 5063)
+--> Finished running module 'EventGeneratorOG' with status eSuccess
+--> Running Run() of module 'SdAccidentalInjectorKG'
+[INFO] Modules/SdSimulation/SdAccidentalInjectorKG/SdAccidentalInjector.cc:194: Run: Injecting accidental muons:
+Total number of accidental muons: 0
+--> Finished running module 'SdAccidentalInjectorKG' with status eSuccess
+--> Running Run() of module 'G4StationSimulatorOG'
+[INFO] Modules/SdSimulation/G4StationSimulator/G4StationSimulator.cc:372: RunFast: G4StationSimulatorOG
+[INFO] Modules/SdSimulation/G4StationSimulator/G4StationSimulator.cc:393: RunFast: No stations with SimData found.
+--> Finished running module 'G4StationSimulatorOG' with status eSuccess
+--> Running Run() of module 'CachedShowerRegeneratorOG'
+[INFO] Modules/SdSimulation/CachedShowerRegeneratorOG/CachedShowerRegenerator.cc:400: InitNewShower: Out of 1672 stations: inner cut 0, outer 0
+[INFO] Modules/SdSimulation/CachedShowerRegeneratorOG/CachedShowerRegenerator.cc:436: Run: Will use weighted simulation for more than 300000 particles per station.
+[INFO] Modules/SdSimulation/CachedShowerRegeneratorOG/CachedShowerRegenerator.cc:657: Run: 5317 particles processed.
+[INFO] Modules/SdSimulation/CachedShowerRegeneratorOG/CachedShowerRegenerator.cc:678: OutputStats: 
+Station particle statistics:
+       |  Rho  |      |     |   |wght| wght |  wght |station 
+station|  [km] |   top| side| up| min|  avg |  max  |thinning
+-------+-------+------+-----+---+----+------+-------+--------
+  4958 | 3.463 |    0 |   1 | 0 | 1  | 1    |  1    |1       
+  4959 | 2.758 |    0 |   1 | 0 | 1  | 1    |  1    |1       
+  4960 | 2.78  |    0 |   3 | 0 | 1  | 1    |  1    |1       
+  4961 | 3.516 |    1 |   0 | 0 | 1  | 1    |  1    |1       
+  4991 | 3.333 |    1 |   0 | 0 | 1  | 1    |  1    |1       
+  4992 | 2.118 |    2 |   6 | 0 | 1  | 1    |  1    |1       
+  4993 | 1.538 |   17 |  18 | 0 | 1  | 1.173|  5.412|1       
+  4994 | 2.18  |    2 |   3 | 0 | 1  | 1.079|  1.393|1       
+  5026 | 2.239 |    4 |   5 | 0 | 1  | 1    |  1    |1       
+  5027 | 0.8122|  567 | 489 | 0 | 1  | 1.494|  6.966|1       
+  5028 | 0.8991|  425 | 357 | 0 | 1  | 1.325|  6.818|1       
+  5029 | 2.337 |    6 |   4 | 0 | 1  | 1    |  1    |1       
+  5061 | 3.035 |    3 |   0 | 0 | 1  | 1    |  1    |1       
+  5062 | 1.615 |   40 |  17 | 0 | 1  | 1    |  1    |1       
+  5063 | 0.7198| 2315 | 914 | 0 | 1  | 1.523| 11.73 |1       
+  5064 | 1.712 |   33 |  22 | 0 | 1  | 1    |  1    |1       
+  5098 | 2.866 |    5 |   0 | 0 | 1  | 1    |  1    |1       
+  5099 | 1.971 |   22 |   4 | 0 | 1  | 1    |  1    |1       
+  5100 | 2.014 |   17 |   6 | 0 | 1  | 1    |  1    |1       
+  5101 | 2.956 |    2 |   0 | 0 | 1  | 1    |  1    |1       
+  5136 | 3.303 |    1 |   0 | 0 | 1  | 1    |  1    |1       
+  5137 | 2.973 |    1 |   1 | 0 | 1  | 1    |  1    |1       
+  5138 | 3.36  |    0 |   1 | 0 | 1  | 1    |  1    |1       
+  5176 | 4.173 |    0 |   1 | 0 | 1  | 1    |  1    |1       
+[INFO] Modules/SdSimulation/CachedShowerRegeneratorOG/CachedShowerRegenerator.cc:721: OutputStats: 
+Station timing statistics:
+abs = absolute time difference to core time
+rel = relative time to station plane-front arrival
+       |  Rho  |  min abs  |  max abs  |  min rel  |  max rel  
+station|  [km] | time [ns] | time [ns] | time [ns] | time [ns] 
+-------+-------+-----------+-----------+-----------+-----------
+  4958 | 3.463 |  8965.9   |  8965.9   |  3699.5   |  3699.5   
+  4959 | 2.758 |  8876.2   |  8876.2   |  3575.8   |  3575.8   
+  4960 | 2.78  |  7419.4   | 17009     |  2087.3   | 11676.8   
+  4961 | 3.516 |  6822.2   |  6822.2   |  1453.9   |  1453.9   
+  4991 | 3.333 |  6389.4   |  6389.4   |  3301.5   |  3301.5   
+  4992 | 2.118 |  5615.2   | 20450.2   |  2495.4   | 17330.4   
+  4993 | 1.538 |  3626.5   |  5907.7   |   475.5   |  2756.7   
+  4994 | 2.18  |  4143.6   |  6238     |   956.9   |  3051.4   
+  5026 | 2.239 |  2527.6   |  9186.3   |  1587.4   |  8246.1   
+  5027 | 0.8122|  1027.9   | 14099.1   |    55.2   | 13126.5   
+  5028 | 0.8991|  1134.2   | 12960.4   |   129.8   | 11956     
+  5029 | 2.337 |  2689.1   |  8439.6   |  1650.3   |  7400.8   
+  5061 | 3.035 |  2425.4   | 17675.5   |  3663.8   | 18913.8   
+  5062 | 1.615 |  -651.8   |  6192.1   |   554.6   |  7398.5   
+  5063 | 0.7198| -1118.5   | 18113.2   |    56.7   | 19288.4   
+  5064 | 1.712 |  -743.4   | 20137.6   |   396.2   | 21277.2   
+  5098 | 2.866 | -1593.9   |  4187.6   |  1790.6   |  7572.1   
+  5099 | 1.971 | -1644.8   |  5332.5   |  1708.9   |  8686.3   
+  5100 | 2.014 | -1882.1   |  2639.5   |  1436.6   |  5958.2   
+  5101 | 2.956 |  2786.6   |  2821.1   |  6072.5   |  6107     
+  5136 | 3.303 | -2098.7   | -2098.7   |  3432.6   |  3432.6   
+  5137 | 2.973 |  6353.8   | 23912.1   | 11850.5   | 29408.8   
+  5138 | 3.36  | -1506.5   | -1506.5   |  3958     |  3958     
+  5176 | 4.173 |  4787     |  4787     | 12412.4   | 12412.4   
+[INFO] Modules/SdSimulation/CachedShowerRegeneratorOG/CachedShowerRegenerator.cc:766: OutputStats: 0 horizontal particles rejected.
+--> Finished running module 'CachedShowerRegeneratorOG' with status eSuccess
+--> Running Run() of module 'G4StationSimulatorOG'
+[INFO] Modules/SdSimulation/G4StationSimulator/G4StationSimulator.cc:226: Run: Constructing G4Station
+[INFO] Modules/SdSimulation/G4StationSimulator/G4StationSimulator.cc:372: RunFast: G4StationSimulatorOG
+StationId 4958 : Particles 1
+[INFO] G4COut: 
+phot:   for  gamma    SubType= 12  BuildTable= 0
+      LambdaPrime table from 200 keV to 100 TeV in 61 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+       PhotoElectric :  Emin=        0 eV    Emax=      100 TeV   AngularGenSauterGavrila
+
+compt:   for  gamma    SubType= 13  BuildTable= 1
+      Lambda table from 100 eV  to 1 MeV, 7 bins per decade, spline: 1
+      LambdaPrime table from 1 MeV to 100 TeV in 56 bins 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+       Klein-Nishina :  Emin=        0 eV    Emax=      100 TeV
+
+conv:   for  gamma    SubType= 14  BuildTable= 1
+      Lambda table from 1.022 MeV to 100 TeV, 18 bins per decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        BetheHeitler :  Emin=        0 eV    Emax=       80 GeV
+     BetheHeitlerLPM :  Emin=       80 GeV   Emax=      100 TeV
+
+msc:   for e-    SubType= 10
+      RangeFactor= 0.04, stepLimitType: 1, latDisplacement: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc :  Emin=        0 eV    Emax=      100 TeV  Table with 84 bins Emin=    100 eV    Emax=    100 TeV
+
+eIoni:   for  e-    SubType= 2
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins per decade, spline: 1
+      finalRange(mm)= 1, dRoverRange= 0.2, integral: 1, fluct: 1, linLossLimit= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        MollerBhabha :  Emin=        0 eV    Emax=      100 TeV
+
+eBrem:   for  e-    SubType= 3
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins per decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+             eBremSB :  Emin=        0 eV    Emax=        1 GeV   DipBustGen
+            eBremLPM :  Emin=        1 GeV   Emax=      100 TeV   DipBustGen
+
+msc:   for e+    SubType= 10
+      RangeFactor= 0.04, stepLimitType: 1, latDisplacement: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc :  Emin=        0 eV    Emax=      100 TeV  Table with 84 bins Emin=    100 eV    Emax=    100 TeV
+
+eIoni:   for  e+    SubType= 2
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins per decade, spline: 1
+      finalRange(mm)= 1, dRoverRange= 0.2, integral: 1, fluct: 1, linLossLimit= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+        MollerBhabha :  Emin=        0 eV    Emax=      100 TeV
+
+eBrem:   for  e+    SubType= 3
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins per decade, spline: 1
+      LPM flag: 1 for E > 1 GeV,  VertexHighEnergyTh(GeV)= 100000
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+             eBremSB :  Emin=        0 eV    Emax=        1 GeV   DipBustGen
+            eBremLPM :  Emin=        1 GeV   Emax=      100 TeV   DipBustGen
+
+annihil:   for  e+, integral: 1     SubType= 5  BuildTable= 0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            eplus2gg :  Emin=        0 eV    Emax=      100 TeV
+
+msc:   for proton    SubType= 10
+      RangeFactor= 0.2, stepLimitType: 0, latDisplacement: 0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc :  Emin=        0 eV    Emax=      100 TeV  Table with 84 bins Emin=    100 eV    Emax=    100 TeV
+
+hIoni:   for  proton    SubType= 2
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins per decade, spline: 1
+      finalRange(mm)= 0.1, dRoverRange= 0.2, integral: 1, fluct: 1, linLossLimit= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               Bragg :  Emin=        0 eV    Emax=        2 MeV
+          Beth
+[INFO] G4COut: eBloch :  Emin=        2 MeV   Emax=      100 TeV
+
+msc:   for anti_proton    SubType= 10
+      RangeFactor= 0.2, stepLimitType: 0, latDisplacement: 0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc :  Emin=        0 eV    Emax=      100 TeV  Table with 84 bins Emin=    100 eV    Emax=    100 TeV
+
+hIoni:   for  anti_proton    SubType= 2
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins per decade, spline: 1
+      finalRange(mm)= 0.1, dRoverRange= 0.2, integral: 1, fluct: 1, linLossLimit= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            ICRU73QO :  Emin=        0 eV    Emax=        2 MeV
+          BetheBloch :  Emin=        2 MeV   Emax=      100 TeV
+
+msc:   for kaon+    SubType= 10
+      RangeFactor= 0.2, stepLimitType: 0, latDisplacement: 0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc :  Emin=        0 eV    Emax=      100 TeV  Table with 84 bins Emin=    100 eV    Emax=    100 TeV
+
+hIoni:   for  kaon+    SubType= 2
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins per decade, spline: 1
+      finalRange(mm)= 0.1, dRoverRange= 0.2, integral: 1, fluct: 1, linLossLimit= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               Bragg :  Emin=        0 eV    Emax=  1.05231 MeV
+          BetheBloch :  Emin=  1.05231 MeV   Emax=      100 TeV
+
+msc:   for kaon-    SubType= 10
+      RangeFactor= 0.2, stepLimitType: 0, latDisplacement: 0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc :  Emin=        0 eV    Emax=      100 TeV  Table with 84 bins Emin=    100 eV    Emax=    100 TeV
+
+hIoni:   for  kaon-    SubType= 2
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins per decade, spline: 1
+      finalRange(mm)= 0.1, dRoverRange= 0.2, integral: 1, fluct: 1, linLossLimit= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            ICRU73QO :  Emin=        0 eV    Emax=  1.05231 MeV
+          BetheBloch :  Emin=  1.05231 MeV   Emax=      100 TeV
+
+msc:   for mu+    SubType= 10
+      RangeFactor= 0.2, step limit type: 0, lateralDisplacement: 0, polarAngleLimit(deg)= 180
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc :  Emin=        0 eV    Emax=      100 TeV  Table with 84 bins Emin=    100 eV    Emax=    100 TeV
+
+muIoni:   for  mu+    SubType= 2
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins per decade, spline: 1
+      finalRange(mm)= 0.1, dRoverRange= 0.2, integral: 1, fluct: 1, linLossLimit= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               Bragg :  Emin=        0 eV    Emax=      200 keV
+          BetheBloch :  Emin=      200 keV   Emax=        1 GeV
+        MuBetheBloch :  Emin=        1 GeV   Emax=      100 TeV
+
+muBrems:   for  mu+    SubType= 3
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins per decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+              MuBrem :  Emin=        0 eV    Emax=      100 TeV
+
+muPairProd:   for  mu+    SubType= 4
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins per decade, spline: 1
+      Sampling table 21x1001; from 1 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+          muPairProd :  Emin=        0 eV    Emax=      100 TeV
+
+msc:   for mu-    SubType= 10
+      RangeFactor= 0.2, step limit type: 0, lateralDisplacement: 0, polarAngleLimit(deg)= 180
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc :  Emin=        0 eV    Emax=      100 TeV  Table w
+StationId 4959 : Particles 1
+StationId 4960 : Particles 3
+StationId 4961 : Particles 1
+StationId 4991 : Particles 1
+StationId 4992 : Particles 8
+StationId 4993 : Particles 35
+StationId 4994 : Particles 5
+StationId 5026 : Particles 9
+StationId 5027 : Particles 1056
+StationId 5028 : Particles 782
+StationId 5029 : Particles 10
+StationId 5061 : Particles 3
+StationId 5062 : Particles 57
+StationId 5063 : Particles 3229
+StationId 5064 : Particles 55
+StationId 5098 : Particles 5
+StationId 5099 : Particles 26
+StationId 5100 : Particles 23
+StationId 5101 : Particles 2
+StationId 5136 : Particles 1
+StationId 5137 : Particles 2
+StationId 5138 : Particles 1
+StationId 5176 : Particles 1
+[INFO] G4COut: ith 84 bins Emin=    100 eV    Emax=    100 TeV
+
+muIoni:   for  mu-    SubType= 2
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins per decade, spline: 1
+      finalRange(mm)= 0.1, dRoverRange= 0.2, integral: 1, fluct: 1, linLossLimit= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            ICRU73QO :  Emin=        0 eV    Emax=      200 keV
+          BetheBloch :  Emin=      200 keV   Emax=        1 GeV
+        MuBetheBloch :  Emin=        1 GeV   Emax=      100 TeV
+
+muBrems:   for  mu-    SubType= 3
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins per decade, spline: 1
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+              MuBrem :  Emin=        0 eV    Emax=      100 TeV
+
+muPairProd:   for  mu-    SubType= 4
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins per decade, spline: 1
+      Sampling table 21x1001; from 1 GeV to 100 TeV 
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+          muPairProd :  Emin=        0 eV    Emax=      100 TeV
+
+msc:   for pi+    SubType= 10
+      RangeFactor= 0.2, stepLimitType: 0, latDisplacement: 0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc :  Emin=        0 eV    Emax=      100 TeV  Table with 84 bins Emin=    100 eV    Emax=    100 TeV
+
+hIoni:   for  pi+    SubType= 2
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins per decade, spline: 1
+      finalRange(mm)= 0.1, dRoverRange= 0.2, integral: 1, fluct: 1, linLossLimit= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+               Bragg :  Emin=        0 eV    Emax=  297.505 keV
+          BetheBloch :  Emin=  297.505 keV   Emax=      100 TeV
+
+msc:   for pi-    SubType= 10
+      RangeFactor= 0.2, stepLimitType: 0, latDisplacement: 0
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            UrbanMsc :  Emin=        0 eV    Emax=      100 TeV  Table with 84 bins Emin=    100 eV    Emax=    100 TeV
+
+hIoni:   for  pi-    SubType= 2
+      dE/dx and range tables from 100 eV  to 100 TeV in 84 bins
+      Lambda tables from threshold to 100 TeV, 7 bins per decade, spline: 1
+      finalRange(mm)= 0.1, dRoverRange= 0.2, integral: 1, fluct: 1, linLossLimit= 0.01
+      ===== EM models for the G4Region  DefaultRegionForTheWorld ======
+            ICRU73QO :  Emin=        0 eV    Emax=  297.505 keV
+          BetheBloch :  Emin=  297.505 keV   Emax=      100 TeV
+--> Finished running module 'G4StationSimulatorOG' with status eSuccess
+--> Running Run() of module 'CachedShowerRegeneratorOG'
+--> Finished running module 'CachedShowerRegeneratorOG' with status eBreakLoop
+--> Running Run() of module 'SdSimulationCalibrationFillerOG'
+--> Finished running module 'SdSimulationCalibrationFillerOG' with status eSuccess
+--> Running Run() of module 'SdPMTSimulatorOG'
+--> Finished running module 'SdPMTSimulatorOG' with status eSuccess
+--> Running Run() of module 'SdFilterFADCSimulatorMTU'
+--> Finished running module 'SdFilterFADCSimulatorMTU' with status eSuccess
+--> Running Run() of module 'SdBaselineSimulatorOG'
+--> Finished running module 'SdBaselineSimulatorOG' with status eSuccess
+--> Running Run() of module 'DummyTankTriggerSimulator'
+--> Finished running module 'DummyTankTriggerSimulator' with status eSuccess
+--> Running Run() of module 'TankTriggerSimulatorOG'
+--> Finished running module 'TankTriggerSimulatorOG' with status eSuccess
+--> Running Run() of module 'TankGPSSimulatorOG'
+--> Finished running module 'TankGPSSimulatorOG' with status eSuccess
+--> Running Run() of module 'ClearParticleLists'
+[INFO] Modules/SdSimulation/ClearParticleLists/ClearParticleLists.cc:54: Run: Cleared 1672 particle lists.
+--> Finished running module 'ClearParticleLists' with status eSuccess
+--> Running Run() of module 'CentralTriggerSimulatorXb'
+[INFO] Modules/SdSimulation/CentralTriggerSimulatorXb/CentralTriggerSimulator.cc:179: Run: found 1 T3 cluster while processing event second 883197206:
+[INFO] Modules/SdSimulation/CentralTriggerSimulatorXb/CentralTriggerSimulator.cc:200: Run: T3 cluster: algorithm TOT2C1&3C2, reference time 2008-01-01T04:33:12.345813000Z (UTC), 883197206:345813000.00 (GPS) (883197206 s, 345813 us)
+--> Finished running module 'CentralTriggerSimulatorXb' with status eSuccess
+--> Running Run() of module 'CentralTriggerEventBuilderOG'
+[INFO] Modules/HdSimulation/CentralTriggerEventBuilder/CentralTriggerEventBuilder.cc:174: BuildEvent: Got 1 T3 trigger:
+#1 n=117 (TOT2C1&3C2):
+ID  |offset|window
+----+------+------
+4816|-114  |30    
+4817|-114  |30    
+4843|-114  |30    
+4844|-114  |30    
+4845|-114  |30    
+4871|-114  |30    
+4872|-114  |30    
+4873|-114  |30    
+4899|-114  |30    
+4900|-114  |30    
+4901|-114  |30    
+4902|-114  |30    
+4928|-114  |30    
+4929|-114  |30    
+4930|-114  |30    
+4931|-114  |30    
+4932|-114  |30    
+4958|-113  |0     
+4959|-113  |0     
+4960|-113  |0     
+4961|-114  |30    
+4962|-114  |30    
+4963|-114  |30    
+4964|-114  |30    
+4965|-114  |30    
+4991|-113  |0     
+4992|-114  |30    
+4993|-113  |0     
+4994|-113  |0     
+4995|-114  |30    
+4996|-114  |30    
+4997|-114  |30    
+4998|-114  |30    
+4999|-114  |30    
+5025|-114  |30    
+5026|-113  |0     
+5027|-123  |0     
+5028|-123  |0     
+5029|-113  |0     
+5030|-114  |30    
+5031|-114  |30    
+5032|-114  |30    
+5033|-114  |30    
+5034|-114  |30    
+5060|-114  |30    
+5061|-114  |30    
+5062|-113  |0     
+5063|-125  |0     
+5064|-113  |0     
+5065|-114  |30    
+5066|-114  |30    
+5067|-114  |30    
+5068|-114  |30    
+5069|-114  |30    
+5096|-114  |30    
+5097|-114  |30    
+5098|-113  |0     
+5099|-113  |0     
+5100|-113  |0     
+5101|-113  |0     
+5102|-114  |30    
+5103|-114  |30    
+5104|-114  |30    
+5105|-114  |30    
+5106|-114  |30    
+5133|-114  |30    
+5134|-114  |30    
+5135|-114  |30    
+5136|-114  |30    
+5137|-114  |30    
+5138|-114  |30    
+5139|-114  |30    
+5140|-114  |30    
+5141|-114  |30    
+5142|-114  |30    
+5143|-114  |30    
+5171|-114  |30    
+5172|-114  |30    
+5173|-114  |30    
+5174|-114  |30    
+5175|-114  |30    
+5176|-114  |30    
+5177|-114  |30    
+5178|-114  |30    
+5179|-114  |30    
+5180|-114  |30    
+5181|-114  |30    
+5210|-114  |30    
+5211|-114  |30    
+5212|-114  |30    
+5213|-114  |30    
+5214|-114  |30    
+5215|-114  |30    
+5216|-114  |30    
+5217|-114  |30    
+5218|-114  |30    
+5219|-114  |30    
+5220|-114  |30    
+5251|-114  |30    
+5252|-114  |30    
+5253|-114  |30    
+5254|-114  |30    
+5255|-114  |30    
+5256|-114  |30    
+5257|-114  |30    
+5258|-114  |30    
+5259|-114  |30    
+5260|-114  |30    
+5293|-114  |30    
+5294|-114  |30    
+5295|-114  |30    
+5296|-114  |30    
+5297|-114  |30    
+5298|-114  |30    
+5299|-114  |30    
+5300|-114  |30    
+5301|-114  |30    
+[INFO] Modules/HdSimulation/CentralTriggerEventBuilder/CentralTriggerEventBuilder.cc:191: BuildEvent: SD Trigger time set to: 2008-01-01T04:33:12.345813000Z (UTC), 883197206:345813000.00 (GPS)
+station|    diff [ns] 
+-------+--------------
+  4958 | 21999.5 early
+  4959 | 21999.5 early
+  4960 | 21999.5 early
+  4991 | 21999.5 early
+  4993 | 21999.5 early
+  4994 | 21999.5 early
+  5026 | 21999.5 early
+  5029 | 21999.5 early
+  5062 | 21999.5 early
+  5064 | 21999.5 early
+  5098 | 21999.5 early
+  5099 | 21999.5 early
+  5100 | 21999.5 early
+  5101 | 21999.5 early
+[INFO] Modules/HdSimulation/CentralTriggerEventBuilder/CentralTriggerEventBuilder.cc:396: BuildEvent: 
+Adding stations:
+5027 5028 5063 as TOT
+4958-4960 4991 4993 4994 5026 5029 5062 5064 5098-5101 as RD Threshold
+--> Finished running module 'CentralTriggerEventBuilderOG' with status eSuccess
+--> Running Run() of module 'EventBuilderOG'
+[WARN] EventIO/CDAS/CDASToOfflineEventConverter.cc:126: ConditionalCopy: Muon charge (sum) size mismatch: source 0, destination 600.
+[WARN] EventIO/CDAS/CDASToOfflineEventConverter.cc:126: ConditionalCopy: Muon shape histogram size mismatch: source 0, destination 20.
+[WARN] EventIO/CDAS/CDASToOfflineEventConverter.cc:126: ConditionalCopy: Muon shape histogram size mismatch: source 0, destination 70.
+--> Finished running module 'EventBuilderOG' with status eSuccess
+--> Running Run() of module 'EventCheckerOG'
+--> Finished running module 'EventCheckerOG' with status eSuccess
+--> Running Run() of module 'SdGainRatioCorrectorKG'
+--> Finished running module 'SdGainRatioCorrectorKG' with status eSuccess
+--> Running Run() of module 'SdStationCheckerOG'
+[INFO] Modules/SdReconstruction/SdStationCheckerOG/SdStationChecker.cc:117: Run: 1555 stations without trigger data rejected.
+--> Finished running module 'SdStationCheckerOG' with status eSuccess
+--> Running Run() of module 'SdHistogramFitterKG'
+[WARN] Modules/SdReconstruction/SdHistogramFitterKG/SdHistogramFitterKG.cc:260: CalculatePeakAndCharge: According to the LS calibration version there should be a muon charge histogram... Will not tell you again!
+[WARN] Modules/SdReconstruction/SdHistogramFitterKG/SdHistogramFitterKG.cc:477: CalculatePeakAndCharge: According to the LS calibration version there should be a muon shape histogram... Will not tell you again!
+--> Finished running module 'SdHistogramFitterKG' with status eSuccess
+--> Running Run() of module 'SdBaselineFinderKG'
+--> Finished running module 'SdBaselineFinderKG' with status eSuccess
+--> Running Run() of module 'RecDataWriterNG'
+[INFO] Modules/General/RecDataWriterNG/Offline2ADST.cc:108: Convert: Convert SD
+[ERROR] Framework/Atmosphere/Atmosphere.cc:765: HasModel: Call to a not registered or not configured model
+[WARN] Modules/General/RecDataWriterNG/Offline2ADST.cc:611: FillSim: Can't load profile model. Core-to-depth distances not filled.
+[INFO] Modules/General/RecDataWriterNG/Offline2ADST.cc:132: Convert: Convert Detector
+[WARN] Modules/General/RecDataWriterNG/Detector2ADST.cc:325: FillDetector: Access to non-existent sub-component exception, List of initialized managers in 'AManagerRegister is empty.
+[WARN] Modules/General/RecDataWriterNG/Detector2ADST.cc:427: FillLidarData: Exception retrieving lidar info.
+[WARN] Modules/General/RecDataWriterNG/Detector2ADST.cc:94: FillGOESData: Access to non-existent sub-component exception, List of initialized managers in 'AManagerRegister is empty.
+[INFO] Modules/General/RecDataWriterNG/Offline2ADST.cc:387: FillDetectorGeometryIncremental: Updating SD stations
+--> Finished running module 'RecDataWriterNG' with status eSuccess
+--> Running Run() of module 'EventFileReaderOG'
+[INFO] EventIO/Corsika/CorsikaShowerFile.cc:1093: Read: End of file
+--> Finished running module 'EventFileReaderOG' with status eBreakLoop
+--> Running Finish() of module 'CachedShowerRegeneratorOG'
+--> Finished Finish() of module 'CachedShowerRegeneratorOG', status: eSuccess
+--> Running Finish() of module 'CentralTriggerEventBuilderOG'
+--> Finished Finish() of module 'CentralTriggerEventBuilderOG', status: eSuccess
+--> Running Finish() of module 'CentralTriggerSimulatorXb'
+--> Finished Finish() of module 'CentralTriggerSimulatorXb', status: eSuccess
+--> Running Finish() of module 'ClearParticleLists'
+--> Finished Finish() of module 'ClearParticleLists', status: eSuccess
+--> Running Finish() of module 'DummyTankTriggerSimulator'
+--> Finished Finish() of module 'DummyTankTriggerSimulator', status: eSuccess
+--> Running Finish() of module 'EventBuilderOG'
+--> Finished Finish() of module 'EventBuilderOG', status: eSuccess
+--> Running Finish() of module 'EventCheckerOG'
+[INFO] Modules/General/EventCheckerOG/EventChecker.cc:157: Finish: 
+                   N    % 
+Events processed:  1  100 
+   Events skiped:  0    0 
+1980 (time-zero):  0    0 
+  SD station err:  0    0 
+      FD eye err:  0    0 
+  MD counter err:  0    0 
+--> Finished Finish() of module 'EventCheckerOG', status: eSuccess
+--> Running Finish() of module 'EventFileReaderOG'
+[INFO] Modules/General/EventFileReaderOG/EventFileReader.cc:206: Finish: Read 1 events in 51.4763 sec, 0.0194264 ev/sec, with 99.2496% cpu usage.
+--> Finished Finish() of module 'EventFileReaderOG', status: eSuccess
+--> Running Finish() of module 'EventGeneratorOG'
+--> Finished Finish() of module 'EventGeneratorOG', status: eSuccess
+--> Running Finish() of module 'G4StationSimulatorOG'
+--> Finished Finish() of module 'G4StationSimulatorOG', status: eSuccess
+--> Running Finish() of module 'RecDataWriterNG'
+[INFO] Modules/General/RecDataWriterNG/RecDataWriter.cc:287: Finish: writing detector
+[INFO] Modules/General/RecDataWriterNG/RecDataWriter.cc:291: Finish: writing file info
+[INFO] Modules/General/RecDataWriterNG/RecDataWriter.cc:303: Finish: 1 event written to ADST ROOT file: 0 stereo | 0 triple | 0 quadruple
+--> Finished Finish() of module 'RecDataWriterNG', status: eSuccess
+--> Running Finish() of module 'SdAccidentalInjectorKG'
+--> Finished Finish() of module 'SdAccidentalInjectorKG', status: eSuccess
+--> Running Finish() of module 'SdBaselineFinderKG'
+--> Finished Finish() of module 'SdBaselineFinderKG', status: eSuccess
+--> Running Finish() of module 'SdBaselineSimulatorOG'
+--> Finished Finish() of module 'SdBaselineSimulatorOG', status: eSuccess
+--> Running Finish() of module 'SdFilterFADCSimulatorMTU'
+--> Finished Finish() of module 'SdFilterFADCSimulatorMTU', status: eSuccess
+--> Running Finish() of module 'SdGainRatioCorrectorKG'
+--> Finished Finish() of module 'SdGainRatioCorrectorKG', status: eSuccess
+--> Running Finish() of module 'SdHistogramFitterKG'
+--> Finished Finish() of module 'SdHistogramFitterKG', status: eSuccess
+--> Running Finish() of module 'SdPMTSimulatorOG'
+--> Finished Finish() of module 'SdPMTSimulatorOG', status: eSuccess
+--> Running Finish() of module 'SdSimulationCalibrationFillerOG'
+--> Finished Finish() of module 'SdSimulationCalibrationFillerOG', status: eSuccess
+--> Running Finish() of module 'SdStationCheckerOG'
+--> Finished Finish() of module 'SdStationCheckerOG', status: eSuccess
+--> Running Finish() of module 'TankGPSSimulatorOG'
+--> Finished Finish() of module 'TankGPSSimulatorOG', status: eSuccess
+--> Running Finish() of module 'TankTriggerSimulatorOG'
+--> Finished Finish() of module 'TankTriggerSimulatorOG', status: eSuccess
+[INFO] Framework/RunController/RunController.cc:244: FinishBranch: Performance counters:
+                          Item: Count
+-------------------------------------
+         EventFileReader/Files:     1
+   EventFileReader/TotalEvents:     1
+EventGenerator/GeneratedEvents:     1
+[INFO] Framework/RunController/RunController.cc:257: FinishBranch: 
+
+CPU user and system time in Module::Run()
+                         Module:   USR    SYS    %  
+----------------------------------------------------
+      CachedShowerRegeneratorOG:  23.17  1.29   48.3
+   CentralTriggerEventBuilderOG:   0.01  0       0  
+      CentralTriggerSimulatorXb:   0.19  0.02    0.4
+             ClearParticleLists:   0     0       0  
+      DummyTankTriggerSimulator:   0.51  0.01    1  
+                 EventBuilderOG:   0.02  0       0  
+                 EventCheckerOG:   0     0       0  
+              EventFileReaderOG:   0.05  0.06    0.2
+               EventGeneratorOG:   0.07  0       0.1
+           G4StationSimulatorOG:  15.76  0      31.1
+                RecDataWriterNG:   0.38  0.01    0.8
+         SdAccidentalInjectorKG:   0     0       0  
+             SdBaselineFinderKG:   0.04  0.01    0.1
+          SdBaselineSimulatorOG:   0.99  0.03    2  
+       SdFilterFADCSimulatorMTU:   2.74  0.01    5.4
+         SdGainRatioCorrectorKG:   0.01  0       0  
+            SdHistogramFitterKG:   0     0       0  
+               SdPMTSimulatorOG:   0.64  0       1.3
+SdSimulationCalibrationFillerOG:   2.97  0       5.9
+             SdStationCheckerOG:   0     0       0  
+             TankGPSSimulatorOG:   0     0       0  
+         TankTriggerSimulatorOG:   0.27  0       0.5
+----------------------------------------------------
+                    All modules:  47.82  1.44   97.3
+                          Total:  49.2   1.45  100  
+Total real time of the run: 50.9464 s
+
+Summary of previous errors:
+[1;36m1x[0m [ERROR] Framework/Atmosphere/Atmosphere.cc:765: HasModel: Call to a not registered or not configured model
+                                                        
+========================================================
+End of run: Auger Offline Framework v3r99p99-           
+GIT revision number: d377862eb 2024-07-31 12:15:13 +0000
+========================================================
+
+=================================================================
+==1647805==ERROR: LeakSanitizer: detected memory leaks
+
+Direct leak of 1008 byte(s) in 18 object(s) allocated from:
+    #0 0x7faeb4e011e7 in operator new(unsigned long) ../../../../src/libsanitizer/asan/asan_new_delete.cpp:99
+    #1 0x7faead57c2fd in TStorage::ObjectAlloc(unsigned long) (/cr/data01/filip/offline/bd0e9e/External/root/5.34.00-36f558c7d9/lib/root/libCore.so+0x4da2fd)
+
+Direct leak of 200 byte(s) in 1 object(s) allocated from:
+    #0 0x7faeb4e011e7 in operator new(unsigned long) ../../../../src/libsanitizer/asan/asan_new_delete.cpp:99
+    #1 0x7faead57c2fd in TStorage::ObjectAlloc(unsigned long) (/cr/data01/filip/offline/bd0e9e/External/root/5.34.00-36f558c7d9/lib/root/libCore.so+0x4da2fd)
+    #2 0x7faeae0c6130 in ROOTDict::new_EventInfo(void*) (/cr/data01/filip/offline/bd0e9e/install/lib/libRecEventKG.so+0x48a130)
+    #3 0x7faead4f278b in TClass::New(TClass::ENewType) const (/cr/data01/filip/offline/bd0e9e/External/root/5.34.00-36f558c7d9/lib/root/libCore.so+0x45078b)
+
+Indirect leak of 7456 byte(s) in 18 object(s) allocated from:
+    #0 0x7faeb4e011e7 in operator new(unsigned long) ../../../../src/libsanitizer/asan/asan_new_delete.cpp:99
+    #1 0x7faeac6a0976 in std::vector<TStreamerInfoActions::TConfiguredAction, std::allocator<TStreamerInfoActions::TConfiguredAction> >::reserve(unsigned long) (/cr/data01/filip/offline/bd0e9e/External/root/5.34.00-36f558c7d9/lib/root/libRIO.so+0x11e976)
+
+Indirect leak of 3680 byte(s) in 92 object(s) allocated from:
+    #0 0x7faeb4e011e7 in operator new(unsigned long) ../../../../src/libsanitizer/asan/asan_new_delete.cpp:99
+    #1 0x7faeac74a0f9 in TStreamerInfoActions::TConfiguredAction GetCollectionReadAction<TStreamerInfoActions::VectorLooper>(TVirtualStreamerInfo*, TStreamerElement*, int, unsigned int, TStreamerInfo::TCompInfo*, int) (/cr/data01/filip/offline/bd0e9e/External/root/5.34.00-36f558c7d9/lib/root/libRIO.so+0x1c80f9)
+
+Indirect leak of 1880 byte(s) in 47 object(s) allocated from:
+    #0 0x7faeb4e011e7 in operator new(unsigned long) ../../../../src/libsanitizer/asan/asan_new_delete.cpp:99
+    #1 0x7faeac749d30 in TStreamerInfoActions::TConfiguredAction GetCollectionReadAction<TStreamerInfoActions::VectorLooper>(TVirtualStreamerInfo*, TStreamerElement*, int, unsigned int, TStreamerInfo::TCompInfo*, int) (/cr/data01/filip/offline/bd0e9e/External/root/5.34.00-36f558c7d9/lib/root/libRIO.so+0x1c7d30)
+
+Indirect leak of 1040 byte(s) in 26 object(s) allocated from:
+    #0 0x7faeb4e011e7 in operator new(unsigned long) ../../../../src/libsanitizer/asan/asan_new_delete.cpp:99
+    #1 0x7faeac74a1c9 in TStreamerInfoActions::TConfiguredAction GetCollectionReadAction<TStreamerInfoActions::VectorLooper>(TVirtualStreamerInfo*, TStreamerElement*, int, unsigned int, TStreamerInfo::TCompInfo*, int) (/cr/data01/filip/offline/bd0e9e/External/root/5.34.00-36f558c7d9/lib/root/libRIO.so+0x1c81c9)
+
+Indirect leak of 1000 byte(s) in 25 object(s) allocated from:
+    #0 0x7faeb4e011e7 in operator new(unsigned long) ../../../../src/libsanitizer/asan/asan_new_delete.cpp:99
+    #1 0x7faeac749db9 in TStreamerInfoActions::TConfiguredAction GetCollectionReadAction<TStreamerInfoActions::VectorLooper>(TVirtualStreamerInfo*, TStreamerElement*, int, unsigned int, TStreamerInfo::TCompInfo*, int) (/cr/data01/filip/offline/bd0e9e/External/root/5.34.00-36f558c7d9/lib/root/libRIO.so+0x1c7db9)
+
+Indirect leak of 560 byte(s) in 14 object(s) allocated from:
+    #0 0x7faeb4e011e7 in operator new(unsigned long) ../../../../src/libsanitizer/asan/asan_new_delete.cpp:99
+    #1 0x7faeac749ff9 in TStreamerInfoActions::TConfiguredAction GetCollectionReadAction<TStreamerInfoActions::VectorLooper>(TVirtualStreamerInfo*, TStreamerElement*, int, unsigned int, TStreamerInfo::TCompInfo*, int) (/cr/data01/filip/offline/bd0e9e/External/root/5.34.00-36f558c7d9/lib/root/libRIO.so+0x1c7ff9)
+
+Indirect leak of 520 byte(s) in 13 object(s) allocated from:
+    #0 0x7faeb4e011e7 in operator new(unsigned long) ../../../../src/libsanitizer/asan/asan_new_delete.cpp:99
+    #1 0x7faeac74a439 in TStreamerInfoActions::TConfiguredAction GetCollectionReadAction<TStreamerInfoActions::VectorLooper>(TVirtualStreamerInfo*, TStreamerElement*, int, unsigned int, TStreamerInfo::TCompInfo*, int) (/cr/data01/filip/offline/bd0e9e/External/root/5.34.00-36f558c7d9/lib/root/libRIO.so+0x1c8439)
+
+Indirect leak of 360 byte(s) in 9 object(s) allocated from:
+    #0 0x7faeb4e011e7 in operator new(unsigned long) ../../../../src/libsanitizer/asan/asan_new_delete.cpp:99
+    #1 0x7faeac749e89 in TStreamerInfoActions::TConfiguredAction GetCollectionReadAction<TStreamerInfoActions::VectorLooper>(TVirtualStreamerInfo*, TStreamerElement*, int, unsigned int, TStreamerInfo::TCompInfo*, int) (/cr/data01/filip/offline/bd0e9e/External/root/5.34.00-36f558c7d9/lib/root/libRIO.so+0x1c7e89)
+
+Indirect leak of 288 byte(s) in 18 object(s) allocated from:
+    #0 0x7faeb4e011e7 in operator new(unsigned long) ../../../../src/libsanitizer/asan/asan_new_delete.cpp:99
+    #1 0x7faeac753f45 in TStreamerInfoActions::TActionSequence::CreateReadMemberWiseActions(TVirtualStreamerInfo*, TVirtualCollectionProxy&) (/cr/data01/filip/offline/bd0e9e/External/root/5.34.00-36f558c7d9/lib/root/libRIO.so+0x1d1f45)
+
+Indirect leak of 160 byte(s) in 4 object(s) allocated from:
+    #0 0x7faeb4e011e7 in operator new(unsigned long) ../../../../src/libsanitizer/asan/asan_new_delete.cpp:99
+    #1 0x7faeac74a231 in TStreamerInfoActions::TConfiguredAction GetCollectionReadAction<TStreamerInfoActions::VectorLooper>(TVirtualStreamerInfo*, TStreamerElement*, int, unsigned int, TStreamerInfo::TCompInfo*, int) (/cr/data01/filip/offline/bd0e9e/External/root/5.34.00-36f558c7d9/lib/root/libRIO.so+0x1c8231)
+
+Indirect leak of 40 byte(s) in 1 object(s) allocated from:
+    #0 0x7faeb4e011e7 in operator new(unsigned long) ../../../../src/libsanitizer/asan/asan_new_delete.cpp:99
+    #1 0x7faeac74a161 in TStreamerInfoActions::TConfiguredAction GetCollectionReadAction<TStreamerInfoActions::VectorLooper>(TVirtualStreamerInfo*, TStreamerElement*, int, unsigned int, TStreamerInfo::TCompInfo*, int) (/cr/data01/filip/offline/bd0e9e/External/root/5.34.00-36f558c7d9/lib/root/libRIO.so+0x1c8161)
+
+Indirect leak of 40 byte(s) in 1 object(s) allocated from:
+    #0 0x7faeb4e011e7 in operator new(unsigned long) ../../../../src/libsanitizer/asan/asan_new_delete.cpp:99
+    #1 0x7faeac74a3d1 in TStreamerInfoActions::TConfiguredAction GetCollectionReadAction<TStreamerInfoActions::VectorLooper>(TVirtualStreamerInfo*, TStreamerElement*, int, unsigned int, TStreamerInfo::TCompInfo*, int) (/cr/data01/filip/offline/bd0e9e/External/root/5.34.00-36f558c7d9/lib/root/libRIO.so+0x1c83d1)
+
+Indirect leak of 40 byte(s) in 1 object(s) allocated from:
+    #0 0x7faeb4e011e7 in operator new(unsigned long) ../../../../src/libsanitizer/asan/asan_new_delete.cpp:99
+    #1 0x7faeac74a571 in TStreamerInfoActions::TConfiguredAction GetCollectionReadAction<TStreamerInfoActions::VectorLooper>(TVirtualStreamerInfo*, TStreamerElement*, int, unsigned int, TStreamerInfo::TCompInfo*, int) (/cr/data01/filip/offline/bd0e9e/External/root/5.34.00-36f558c7d9/lib/root/libRIO.so+0x1c8571)
+
+SUMMARY: AddressSanitizer: 18272 byte(s) leaked in 288 allocation(s).

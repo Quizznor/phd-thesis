@@ -174,15 +174,20 @@ void ExtractDataFromAdstFiles(fs::path pathToAdst)
       const auto& traces = recStation.GetPMTTraces();
       for (const auto& trace : traces)
       {
+        if (trace.GetType() != eTotalTrace) continue;
         if (trace.GetPMTId() == 4) continue;
 
-        // const auto peak = trace.GetPeak();
-        const auto calibratedTrace = trace.GetVEMComponent();
-
         traceFile << showerEnergy << " " << showerZenith << " " << stationId << " " << SPD << " " << trace.GetPMTId();
-        for (const auto& bin : calibratedTrace)
-        {
-          traceFile << " " << bin;
+        const auto& vemTrace = trace.GetVEMComponent();
+        if (!vemTrace.size()) {
+          for (int i=0; i<2048; i++) {
+            traceFile << "0 ";
+          }
+        } else {
+          for (const auto& bin : trace.GetVEMComponent())
+          {
+            traceFile << " " << bin;
+          }
         }
 
         traceFile << "\n";
