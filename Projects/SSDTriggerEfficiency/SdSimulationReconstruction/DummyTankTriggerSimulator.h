@@ -17,7 +17,7 @@ namespace utl {
   class TimeStamp;
 }
 
-namespace DummyTankTriggerSimulatorOG {
+namespace DummyTankTriggerSimulator {
 
   /**
     \class DummyTankTriggerSimulator
@@ -41,7 +41,7 @@ namespace DummyTankTriggerSimulatorOG {
 
   private:
 
-    REGISTER_MODULE("DummyTankTriggerSimulatorOG", DummyTankTriggerSimulator);
+    REGISTER_MODULE("DummyTankTriggerSimulator", DummyTankTriggerSimulator);
 
   };
 

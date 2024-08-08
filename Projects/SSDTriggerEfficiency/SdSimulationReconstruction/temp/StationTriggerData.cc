@@ -25,8 +25,8 @@ namespace sevt {
       return eMuon;
     if (IsRDThreshold())
       return eRDThreshold;
-    if (IsForced())
-      return eForced;
+    // if (IsForced())
+    //   return eForced;
 
     return eNone;
   }
@@ -92,6 +92,7 @@ namespace sevt {
       fWindowMicroSecond = 30;
       fPLDTrigger = ePLDLatchForced;
       fErrorCode = eNoError;
+      break;
     }
   }
 

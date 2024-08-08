@@ -5,11 +5,14 @@ import subprocess
 
 # TODO: intelligently grab source file
 
-DETECTORSEED = 0
-PHYSICSSEED = 1
+# DETECTORSEED = 0
+# PHYSICSSEED = 1
 
-source_file = "/lsdf/auger/corsika/prague/QGSJET-II.04/proton/18_18.5/DAT010002"
-source_name, proc_no = source_file.split('/')[-1], sys.argv[1]
+source_file = "/lsdf/auger/corsika/napoli/QGSJET-II.04/proton/19.5_20/DAT100012.lst"
+source_name, proc_no = source_file.split('/')[-1], int(sys.argv[1])
+
+DETECTORSEED = proc_no
+PHYSICSSEED = proc_no + 1
 
 target_file = f"/cr/work/filip/SSDTriggerEfficiency/run01/{source_name.split('.')[0]}_{DETECTORSEED:06}.root"
 target_bootstrap = f'/cr/work/filip/Simulations/Bootstraps/bootstrap_{proc_no}.xml'
@@ -20,8 +23,8 @@ replace_config_dir = lambda x: x.replace("@CONFIGDIR@", offline_config_path)
 # Prepare bootstrap
 replacements = {
     '@INPUTFILE@' : source_file,
-    '@PATTERNPATH@' : '*',                      # TODO: will fail for some shit
-    '@GROUNDDATA@' : '(1)',                     # TODO: will fail for some shit
+    '@PATTERNPATH@' : '*.lst',                      # TODO: will fail for some shit
+    '@GROUNDDATA@' : '(1).lst',                     # TODO: will fail for some shit
     '@DETECTORSEED@' : f"{DETECTORSEED:06}",
     '@PHYSICSSEED@' : f"{PHYSICSSEED:06}",
     '@NPARTICLES@' : '1000',                    # DEFAULT: 300000

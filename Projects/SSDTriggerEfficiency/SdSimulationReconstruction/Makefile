@@ -27,7 +27,7 @@ EXE := userAugerOffline
 # Authors: T. Paul, S. Argiro, L. Nellen, D. Veberic
 # Send bug reports to http://www.auger.unam.mx/bugzilla/
 
-.PHONY: all depend clean
+.PHONY: all depend clean debug
 
 ifdef AUGEROFFLINEROOT
   AUGEROFFLINECONFIG := $(AUGEROFFLINEROOT)/bin/auger-offline-config
@@ -62,6 +62,10 @@ depend: Make-depend
 
 Make-depend: $(USER_SRCS)
 	$(CPP) $(CPPFLAGS) -MM $^ >$@
+
+
+debug: $(EXE) $(USER_XMLS)
+	$(CXX) -o $@ $^ $(MAIN) $(CXXFLAGS) -g $(LDFLAGS)
 
 clean:
 	- rm -f *.o  *.so *.ps core $(USER_XMLS) Make-depend

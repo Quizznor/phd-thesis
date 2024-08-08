@@ -8,4 +8,4 @@ cd ../SdSimulationReconstruction
 cd ../ADSTReader
 ./AdstReader $2
 
-# rm -rf ../Offline/HybridRec.dat #$@
+rm -rf ../Offline/HybridRec.dat #$@

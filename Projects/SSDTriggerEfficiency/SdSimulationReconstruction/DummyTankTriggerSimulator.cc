@@ -34,7 +34,7 @@ using namespace utl;
 using namespace std;
 
 
-namespace DummyTankTriggerSimulatorOG {
+namespace DummyTankTriggerSimulator {
 
   VModule::ResultFlag
   DummyTankTriggerSimulator::Init() {return eSuccess;}
@@ -66,15 +66,26 @@ namespace DummyTankTriggerSimulatorOG {
         continue;
       }
 
-      const auto& simData = station.GetSimData();
-      if (simData.GetNParticles() == 0) {
-        Buffer(station, eventTime, StationTriggerData::eSilent, StationTriggerData::ePLDNone, 0, 0);
-        continue;
+      // bool hasPhotoelectrons = false;
+      for (const auto& pmt : station.PMTsRange(sdet::PMTConstants::eAnyType)) {        
+        if (!pmt.HasSimData()) continue;
+        const auto& simData =  pmt.GetSimData();
+        
+        if (!simData.HasPETimeDistribution()) continue;
+        // hasPhotoelectrons = true;
+
+        // const auto& trace = simData.GetPETimeDistribution();
+
+        // for (const auto& bin : trace) {
+        //   std::cout << bin << " ";
+        // }
       }
 
-      // is this sufficient?
-      int startBin = simData.ParticlesBegin()->GetTime();
-      int stopBin = simData.ParticlesEnd()->GetTime();
+      // const auto& trace = simData.GetPETimeDistribution();
+      // int startBin = trace.GetStart() * trace.GetBinning();
+      // int stopBin = trace.GetEnd() * trace.GetBinning();
+      int startBin = 0;       // change this
+      int stopBin = 120;      // change this
 
       tab << station.GetId() << endc
           << "(" << startBin << ", " << stopBin << ")" << endc
@@ -83,8 +94,8 @@ namespace DummyTankTriggerSimulatorOG {
       tab << endr;
 
       Buffer(station, eventTime, 
-        StationTriggerData::eForced, 
-        StationTriggerData::ePLDForced, 
+        StationTriggerData::eRDThreshold, 
+        StationTriggerData::ePLDRD, 
         startBin, stopBin);
     }
 

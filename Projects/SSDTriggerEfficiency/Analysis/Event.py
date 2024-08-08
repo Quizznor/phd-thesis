@@ -23,6 +23,15 @@ class Event():
             if station_id == station.id: return station
         else:
             raise ValueError(f"Station {station_id} not found")
+        
+    
+    def __str__(self) -> str :
+        return_str = ""
+
+        for station in self.stations:
+            return_str += station.__str__() + "\n"
+
+        return return_str
 
 
 class Station():
@@ -35,12 +44,13 @@ class Station():
 
         assert len(self.id) == 1, f"Malformed station =(, got id {self.id}"
         assert len(self.spd) == 1, f"Malformed station =(, got spd {self.id}"
-        self.id, self.spd = self.id.pop(), self.spd.pop()
+        self.id, self.spd = int(self.id.pop()), int(self.spd.pop())
 
         self.wcd_traces = station_data[:-1, 3:]
         self.ssd = station_data[-1, 3:]
 
     def isT2(self) -> int : return self.isToT_WCD() or self.isToT_SSD()
+
 
     def isToT_SSD(self) -> int : 
         
@@ -54,7 +64,8 @@ class Station():
 
         else:
             return 0
-    
+
+
     def isToT_WCD(self) -> int :
 
         pmt_multiplicity_check = lambda sums : sum(sums > self.cfg.multiplicity['wcd']) > 1
@@ -71,4 +82,5 @@ class Station():
             pmt_running_sum += new_over_threshold - old_over_threshold
 
 
-        
+    def __str__(self) -> str :
+        return f"Station {self.id} at {self.spd}m"    
