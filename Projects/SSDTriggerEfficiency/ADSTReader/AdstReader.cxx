@@ -145,7 +145,7 @@ void ExtractDataFromAdstFiles(fs::path pathToAdst)
   for (unsigned int i = 0; i < recEventFile.GetNEvents(); ++i) 
   {
     // skip if event reconstruction failed
-    if (recEventFile.ReadEvent(i) != RecEventFile::eSuccess){continue;}
+    if (recEventFile.ReadEvent(i) != RecEventFile::eSuccess) continue;
 
     // allocate memory for data
     const SDEvent& sdEvent = recEvent->GetSDEvent();                              // contains the traces

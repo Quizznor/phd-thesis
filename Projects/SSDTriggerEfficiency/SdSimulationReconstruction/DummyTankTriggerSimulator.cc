@@ -87,8 +87,8 @@ namespace DummyTankTriggerSimulator {
         tab << endr;
 
         Buffer(station, eventTime, 
-          StationTriggerData::eRandom, 
-          StationTriggerData::ePLDRandom, 
+          StationTriggerData::eTimeOverThreshold, 
+          StationTriggerData::ePLDLatchTOTA, 
           startBin, stopBin);
       }
     }
