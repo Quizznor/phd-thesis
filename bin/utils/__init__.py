@@ -11,6 +11,7 @@ from dataclasses import dataclass
 class CONSTANTS():
 
     AUGER_FD_ROOT : str = '/cr/users/filip/bin/utils/Auger/FD'
+    GPS_OFFSET : int = 315964800
     
 
 class Formatter(logging.Formatter):

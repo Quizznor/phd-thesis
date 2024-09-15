@@ -3,7 +3,7 @@
 echo $@
 source $OFFLINE
 
-cd ../SdSimulationReconstruction
+cd ../SdSimulation
 ./userAugerOffline --bootstrap $1
 cd ../ADSTReader
 ./AdstReader $2

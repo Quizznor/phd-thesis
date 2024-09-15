@@ -32,7 +32,7 @@ replacements = {
 }
 
 with open(target_bootstrap, 'w') as target:
-    with open('../SdSimulationReconstruction/bootstrap.xml', 'r') as source:
+    with open('../SdSimulation/bootstrap.xml', 'r') as source:
         for line in source.readlines():
             try:
                 target.write(replacements[line.strip()] + "\n")

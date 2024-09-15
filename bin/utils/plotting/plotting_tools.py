@@ -194,3 +194,6 @@ def save(fig : plt.Figure = None, path : str = '') -> None :
         os.system('mkdir -p {base}/{path}')
 
     fig.savefig(base + path, bbox_inches='tight')
+
+def to_datetime(timestamps : Iterable) -> list[datetime.datetime] :
+    return [datetime.datetime.fromtimestamp(t) for t in timestamps]

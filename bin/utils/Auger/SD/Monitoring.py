@@ -13,16 +13,15 @@ class Monit():
 
     def __init__(self, years : list[int], months : list[int] = [0], days : list[int] = [0], /, *, starting_branch=None, verbosity=logging.INFO) -> None :
 
+        starting_branch = starting_branch or "SDMonCal/SDMonCalBranch"
+        self.logger = create_stream_logger("SD.Monitor", loglevel=verbosity)
+        
         if isinstance(years, str):
             full_file_paths = [years]
         else:   
-            starting_branch = starting_branch or "SDMonCal/SDMonCalBranch"
             if isinstance(years, int): years = [years]
             if isinstance(months, int): months = [months]
             if isinstance(days, int): days = [days]
-            
-            self.logger = create_stream_logger("SD.Monitor", loglevel=verbosity)
-            self.logger.info(f'received {len(list(product(years, months, days)))} file(s) as input')
 
             full_file_paths = []
             for y, m, d in product(years, months, days):
@@ -34,6 +33,8 @@ class Monit():
                     self.logger.error(f"I cannot find the monit file for {y:04}-{m:02}-{d:02} !!!")
                     raise FileNotFoundError
         
+        self.logger.info(f'received {len(full_file_paths)} file(s) as input')
+
         """
         opening individual files is faster than concatenate, iterate etc.,
         because we dont immediately load everything into memory at once
@@ -91,8 +92,8 @@ class Monit():
     def keys(self) -> typing.NoReturn :
         print(json.dumps(self._keys, indent=2))
 
-del logging
-del create_stream_logger
-del product, np, os
+# del logging
+# del create_stream_logger
+# del product, np, os
 del typing
-del json
+# del json
