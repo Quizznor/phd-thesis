@@ -39,17 +39,22 @@ int main(int argc, char *argv[])
       const UShort_t* const ssdPeakHisto = calibrationHistograms->Peak3;
       if (!ssdPeakHisto) continue;
 
-      // // calibration histograms for WCD PMTs
-      // const auto wcdPeakHisto = calibrationHistograms->Peak;
-      // for (unsigned int iPMT = 0; iPMT < 3; iPMT++)
-      // {
-      //   const Float_t* vemPeak = (&stationCalib->VemPeak)[iPMT];
-      //   outFile << stationId << " " << average << " " << *vemPeak << " " << iPMT + 1 << " ";
-      // }
-
       const UInt_t startSecond = stationCalib->StartSecond;
       const UInt_t endSecond = startSecond + stationCalib->EndSecond;
       const UInt_t average = 0.5 * (startSecond + endSecond);
+
+      // calibration histograms for WCD PMTs
+      const auto wcdPeakHisto = calibrationHistograms->Peak;
+      for (unsigned int iPMT = 0; iPMT < 3; iPMT++)
+      {
+        string histo = "";
+        for (unsigned int bin = 0; bin < sizeof(IoSdHisto::Peak)/sizeof(UShort_t)/3; bin++)
+        {
+          histo += to_string(wcdPeakHisto[iPMT][bin]) + ' ';
+        }
+
+        outFile << stationId << " " << average << " " << iPMT << " " << histo << '\n';
+      }
 
       string histo = "";
       UInt_t tailSum = 0;
@@ -64,8 +69,8 @@ int main(int argc, char *argv[])
 
       if (tailSum == 0) continue;
 
+      outFile << stationId << " " << average << " 3 " << histo.substr(0, histo.size() - 1) << '\n';
       nData += 1;
-      outFile << stationId << " " << average << " " << histo.substr(0, histo.size() - 1) << '\n';
     }
     // break;
   }
