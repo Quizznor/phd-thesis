@@ -11,14 +11,15 @@ class Monit():
     monit_path = '/cr/auger02/Prod/monit/Sd/'
     monit_path2 = '/cr/data01/filip/Data/monit'
 
-    def __init__(self, years : list[int], months : list[int] = [0], days : list[int] = [0], /, *, starting_branch=None, verbosity=logging.INFO) -> None :
+    def __init__(self, *args, starting_branch=None, verbosity=logging.INFO) -> None :
 
         starting_branch = starting_branch or "SDMonCal/SDMonCalBranch"
         self.logger = create_stream_logger("SD.Monitor", loglevel=verbosity)
         
-        if isinstance(years, str):
-            full_file_paths = [years]
-        else:   
+        if isinstance(args[0], str):
+            full_file_paths = args
+        else:
+            years, months, days = args
             if isinstance(years, int): years = [years]
             if isinstance(months, int): months = [months]
             if isinstance(days, int): days = [days]

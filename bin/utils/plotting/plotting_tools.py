@@ -196,4 +196,7 @@ def save(fig : plt.Figure = None, path : str = '') -> None :
     fig.savefig(base + path, bbox_inches='tight')
 
 def to_datetime(timestamps : Iterable) -> list[datetime.datetime] :
-    return [datetime.datetime.fromtimestamp(t) for t in timestamps]
+    try:
+        return [datetime.datetime.fromtimestamp(t) for t in timestamps]
+    except TypeError:
+        return datetime.datetime.fromtimestamp(timestamps)

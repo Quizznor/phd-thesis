@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
           histo += to_string(wcdPeakHisto[iPMT][bin]) + ' ';
         }
 
-        outFile << stationId << " " << average << " " << iPMT << " " << histo << '\n';
+        outFile << stationId << " " << average + 315964800 << " " << iPMT << " " << histo << '\n';
       }
 
       string histo = "";
@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
 
       if (tailSum == 0) continue;
 
-      outFile << stationId << " " << average << " 3 " << histo.substr(0, histo.size() - 1) << '\n';
+      outFile << stationId << " " << average + 315964800 << " 3 " << histo.substr(0, histo.size() - 1) << '\n';
       nData += 1;
     }
     // break;
