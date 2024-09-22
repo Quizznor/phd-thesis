@@ -1,5 +1,6 @@
 // Pauls stuff
 #include <algorithm>
+#include <iomanip>
 
 // stl
 #include <iostream>
@@ -130,22 +131,6 @@ struct VectorWrapper
 
 };
 
-// all stations that can theoretically be triggered during simulation. Since were throwing the simulated shower anywhere near Station 5398, this 
-// should ensure complete containment in most cases. Might not be true for highly inclined showers. Should in any case be a fair first estimate
-std::vector<int> consideredStations{
-
-             // 4 crowns with 5398 in center
-              4049, 4050, 4051, 4052, 4053,
-            4006, 4007, 4008, 4009, 4010, 4011,
-        5480, 5481, 5482, 5483, 5484, 5485, 5486,
-      5437, 5438, 5439, 5440, 5441, 5442, 5443, 5444,
-  5394, 5395, 5396, 5397, 5398, 5399, 5400, 5401, 5402,
-      5352, 5353, 5354, 5355, 5356, 5357, 5358, 5359,
-        5311, 5312, 5313, 5314, 5315, 5316, 5317,
-            5270, 5271, 5272, 5273, 5274, 5275,
-              5230, 5231, 5232, 5233, 5234
-};
-
 void ExtractDataFromAdstFiles(fs::path pathToAdst)
 {
   const auto csvTraceFile = pathToAdst.parent_path()/ pathToAdst.filename().replace_extension("csv");
@@ -160,7 +145,7 @@ void ExtractDataFromAdstFiles(fs::path pathToAdst)
   for (unsigned int i = 0; i < recEventFile.GetNEvents(); ++i) 
   {
     // skip if event reconstruction failed
-    if (recEventFile.ReadEvent(i) != RecEventFile::eSuccess){continue;}
+    if (recEventFile.ReadEvent(i) != RecEventFile::eSuccess) continue;
 
     // allocate memory for data
     const SDEvent& sdEvent = recEvent->GetSDEvent();                              // contains the traces
@@ -186,41 +171,23 @@ void ExtractDataFromAdstFiles(fs::path pathToAdst)
       const auto stationId = recStation.GetId();
       const auto SPD = detectorGeometry.GetStationAxisDistance(stationId, showerAxis, showerCore);  // in m
 
-      const auto genStation = sdEvent.GetSimStationById(stationId);
-      // const auto nMuons = genStation->GetNumberOfMuons();
-      // const auto nElectrons = genStation->GetNumberOfElectrons();
-      // const auto nPhotons = genStation->GetNumberOfPhotons();
-
-      // Save trace in ADC format
-      for (unsigned int PMT = 1; PMT < 6; PMT++)
+      const auto& traces = recStation.GetPMTTraces();
+      for (const auto& trace : traces)
       {
+        if (trace.GetType() != eTotalTrace) continue;
+        if (trace.GetPMTId() == 4) continue;
 
-        if (PMT == 4) continue;
-
-        // total trace container
-        VectorWrapper TotalTrace(2048,0);
-
-        // loop over all components (photon, electron, muons) -> NO HADRONIC COMPONENT
-        for (int component = ePhotonTrace; component <= eMuonTrace; component++)
-        {
-          const auto component_trace = recStation.GetPMTTraces((ETraceType)component, PMT);
-          auto CalibratedTrace = VectorWrapper( component_trace.GetVEMComponent() );
-
-          // make sure there exists a component of this type
-          if (CalibratedTrace.values.size() != 0)
-          {
-            TotalTrace = TotalTrace + CalibratedTrace;
+        traceFile << showerEnergy << " " << showerZenith << " " << stationId << " " << SPD << " " << trace.GetPMTId();
+        const auto& vemTrace = trace.GetVEMComponent();
+        if (!vemTrace.size()) {
+          for (int i=0; i<2048; i++) {
+            traceFile << "0 ";
           }
-        }
-
-        // write all information to file
-        traceFile << stationId << " " << PMT << " " << SPD << " " << showerEnergy << " " << showerZenith;
-
-
-        // ... and write trace to disk
-        for (const auto& bin : TotalTrace.get_trace(0, 2048))
-        {
-          traceFile << " " << bin;
+        } else {
+          for (const auto& bin : trace.GetVEMComponent())
+          {
+            traceFile << " " << bin;
+          }
         }
 
         traceFile << "\n";
@@ -233,7 +200,6 @@ void ExtractDataFromAdstFiles(fs::path pathToAdst)
 
 int main(int argc, char** argv) 
 {
-  
   ExtractDataFromAdstFiles(argv[1]);
   return 0;
 

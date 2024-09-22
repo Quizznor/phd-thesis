@@ -10,8 +10,17 @@ from dataclasses import dataclass
 @dataclass
 class CONSTANTS():
 
+    import numpy as np
+
     AUGER_FD_ROOT : str = '/cr/users/filip/bin/utils/Auger/FD'
-    
+    GPS_OFFSET : int = 315964800
+
+    # Auger SD Station specifications
+    UUB_WCD_BIN_EDGES : np.ndarray = np.array([4*k for k in range(100)] + [400 + 16*k for k in range(51)])
+    UUB_WCD_BIN_CENTERS: np.ndarray = 0.5 * (UUB_WCD_BIN_EDGES[1:] + UUB_WCD_BIN_EDGES[:-1])
+
+    UUB_SSD_BIN_EDGES : np.ndarray = np.array([2*k for k in range(100)] + [200 +  8*k for k in range(51)])
+    UUB_SSD_BIN_CENTERS: np.ndarray = 0.5 * (UUB_SSD_BIN_EDGES[1:] + UUB_SSD_BIN_EDGES[:-1])
 
 class Formatter(logging.Formatter):
     """Custom logging class to allow for stylized formatting, and (rough) runtime analysis"""

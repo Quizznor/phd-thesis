@@ -8,7 +8,8 @@ sys.path.append('/cr/users/filip/bin/')
 STATION = sys.argv[1]
 
 # 11800 scanning points
-multiplicities = range(5, 45)
+# multiplicities = range(5, 45)                           # 11800 params
+multiplicities = range(34, 45)                          # 2950 params
 threshold = np.linspace(0.05, 3.00, 295)
 params = list(product(multiplicities, threshold))
 
@@ -16,7 +17,7 @@ m, t = params[int(sys.argv[2])]
 try:
     already_calculated = np.loadtxt(f'/cr/data01/filip/Data/SSDtotRateMap/{STATION}_SSD.txt', usecols=[0, 1])
     for _m, _t in already_calculated:
-        if _m == m and _t == t: sys.exit(f"calculation already exists for {m, t}")
+        if _m == m and _t == t: sys.exit()
 except FileNotFoundError:
     pass
 
