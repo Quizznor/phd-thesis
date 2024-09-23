@@ -1,0 +1,55 @@
+<!-- A sequence for an SD only reconstruction -->
+
+<!DOCTYPE sequenceFile [
+  <!ENTITY % sd SYSTEM "/cr/data01/filip/offline/install/ds_forced_station_triggers/install/share/auger-offline/config/standardSdSequences.dtd">
+  %sd;
+] >
+
+<sequenceFile
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation='/cr/data01/filip/offline/install/ds_forced_station_triggers/install/share/auger-offline/config/ModuleSequence.xsd'>
+
+  <enableTiming/>
+
+  <moduleControl>
+
+    <loop numTimes="1" pushEventToStack="yes">
+
+      <module> EventFileReaderOG </module>
+
+      <!-- increase numTimes if you want to throw the shower
+           into the array more than once -->
+      <loop numTimes="1" pushEventToStack="yes">
+
+        <module> EventGeneratorOG </module>
+
+        <!-- simulation of muon background -->
+        <!-- <module> SdAccidentalInjectorKG </module> -->
+        <!-- <module> G4StationSimulatorOG </module> -->
+
+        &SdSimulation;
+
+        <!-- <module> DummyCentralTriggerKG           </module> -->
+        <module> CentralTriggerSimulatorXb       </module>
+        <module> CentralTriggerEventBuilderOG    </module>
+        <module> EventBuilderOG                  </module>
+
+        <module> EventCheckerOG                  </module>
+        <module> SdGainRatioCorrectorKG          </module>
+        <module> SdStationCheckerOG              </module>
+        <module> SdHistogramFitterKG             </module>
+        <module> SdBaselineFinderKG              </module>
+        <module> SdTraceCalibratorOG             </module>
+        <module> SdSignalRecoveryKLT             </module>
+        <module> SdMonteCarloEventSelectorOG     </module>
+
+        <!-- export the ADST -->
+        <module> RecDataWriterNG                 </module>
+
+      </loop>
+
+    </loop>
+
+  </moduleControl>
+
+</sequenceFile>

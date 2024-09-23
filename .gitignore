@@ -67,7 +67,6 @@ plots/
 # Offline
 Make-depend
 *.o
-*.xml
 **/userAugerOffline
 *.P
 */AdstReader
