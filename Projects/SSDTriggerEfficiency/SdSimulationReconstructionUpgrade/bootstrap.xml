@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!DOCTYPE bootstrap [
+  <!ENTITY standardSdIdealDetConfig SYSTEM '/cr/data01/filip/offline/install/ds_forced_station_triggers/install/share/auger-offline/config/standardSdIdealDetConfig.xml'>
+  <!ENTITY standardSdSimModuleConfig SYSTEM '/cr/data01/filip/offline/install/ds_forced_station_triggers/install/share/auger-offline/config/standardSdSimModuleConfig.xml'>
+  <!ENTITY standardSdRecModuleConfig SYSTEM '/cr/data01/filip/offline/install/ds_forced_station_triggers/install/share/auger-offline/config/standardSdRecModuleConfig.xml'>
+]>
+
+
+<bootstrap
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation='/cr/data01/filip/offline/install/ds_forced_station_triggers/install/share/auger-offline/config/bootstrap.xsd'
+  xmlns:xlink="http://www.auger.org/schema/types">
+
+  &standardSdIdealDetConfig;
+  &standardSdSimModuleConfig;
+  &standardSdRecModuleConfig;
+
+  <centralConfig>
+
+    <configLink
+      id         = "ModuleSequence"
+      type       = "XML"
+      xlink:href = "./ModuleSequence.xml"/>
+
+    <configLink
+      id         = "EventFileReader"
+      type       = "XML"
+      xlink:href = "./EventFileReader.xml"/>
+
+    <configLink
+      id         = "EventFileExporter"
+      type       = "XML"
+      xlink:href = "./EventFileExporter.xml"/>
+
+    <configLink
+      id         = "EventGenerator"
+      type       = "XML"
+      xlink:href = "./EventGenerator.xml"/>
+
+   <configLink
+       id         = "SStationListXMLManager"
+       type       = "XML"
+       xlink:href = "/cr/data01/filip/offline/install/ds_forced_station_triggers/install/share/auger-offline/config/SIdealUpgradedStationListInfill.xml"/>
+
+   <configLink
+     id         = "SDenseStationListXMLManager"
+     type       = "XML"
+     xlink:href = "./SDenseCustom.xml "/>
+
+  </centralConfig>
+
+  <parameterOverrides>
+    <configLink id="CentralTriggerEventBuilder">
+      <CentralTriggerEventBuilder>
+        <ForceEventBuildWithoutT3> 1 </ForceEventBuildWithoutT3>
+      </CentralTriggerEventBuilder>
+    </configLink>
+
+    <configLink id="EventFileReader">
+      <EventFileReader>
+        <CORSIKA>
+
+          <!-- the list of filenames -->
+          <InputFilenames>
+            @INPUTFILE@
+          </InputFilenames>
+          <PatternPath>
+            @PATTERNPATH@
+          </PatternPath>
+          <InputMapping>
+            <GroundData>
+            @GROUNDDATA@
+            </GroundData>
+            <ProfileData> (1).long </ProfileData>
+          </InputMapping>    
+        </CORSIKA>
+      </EventFileReader>
+    </configLink>
+
+    <configLink id="RecDataWriter">
+      <RecDataWriter>
+        <minEnergyForTraces unit="EeV"> 0 </minEnergyForTraces>
+        <rootOutput>
+          <outputFileName>
+          @OUTPUTFILE@
+          </outputFileName>
+        </rootOutput>
+      </RecDataWriter>
+    </configLink>
+
+    <configLink id="SDenseStationListXMLManager">
+      <SDenseStationList>
+        <isUUB> 1 </isUUB>
+        <hasSmallPMT> 1 </hasSmallPMT>
+        <hasScintillator> 1 </hasScintillator>
+      </SDenseStationList>
+    </configLink>
+
+    <configLink id="CachedShowerRegenerator">
+      <CachedShowerRegenerator>
+        <WeightedStationSimulationParticleLimit> 
+        @NPARTICLES@
+        </WeightedStationSimulationParticleLimit>
+      </CachedShowerRegenerator>
+    </configLink>
+
+    <configLink id="RandomEngineRegistry">
+      <RandomEngineRegistry>
+        <DetectorSeed>
+        @DETECTORSEED@
+        </DetectorSeed>
+        <PhysicsSeed>
+        @PHYSICSSEED@
+        </PhysicsSeed>
+      </RandomEngineRegistry>
+    </configLink>
+    
+     <configLink id="TankTriggerSimulator">
+      <TankTriggerSimulator>
+        <ForceStationTrigger> 1 </ForceStationTrigger>
+      </TankTriggerSimulator>
+    </configLink>
+  </parameterOverrides>
+
+</bootstrap>

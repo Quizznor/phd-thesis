@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- Example sequence file.-->
+
+<sequenceFile>
+
+  <enableTiming/>
+
+  <moduleControl>
+
+    <loop>
+
+      <!-- EventGenerator module is only needed to set detector time -->
+      <module> EventGeneratorOG </module>
+
+      <loop numTimes="500000" pushEventToStack="yes">
+
+        <!-- <module> ParticleInjectorNEU </module> -->
+        <module> LEInjectorCustom  </module> -->
+        <module> G4StationSimulatorOG </module>
+        <module> SdPMTSimulatorOG </module>
+        <module> SdFilterFADCSimulatorMTU </module>
+        <module> SdBaselineSimulatorOG </module>
+        <module> SdSimulationCalibratorOG </module>
+
+      </loop>
+
+    </loop>
+
+  </moduleControl>
+
+</sequenceFile>
