@@ -53,23 +53,23 @@ int main(int argc, char *argv[])
           histo += to_string(wcdPeakHisto[iPMT][bin]) + ' ';
         }
 
-        outFile << stationId << " " << average + 315964800 << " " << iPMT << " " << histo << '\n';
+        outFile << stationId << " " << stationCalib->EndSecond << " " << average + 315964800 << " " << iPMT << " " << histo << '\n';
       }
 
       string histo = "";
-      UInt_t tailSum = 0;
+      // UInt_t tailSum = 0;
       for (unsigned int i = 0; i < sizeof(IoSdHisto::Peak3)/sizeof(UShort_t); ++i)
       {
         histo += to_string(ssdPeakHisto[i]) + ' ';
 
         // additional quality control for SSD histos here?
-        tailSum += i > 125 ? ssdPeakHisto[i] : 0;
+        // tailSum += i > 125 ? ssdPeakHisto[i] : 0;
 
       }
 
-      if (tailSum == 0) continue;
+      // if (tailSum == 0) continue;
 
-      outFile << stationId << " " << average + 315964800 << " 3 " << histo.substr(0, histo.size() - 1) << '\n';
+      outFile << stationId << " " << stationCalib->EndSecond << " " << average + 315964800 << " 3 " << histo.substr(0, histo.size() - 1) << '\n';
       nData += 1;
     }
     // break;
