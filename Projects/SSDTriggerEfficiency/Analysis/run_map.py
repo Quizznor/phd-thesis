@@ -1,12 +1,13 @@
+#!/usr/bin/python3
+
 from itertools import product
 from Event import Event
+import pandas as pd
+import numpy as np
 import sys, os
 
-from utils.binaries import *
-
-run_no = "run01"
-src_dir = f'/cr/work/filip/SSDTriggerEfficiency/{run_no}/'
-proc_no = int(sys.argv[1])
+src_dir = f'/cr/work/filip/SSDTriggerEfficiency/{sys.argv[1]}/'
+proc_no = int(sys.argv[2])
 
 file = os.listdir(src_dir)[proc_no]
 event = Event(src_dir + file)
@@ -76,4 +77,4 @@ df_far['sum_far'] = df_far.sum(axis=1, numeric_only = True)
 df_far['n_far'] = len(cols_far)
 
 df_new = pd.concat([df_close[["sum_close", "n_close"]], df_far[["sum_far", "n_far"]]], axis=1)
-df_new.to_csv(f'{src_dir}/../{run_no}_evaluated/{file}')
+df_new.to_csv(f'{src_dir}/../{sys.argv[1]}_evaluated/{file}')
