@@ -4,7 +4,7 @@
 # AND the executable 'auger-offline-config' is not in your PATH
 # the definition of the following variable is required
 #
-# AUGEROFFLINEROOT := @prefix@
+# AUGEROFFLINEROOT := /cr/data/schmidt-d/offline/v018/build_cmake/inst-offline
 #
 # Replace the wildcard expression with .cc file list if you do
 # not want to compile all .cc files in this directory

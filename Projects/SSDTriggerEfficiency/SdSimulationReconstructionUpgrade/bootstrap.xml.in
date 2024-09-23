@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!DOCTYPE bootstrap [
+  <!ENTITY standardSdIdealDetConfig SYSTEM '@CONFIGDIR@/standardSdIdealDetConfig.xml'>
+  <!ENTITY standardSdSimModuleConfig SYSTEM '@CONFIGDIR@/standardSdSimModuleConfig.xml'>
+  <!ENTITY standardSdRecModuleConfig SYSTEM '@CONFIGDIR@/standardSdRecModuleConfig.xml'>
+]>
+
+
+<bootstrap
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation='@SCHEMALOCATION@/bootstrap.xsd'
+  xmlns:xlink="http://www.auger.org/schema/types">
+
+  &standardSdIdealDetConfig;
+  &standardSdSimModuleConfig;
+  &standardSdRecModuleConfig;
+
+  <centralConfig>
+
+    <configLink
+      id         = "ModuleSequence"
+      type       = "XML"
+      xlink:href = "./ModuleSequence.xml"/>
+
+    <configLink
+      id         = "EventFileReader"
+      type       = "XML"
+      xlink:href = "./EventFileReader.xml"/>
+
+    <configLink
+      id         = "EventFileExporter"
+      type       = "XML"
+      xlink:href = "./EventFileExporter.xml"/>
+
+    <configLink
+      id         = "EventGenerator"
+      type       = "XML"
+      xlink:href = "./EventGenerator.xml"/>
+
+   <configLink
+       id         = "SStationListXMLManager"
+       type       = "XML"
+       xlink:href = "@CONFIGDIR@/SIdealUpgradedStationList.xml"/>
+
+   <configLink
+     id         = "SDenseStationListXMLManager"
+     type       = "XML"
+     xlink:href = "./SDenseCustom.xml "/>
+
+  </centralConfig>
+
+  <parameterOverrides>
+
+    <configLink id="RecDataWriter">
+      <RecDataWriter>
+        <minEnergyForTraces unit="EeV"> 0 </minEnergyForTraces>
+      </RecDataWriter>
+    </configLink>
+
+    <configLink id="SDenseStationListXMLManager">
+      <SDenseStationList>
+        <isUUB> 1 </isUUB>
+        <hasSmallPMT> 1 </hasSmallPMT>
+        <hasScintillator> 1 </hasScintillator>
+      </SDenseStationList>
+    </configLink>
+
+    <configLink id="CachedShowerRegenerator">
+      <CachedShowerRegenerator>
+        <WeightedStationSimulationParticleLimit> 1000 </WeightedStationSimulationParticleLimit>
+      </CachedShowerRegenerator>
+    </configLink>
+
+    <configLink id="RandomEngineRegistry">
+      <RandomEngineRegistry>
+        <DetectorSeed> 000006 </DetectorSeed>
+        <PhysicsSeed> 000007 </PhysicsSeed>
+      </RandomEngineRegistry>
+    </configLink>
+    
+     <configLink id="TankTriggerSimulator">
+      <TankTriggerSimulator>
+        <ForceStationTrigger> 1 </ForceStationTrigger>
+      </TankTriggerSimulator>
+    </configLink>
+
+  </parameterOverrides>
+
+</bootstrap>

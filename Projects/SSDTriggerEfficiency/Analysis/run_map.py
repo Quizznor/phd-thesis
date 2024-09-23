@@ -32,7 +32,8 @@ def read():
 
 trigger_list = []
 ssd_background_rates = read()
-for params in tools.ProgressBar(all_params):
+# for params in tools.ProgressBar(all_params):
+for params in all_params:
     if ssd_background_rates[params] > 50: continue
 
     class cfg_class():

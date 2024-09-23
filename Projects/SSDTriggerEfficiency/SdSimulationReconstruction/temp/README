@@ -1,6 +1,0 @@
-Configuration for SD simulation and reconstruction, including writing to ADST.  While the reconstruction configuration for
-real data takes station position information from the database, this configuration
-uses the ideal station list, which is read from an XML file.  Note that this configuration does not require database access.
-
-Please consult the doxygen-generated documentation for details on how to inspect the configuration files
-used for this application.

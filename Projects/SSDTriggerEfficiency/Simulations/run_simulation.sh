@@ -1,11 +1,12 @@
 #!/bin/bash
 
 echo $@
-source $OFFLINE
+source /cr/data01/filip/offline/install/ds_forced_station_triggers/set_offline_env.sh
 
-cd ../SdSimulation
+cd /cr/users/filip/Projects/SSDTriggerEfficiency/SdSimulationReconstructionUpgrade
 ./userAugerOffline --bootstrap $1
-cd ../ADSTReader
+rm -rf SdSimAndRecOffline.root
+cd /cr/users/filip/Projects/SSDTriggerEfficiency/ADSTReader
 ./AdstReader $2
 
-rm -rf ../Offline/HybridRec.dat #$@
+# rm -rf $@

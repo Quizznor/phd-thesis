@@ -32,7 +32,9 @@ class Event():
             return_str += station.__str__() + "\n"
 
         return return_str
-    
+
+    def __len__(self) -> int :
+        return len(self.stations) 
     
     def get_ids(self) -> list[int] :
         return [station.id for station in self.stations]
