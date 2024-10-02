@@ -5,7 +5,8 @@ from . import plt
 from . import so
 
 import datetime
-from matplotlib.colors import Normalize
+from matplotlib.colors import Normalize, Colormap
+from matplotlib import cm
 
 def __dir__() -> list[str] :
     """spoof dir function for a clean namespace"""
@@ -200,3 +201,6 @@ def to_datetime(timestamps : Iterable) -> list[datetime.datetime] :
         return [datetime.datetime.fromtimestamp(t) for t in timestamps]
     except TypeError:
         return datetime.datetime.fromtimestamp(timestamps)
+
+def gradient(cmap: Colormap, n_points: int) -> list:
+    return [cmap(i/n_points) for i in range(n_points)]

@@ -14,7 +14,8 @@ bool inInfillSquare(Double_t easting, Double_t northing)
 
 int main(int argc, char *argv[]) 
 {
-  ofstream outFile("out.txt", ios_base::trunc);
+  ofstream peakFile("peak.txt", ios_base::trunc);
+  ofstream chargeFile("charge.txt", ios_base::trunc);
   EventPos pos; IoSd input(argc - 1, argv + 1);
   int nData = 0;
 
@@ -45,31 +46,39 @@ int main(int argc, char *argv[])
 
       // calibration histograms for WCD PMTs
       const auto wcdPeakHisto = calibrationHistograms->Peak;
+      const auto wcdChargeHisto = calibrationHistograms->Charge;
       for (unsigned int iPMT = 0; iPMT < 3; iPMT++)
       {
-        string histo = "";
+        string peakHisto = "";
         for (unsigned int bin = 0; bin < sizeof(IoSdHisto::Peak)/sizeof(UShort_t)/3; bin++)
         {
-          histo += to_string(wcdPeakHisto[iPMT][bin]) + ' ';
+          peakHisto += to_string(wcdPeakHisto[iPMT][bin]) + ' ';
         }
 
-        outFile << stationId << " " << stationCalib->EndSecond << " " << average + 315964800 << " " << iPMT << " " << histo << '\n';
+        string chargeHisto = "";
+        for (unsigned int bin = 0; bin < sizeof(IoSdHisto::Charge)/sizeof(UShort_t)/3; bin++)
+        {
+          chargeHisto += to_string(wcdChargeHisto[iPMT][bin]) + ' ';
+        }
+
+        peakFile << stationId << " " << stationCalib->EndSecond << " " << average + 315964800 << " " << iPMT << " " << peakHisto << '\n';
+        chargeFile << stationId << " " << stationCalib->EndSecond << " " << average + 315964800 << " " << iPMT << " " << chargeHisto << '\n';
       }
 
-      string histo = "";
-      // UInt_t tailSum = 0;
-      for (unsigned int i = 0; i < sizeof(IoSdHisto::Peak3)/sizeof(UShort_t); ++i)
+      string peakHisto = "";
+      for (unsigned int bin = 0; bin < sizeof(IoSdHisto::Peak3)/sizeof(UShort_t); bin++)
       {
-        histo += to_string(ssdPeakHisto[i]) + ' ';
-
-        // additional quality control for SSD histos here?
-        // tailSum += i > 125 ? ssdPeakHisto[i] : 0;
-
+        peakHisto += to_string(ssdPeakHisto[bin]) + ' ';
       }
 
-      // if (tailSum == 0) continue;
+      // string chargeHisto = "";
+      // for (unsigned int bin = 0; bin < sizeof(); bin++)
+      // {
+      //   chargeHisto += to_string(ssdChargeHisto[bin]) + ' ';
+      // }
 
-      outFile << stationId << " " << stationCalib->EndSecond << " " << average + 315964800 << " 3 " << histo.substr(0, histo.size() - 1) << '\n';
+      peakFile << stationId << " " << stationCalib->EndSecond << " " << average + 315964800 << " 3 " << peakHisto << '\n';
+      // chargeFile << stationId << " " << stationCalib->EndSecond << " " << average + 315964800 << " 3 " << chargeHisto << '\n';
       nData += 1;
     }
     // break;

@@ -11,16 +11,18 @@ class XYComparisonGrid():
     data_path : str = f'{CONSTANTS.AUGER_FD_ROOT}/xy_measurements.pkl'
     n_bays : dict = {t : 6 if t != 'HE' else 3 for t in['LL', 'LM', 'LA', 'CO', 'HE']}
 
-    def __init__(self, telescopes = ['LL', 'LM', 'LA', 'CO', 'HE'], dates = None) -> None :
+    def __init__(self, telescopes = ['LL', 'LM', 'LA', 'CO', 'HE'], dates = None, compare='none') -> None :
 
         import pickle
         with open(f'{CONSTANTS.AUGER_FD_ROOT}/xy_measurements.pkl', 'rb') as f:
             measurements = pickle.load(f)
 
+        telescopes = [eye.upper() for eye in telescopes]
         self.n_rows, self.n_cols, dates = self.get_rows_and_cols(measurements, telescopes, dates)
         self.xlabels = [[f'{t}{n}' for n in range(1, self.n_bays[t] + 1)] for t in telescopes]
         self.xlabels = [bay for site in self.xlabels for bay in site]
         self.ylabels = sorted(dates)
+        self.compare = compare
 
         print('columns (sites):', self.xlabels)
         print('rows    (dates):', self.ylabels)
@@ -64,13 +66,13 @@ class XYComparisonGrid():
         data = [self.grid_data[self.xlabels[j]][self.ylabels[i]] for i, j in product(range(self.n_rows), range(self.n_cols))]
         axes = iter([fig.add_subplot(gs[i, j]) for i, j in product(range(self.n_rows), range(self.n_cols))])
         data, types, _range = self.compute_data(data)
-        self.ratio_norm = colors.CenteredNorm(1, _range)
+        self.ratio_norm = colors.Normalize(*_range) if self.compare == 'none' else colors.CenteredNorm(1, _range)
         
         for i, j in product(range(self.n_rows), range(self.n_cols)):
             self.draw_axis(i, j, next(axes), next(data), next(types))
        
         cax = fig.add_subplot(gs[:, -1])
-        ColorbarBase(cax, cmap=plt.cm.coolwarm, norm=self.ratio_norm, orientation='vertical')
+        ColorbarBase(cax, cmap=plt.cm.viridis if self.compare == 'none' else plt.cm.coolwarm, norm=self.ratio_norm, orientation='vertical')
 
         return fig
 
@@ -83,7 +85,7 @@ class XYComparisonGrid():
 
         if len(data) != 0:
             kwargs = {'norm' : self.ratio_norm if type else None,
-                      'cmap' : plt.cm.coolwarm if type else None}
+                      'cmap' : plt.cm.coolwarm if type and self.compare != 'none' else None}
             PixelPlot(data, ax=ax, axis_off = False, **kwargs)
         
         self.hide_axis(ax) 
@@ -92,6 +94,7 @@ class XYComparisonGrid():
 
         standard_deviations = []
         types, computed_data = [], []
+        data_min, data_max = [np.inf, -np.inf]
         for runs in data:
             match len(runs):
                 case 0:
@@ -101,7 +104,9 @@ class XYComparisonGrid():
                 case 2:
                     xy_pixels1 = self.read_data_and_normalize(runs[0])
                     xy_pixels2 = self.read_data_and_normalize(runs[1])
-                    ratio = xy_pixels1 / xy_pixels2
+                    ratio = xy_pixels1 / xy_pixels2 if self.compare == 'first' else xy_pixels2
+                    data_min = np.min([data_min, np.min(ratio)])
+                    data_max = np.max([data_max, np.max(ratio)])
                     computed_data.append(ratio)
                     types.append(1)
 
@@ -109,10 +114,13 @@ class XYComparisonGrid():
 
                 case 4:
                     xy_pixels = self.read_data_and_normalize(runs)
+                    data_min = np.min([data_min, np.min(xy_pixels)])
+                    data_max = np.max([data_max, np.max(xy_pixels)])
+
                     computed_data.append(xy_pixels)
                     types.append(0)
                     
-        return iter(computed_data), iter(types), 5 * np.mean(standard_deviations)
+        return iter(computed_data), iter(types), (data_min, data_max) if self.compare == 'none' else 5 * np.mean(standard_deviations) 
     
     @staticmethod
     def hide_axis(ax : plt.Axes) -> None :
@@ -124,8 +132,7 @@ class XYComparisonGrid():
     def get_month(date_str) -> str :
         return '-'.join(date_str.split('-')[:-1])
     
-    @staticmethod
-    def read_data_and_normalize(run) -> tuple[np.ndarray, np.ndarray] :
+    def read_data_and_normalize(self, run) -> tuple[np.ndarray, np.ndarray] :
 
         result_dir = '/cr/data01/filip/xy-calibration/results'
         xy, CalAs = run['XY'], run['CalA_open_shutter']
@@ -136,7 +143,7 @@ class XYComparisonGrid():
             for CalA in CalAs:
                 if CalA is None: continue
 
-                CalA_signal += np.loadtxt(f"{result_dir}/out_{CalA}.txt", usecols=[2])
+                CalA_signal += np.loadtxt(f"{result_dir}/out_{CalA}.txt", usecols=[1])
                 n_CalA += 1
 
             CalA_signal /= n_CalA
@@ -145,7 +152,10 @@ class XYComparisonGrid():
             print("Malformed CalA data received, please make sure you pass \
                 in two CalAs (pre/post-XY), which have 440 pixels of data")
 
-        pixels = np.loadtxt(f"{result_dir}/out_{xy}.txt", usecols=[2]) / (CalA_signal / 50)
+        pixels = np.loadtxt(f"{result_dir}/out_{xy}.txt", usecols=[1]) 
+        
+        if self.compare != 'none':
+            pixels /= (CalA_signal / 50)
         return np.array(pixels)
 
     @staticmethod
