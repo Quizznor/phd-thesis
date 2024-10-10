@@ -170,12 +170,12 @@ def shaded_hist(data : Any, cmap : str, **kwargs) -> Normalize :
 
     return norm
 
-def preliminary(fig : plt.Figure = None, fontsize : float = 60):
+def preliminary(ax: plt.Axes = None, text: str = 'Preliminary', fontsize : float = 60):
     """helper that plots a big, fat 'preliminary' on top of your figure"""
     import matplotlib.patheffects as patheffects
-    if fig is None: fig = plt.gcf()
+    if ax is None: ax = plt.gca()
 
-    fig.text(0.5, 0.5, "Preliminary",
+    ax.text(0.5, 0.5, text,
          c='red',
          rotation=15,
          horizontalalignment='center',

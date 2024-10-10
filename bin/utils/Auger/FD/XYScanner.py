@@ -6,22 +6,22 @@ from matplotlib import colors
 from . import AperturePlot, PixelPlot
 from ... import CONSTANTS
 
-class XYComparisonGrid():
+class Grid():
 
     data_path : str = f'{CONSTANTS.AUGER_FD_ROOT}/xy_measurements.pkl'
     n_bays : dict = {t : 6 if t != 'HE' else 3 for t in['LL', 'LM', 'LA', 'CO', 'HE']}
 
-    def __init__(self, telescopes = ['LL', 'LM', 'LA', 'CO', 'HE'], dates = None, compare='none') -> None :
+    def __init__(self, *args, compare='none') -> None :
 
         import pickle
         with open(f'{CONSTANTS.AUGER_FD_ROOT}/xy_measurements.pkl', 'rb') as f:
             measurements = pickle.load(f)
 
-        telescopes = [eye.upper() for eye in telescopes]
-        self.n_rows, self.n_cols, dates = self.get_rows_and_cols(measurements, telescopes, dates)
+        telescopes = [eye.upper() for eye in args]
+        self.n_rows, self.n_cols, self.dates = self.get_rows_and_cols(measurements, telescopes)
         self.xlabels = [[f'{t}{n}' for n in range(1, self.n_bays[t] + 1)] for t in telescopes]
         self.xlabels = [bay for site in self.xlabels for bay in site]
-        self.ylabels = sorted(dates)
+        self.ylabels = sorted(self.dates)
         self.compare = compare
 
         print('columns (sites):', self.xlabels)
@@ -66,13 +66,14 @@ class XYComparisonGrid():
         data = [self.grid_data[self.xlabels[j]][self.ylabels[i]] for i, j in product(range(self.n_rows), range(self.n_cols))]
         axes = iter([fig.add_subplot(gs[i, j]) for i, j in product(range(self.n_rows), range(self.n_cols))])
         data, types, _range = self.compute_data(data)
-        self.ratio_norm = colors.Normalize(*_range) if self.compare == 'none' else colors.CenteredNorm(1, _range)
+
+        self.norm = colors.Normalize(*_range) if self.compare == 'none' else colors.CenteredNorm(1, _range)
         
         for i, j in product(range(self.n_rows), range(self.n_cols)):
             self.draw_axis(i, j, next(axes), next(data), next(types))
        
         cax = fig.add_subplot(gs[:, -1])
-        ColorbarBase(cax, cmap=plt.cm.viridis if self.compare == 'none' else plt.cm.coolwarm, norm=self.ratio_norm, orientation='vertical')
+        ColorbarBase(cax, cmap=plt.cm.viridis if self.compare == 'none' else plt.cm.coolwarm, norm=self.norm, orientation='vertical')
 
         return fig
 
@@ -84,7 +85,7 @@ class XYComparisonGrid():
             ax.set_title(self.xlabels[col])
 
         if len(data) != 0:
-            kwargs = {'norm' : self.ratio_norm if type else None,
+            kwargs = {'norm' : self.norm,
                       'cmap' : plt.cm.coolwarm if type and self.compare != 'none' else None}
             PixelPlot(data, ax=ax, axis_off = False, **kwargs)
         
@@ -105,22 +106,30 @@ class XYComparisonGrid():
                     xy_pixels1 = self.read_data_and_normalize(runs[0])
                     xy_pixels2 = self.read_data_and_normalize(runs[1])
                     ratio = xy_pixels1 / xy_pixels2 if self.compare == 'first' else xy_pixels2
-                    data_min = np.min([data_min, np.min(ratio)])
-                    data_max = np.max([data_max, np.max(ratio)])
+
+                    mean, std = ratio.mean(), ratio.std()
+
+                    if mean + 3 * std > data_max: data_max = np.max([mean + 3 * std, data_max])
+                    if mean - 3 * std < data_min: data_min = np.min([mean - 3 * std, data_min])
+
                     computed_data.append(ratio)
                     types.append(1)
 
-                    standard_deviations.append(ratio.std())
+                    standard_deviations.append(std)
 
                 case 4:
                     xy_pixels = self.read_data_and_normalize(runs)
-                    data_min = np.min([data_min, np.min(xy_pixels)])
-                    data_max = np.max([data_max, np.max(xy_pixels)])
+                    
+                    mean, std = xy_pixels.mean(), xy_pixels.std()
+
+                    if mean + 3 * std > data_max and self.compare=='none': data_max = np.max([mean + 3 * std, data_max])
+                    if mean - 3 * std < data_min and self.compare=='none': data_min = np.min([mean - 3 * std, data_min])
+
 
                     computed_data.append(xy_pixels)
                     types.append(0)
                     
-        return iter(computed_data), iter(types), (data_min, data_max) if self.compare == 'none' else 5 * np.mean(standard_deviations) 
+        return iter(computed_data), iter(types), (np.max([0, data_min]), data_max) if self.compare == 'none' else 3 * np.mean(standard_deviations) 
     
     @staticmethod
     def hide_axis(ax : plt.Axes) -> None :
@@ -159,18 +168,17 @@ class XYComparisonGrid():
         return np.array(pixels)
 
     @staticmethod
-    def get_rows_and_cols(measurements, telescopes, dates) -> tuple[int, int, list[str]] :
+    def get_rows_and_cols(measurements, telescopes) -> tuple[int, int, list[str]] :
 
         n_cols = sum([6 if t != 'HE' else 3 for t in telescopes])
 
-        if dates is None:
-            times, n_rows = [], 0
-            for telescope in measurements.values():
-                for runs in telescope:
-                    times.append('-'.join(runs['date'].split('-')[:-1]))
+        times, n_rows = [], 0
+        for telescope in measurements.values():
+            for runs in telescope:
+                times.append('-'.join(runs['date'].split('-')[:-1]))
 
-            times = np.unique(times)
-            n_rows += len(times)
+        times = np.unique(times)
+        n_rows += len(times)
 
         return n_rows, n_cols, list(times)
     

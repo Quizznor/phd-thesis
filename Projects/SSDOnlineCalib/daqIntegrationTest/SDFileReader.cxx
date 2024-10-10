@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
       const Double_t stationEasting = station.easting();
       const Double_t stationNorthing = station.northing();
 
-      if (inInfillSquare(stationEasting, stationNorthing)) continue;              // skip stations in Infill    
+      // if (inInfillSquare(stationEasting, stationNorthing)) continue;              // skip stations in Infill    
       if (!station.IsUUB) continue;                                               // skip non-UUB stations, unneccesary
       const IoSdCalib* const stationCalib = station.calib();
       if (!stationCalib || stationCalib->Version <= 262) continue;                // ensure SSD Histograms are present
@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
         }
 
         string chargeHisto = "";
-        for (unsigned int bin = 0; bin < sizeof(IoSdHisto::Charge)/sizeof(UShort_t)/3; bin++)
+        for (unsigned int bin = 0; bin < sizeof(IoSdHisto::Charge)/sizeof(UShort_t)/4; bin++)
         {
           chargeHisto += to_string(wcdChargeHisto[iPMT][bin]) + ' ';
         }
@@ -71,14 +71,14 @@ int main(int argc, char *argv[])
         peakHisto += to_string(ssdPeakHisto[bin]) + ' ';
       }
 
-      // string chargeHisto = "";
-      // for (unsigned int bin = 0; bin < sizeof(); bin++)
-      // {
-      //   chargeHisto += to_string(ssdChargeHisto[bin]) + ' ';
-      // }
+      string chargeHisto = "";
+      for (const auto& bin : wcdChargeHisto[3])
+      {
+        chargeHisto += to_string(bin) + ' ';
+      }
 
       peakFile << stationId << " " << stationCalib->EndSecond << " " << average + 315964800 << " 3 " << peakHisto << '\n';
-      // chargeFile << stationId << " " << stationCalib->EndSecond << " " << average + 315964800 << " 3 " << chargeHisto << '\n';
+      chargeFile << stationId << " " << stationCalib->EndSecond << " " << average + 315964800 << " 3 " << chargeHisto << '\n';
       nData += 1;
     }
     // break;
