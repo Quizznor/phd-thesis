@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
       const Double_t stationEasting = station.easting();
       const Double_t stationNorthing = station.northing();
 
-      if (inInfillSquare(stationEasting, stationNorthing)) continue;              // skip stations in Infill    
+      // if (inInfillSquare(stationEasting, stationNorthing)) continue;              // skip stations in Infill    
       if (!station.IsUUB) continue;                                               // skip non-UUB stations, unneccesary
       const IoSdCalib* const stationCalib = station.calib();
       if (!stationCalib || stationCalib->Version <= 262) continue;                // ensure SSD Histograms are present
