@@ -14,7 +14,7 @@ tail -f /home/root/daq/error.log | while read -r line; do
 #    fi
 
     # MuonFill timestamp
-    if [[ "$line" =~ ^\[E\]MuonFill\([0-9]*\):\ time ]]; then
+    if [[ "$line" =~ ^\[I\]MuonFill\([0-9]*\):\ time= ]]; then
 	echo $string >> calib.test
 	string=$(echo $line | awk '{print $NF}')
 	echo $line
