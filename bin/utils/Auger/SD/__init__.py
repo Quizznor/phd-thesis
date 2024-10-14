@@ -162,7 +162,7 @@ class SdHisto:
                 peaks.append(popts)
 
             except Exception as e:
-                print(f"PMT {i} fit failed: {e}")
+                # print(f"PMT {i} fit failed: {e}")
                 peaks.append([uncertainties.ufloat(np.nan, np.nan) for _ in range(3)])
                 # raise e
 
@@ -235,10 +235,6 @@ class SdHisto:
         return scale * (x-mip)**2 + y0
 
     @staticmethod
-    def exp_hump(x, A, B, tau, hump, scale) -> np.ndarray:
-        return A * np.exp(-tau*x) + B * np.exp(-(x-hump)**2/(2*scale**2))
-
-    @staticmethod
     def get_bins(mode: str, pmt: int) -> np.ndarray:
 
         if mode == 'peak' and pmt < 3:
@@ -249,9 +245,3 @@ class SdHisto:
             return CONSTANTS.UUB_WCD_CHARGE
         elif mode == 'charge' and pmt == 3:
             return CONSTANTS.UUB_SSD_CHARGE
-
-# del logging
-# del create_stream_logger
-# del product, np, os
-# del typing
-# del json

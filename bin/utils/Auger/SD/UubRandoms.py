@@ -4,7 +4,6 @@ import bz2
 import os
 
 # maybe make this asynchronous at some point?
-
 TUPLE_OR_ARRAY = Union[tuple, np.ndarray]
 
 class UubRandom():
@@ -17,16 +16,20 @@ class UubRandom():
         'Svenja' : '2022_11'
     }
     fmt = {
-        'wcd' : np.dtype([('timestamp', 'I'), 
-                        ('t1_latch_bin', 'h'), 
-                        ('vem_peak', ('e', 3)), 
-                        ('baseline', ('H', 3)), 
-                        ('traces', ('h', (3, 2048)))]),
-        'ssd' : np.dtype([('timestamp', 'I'), 
-                        ('t1_latch_bin', 'h'), 
-                        ('mip_peak', 'e'), 
-                        ('baseline', 'H'), 
-                        ('trace', ('h', 2048))])
+        'wcd' : np.dtype([
+            ('timestamp', 'I'), 
+            ('t1_latch_bin', 'h'), 
+            ('vem_peak', ('e', 3)), 
+            ('baseline', ('H', 3)), 
+            ('traces', ('h', (3, 2048)))
+        ]),
+        'ssd' : np.dtype([
+            ('timestamp', 'I'), 
+            ('t1_latch_bin', 'h'), 
+            ('mip_peak', 'e'), 
+            ('baseline', 'H'), 
+            ('trace', ('h', 2048))
+        ])
     }
 
     def __init__(self, station : str, detectors : str = 'all') -> None :
