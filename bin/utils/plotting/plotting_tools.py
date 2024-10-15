@@ -185,16 +185,16 @@ def preliminary(ax: plt.Axes = None, text: str = 'Preliminary', fontsize : float
          zorder=10000,
     )
 
-def save(fig : plt.Figure = None, path : str = '') -> None :
+def save(fig : plt.Figure = None, path : str = '', **kwargs) -> None :
     base = '/cr/data01/filip/plots/'
     
     fig = fig if fig is not None else plt.gcf()
 
     import os
     if not os.path.exists(os.path.dirname(base + path)):
-        os.system('mkdir -p {base}/{path}')
+        os.system(f'mkdir -p {base}/{path}')
 
-    fig.savefig(base + path, bbox_inches='tight')
+    fig.savefig(base + path, bbox_inches='tight', **kwargs)
 
 def to_datetime(timestamps : Iterable) -> list[datetime.datetime] :
     try:
