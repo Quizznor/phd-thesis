@@ -1,19 +1,15 @@
 #include <iostream>
 #include <fstream>
 #include "IoSd.h"
-
-bool inInfillSquare(Double_t easting, Double_t northing)
-{
-  // rough estimate of a square that 
-  // contains all infill stations
-  Double_t minX = 446800, maxX = 454400;
-  Double_t minY = 6111300, maxY = 61116600;
-
-  return (minX < easting && easting < maxX) && (minY < northing && northing < maxY);
-}
+#include "utl/QuadraticFitter.h"
 
 int main(int argc, char *argv[]) 
 {
+  const int gpsOffset = 315964800;
+
+
+
+
   ofstream peakFile("peak.txt", ios_base::trunc);
   ofstream chargeFile("charge.txt", ios_base::trunc);
   EventPos pos; IoSd input(argc - 1, argv + 1);
@@ -30,6 +26,7 @@ int main(int argc, char *argv[])
       const UInt_t stationId = station.id();
       const Double_t stationEasting = station.easting();
       const Double_t stationNorthing = station.northing();
+      const auto& peakHistoBinning = station.GetMuonPeakHistogramBinning<short>(type, calibVersion);
 
       // if (inInfillSquare(stationEasting, stationNorthing)) continue;              // skip stations in Infill    
       if (!station.IsUUB) continue;                                               // skip non-UUB stations, unneccesary
@@ -61,8 +58,8 @@ int main(int argc, char *argv[])
           chargeHisto += to_string(wcdChargeHisto[iPMT][bin]) + ' ';
         }
 
-        peakFile << stationId << " " << stationCalib->EndSecond << " " << average + 315964800 << " " << iPMT << " " << peakHisto << '\n';
-        chargeFile << stationId << " " << stationCalib->EndSecond << " " << average + 315964800 << " " << iPMT << " " << chargeHisto << '\n';
+        peakFile << stationId << " " << stationCalib->EndSecond << " " << average + gpsOffset << " " << iPMT << " " << peakHisto << '\n';
+        chargeFile << stationId << " " << stationCalib->EndSecond << " " << average + gpsOffset << " " << iPMT << " " << chargeHisto << '\n';
       }
 
       string peakHisto = "";
@@ -77,8 +74,8 @@ int main(int argc, char *argv[])
         chargeHisto += to_string(bin) + ' ';
       }
 
-      peakFile << stationId << " " << stationCalib->EndSecond << " " << average + 315964800 << " 3 " << peakHisto << '\n';
-      chargeFile << stationId << " " << stationCalib->EndSecond << " " << average + 315964800 << " 3 " << chargeHisto << '\n';
+      peakFile << stationId << " " << stationCalib->EndSecond << " " << average + gpsOffset << " 3 " << peakHisto << '\n';
+      chargeFile << stationId << " " << stationCalib->EndSecond << " " << average + gpsOffset << " 3 " << chargeHisto << '\n';
       nData += 1;
     }
     // break;

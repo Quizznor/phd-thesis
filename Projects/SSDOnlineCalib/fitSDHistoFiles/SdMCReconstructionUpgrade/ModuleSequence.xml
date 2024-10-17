@@ -1,0 +1,33 @@
+<!-- A sequence for an SD only reconstruction -->
+
+<!-- For homogeneity in the StandardApplications, standard sequences for
+simulation, MC reconstruction, and data reconstruction have been added to
+Framework/CentralConfig/standard**Sequences.dtd. Please refer to these
+files if you have questions regarding &NAME (i.e. &SdCalibartionSelection) -->
+
+<!DOCTYPE sequenceFile [
+  <!ENTITY % sd SYSTEM "/cr/data01/filip/offline/bd0e9e/install/share/auger-offline/config/standardSdSequences.dtd"> %sd;
+]>
+
+
+<sequenceFile
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation='/cr/data01/filip/offline/bd0e9e/install/share/auger-offline/config/ModuleSequence.xsd'>
+
+  <enableTiming/>
+
+  <moduleControl>
+
+    <loop numTimes="1" pushEventToStack="yes">
+
+      <module> EventFileReaderOG </module>
+
+      &SdSimReconstruction;
+
+      <module> RecDataWriterNG </module>
+
+    </loop>
+
+  </moduleControl>
+
+</sequenceFile>

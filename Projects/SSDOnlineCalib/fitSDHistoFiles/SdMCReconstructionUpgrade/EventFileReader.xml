@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- Configuration of Module EventFileReader -->
+
+<EventFileReader
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation='/cr/data01/filip/offline/bd0e9e/install/share/auger-offline/config/EventFileReader.xsd'>
+
+  <ReportFilenames/>
+
+  <!-- file type: Offline
+                  FDAS
+                  CDAS
+                  CORSIKA
+                  AIRES
+                  IoAuger -->
+
+  <Offline>
+    <InputFilenames>
+      $(f=SdSimOutUpgrade-2022-09-23.root ; wget --no-check-certificate -qcO $f http://web.iap.kit.edu/offline/sampShow/$f &amp;&amp; echo $f)
+    </InputFilenames>
+  </Offline>
+
+</EventFileReader>

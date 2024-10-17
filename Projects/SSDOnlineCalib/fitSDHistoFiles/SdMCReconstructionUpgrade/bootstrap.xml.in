@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!DOCTYPE bootstrap [
+  <!ENTITY standardSdIdealDetConfig SYSTEM '@CONFIGDIR@/standardSdIdealDetConfig.xml'>
+  <!ENTITY standardSdRecModuleConfig SYSTEM '@CONFIGDIR@/standardSdRecModuleConfig.xml'>
+]>
+
+
+<bootstrap
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation='@SCHEMALOCATION@/bootstrap.xsd'
+  xmlns:xlink="http://www.auger.org/schema/types">
+
+  &standardSdIdealDetConfig;
+  &standardSdRecModuleConfig;
+
+  <centralConfig>
+
+    <configLink
+      id         = "ModuleSequence"
+      type       = "XML"
+      xlink:href = "./ModuleSequence.xml"/>
+
+    <configLink
+      id         = "EventFileReader"
+      type       = "XML"
+      xlink:href = "./EventFileReader.xml"/>
+
+   <configLink
+       id         = "SStationListXMLManager"
+       type       = "XML"
+       xlink:href = "@CONFIGDIR@/SIdealUpgradedStationList.xml"/>
+
+  </centralConfig>
+
+  <parameterOverrides>
+
+    <configLink id="RecDataWriter">
+      <RecDataWriter>
+        <asciiOutput>
+          <outputFileMode> eWrite </outputFileMode>
+          <mode> SD </mode>
+        </asciiOutput>
+      </RecDataWriter>
+    </configLink>
+
+    <configLink id="SDenseStationListXMLManager">
+      <SDenseStationList>
+        <isUUB> 1 </isUUB>
+        <hasSmallPMT> 1 </hasSmallPMT>
+        <hasScintillator> 1 </hasScintillator>
+      </SDenseStationList>
+    </configLink>
+
+  </parameterOverrides>
+
+</bootstrap>
