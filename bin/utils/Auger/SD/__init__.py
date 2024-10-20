@@ -100,8 +100,7 @@ class Monit():
         print(json.dumps(self._keys, indent=2))
 
 
-class SdHisto:
-
+class SdHisto():
     def __init__(self, *, peak: list[np.ndarray]=None, charge: list[np.ndarray]=None) -> None:
 
         assert peak is None or len(peak) == 4, 'Missing a PMT?'
@@ -144,13 +143,13 @@ class SdHisto:
         try:
             match len(counts):
                 case  99: 
-                    bins = CONSTANTS.UUB_WCD_PEAK
-                    initial_start = 99 - 5
                     increment = 5
+                    bins = CONSTANTS.UUB_WCD_PEAK
+                    initial_start = 99 - increment
                 case 399: 
-                    bins = CONSTANTS.UUB_WCD_CHARGE
-                    initial_start = 399 - 20
                     increment = 20
+                    bins = CONSTANTS.UUB_WCD_CHARGE
+                    initial_start = 399 - increment
                 case _:
                     raise IndexError(f'received histogram with length {len(counts)}')
 
@@ -158,27 +157,28 @@ class SdHisto:
             while old_peak != guess:
                 old_peak = guess
                 initial_start -= increment
-                guess = np.argmax(counts[initial_start:])
+                guess = np.argmax(counts[initial_start:]) + initial_start
 
             start, stop = guess - increment, guess + increment
             x1, x2, y1, y2 = start, len(counts)-1, counts[stop], counts[len(counts)-1]
             background_slope = lambda x: (y2-y1)/(x2-x1)*(x-x1) + y1
     
             popts, pcov = curve_fit(SdHisto.parabola, bins[start:stop], 
-                                    np.log(counts[start:stop]) - background_slope(range(start,stop)),
+                                    np.log(counts[start:stop]) - background_slope(np.arange(start, stop, 1)),
                                     bounds=([-np.inf, 0, 0],[0, np.inf, np.inf]),
                                     maxfev=100000, p0=[-0.01, bins[guess], counts[guess]],
                                     nan_policy='omit')
 
             popts = uncertainties.correlated_values(popts, pcov)
-            if popts[1].n < 100 or 300 < popts[1].n: raise ValueError(f"calculated {popts[1]:i} ADC for WCD peak")
+            # if len(counts) == 99 and popts[1].n < 100 or 300 < popts[1].n: raise ValueError(f"calculated {popts[1]:i} ADC for WCD peak")
+            # if len(counts) == 399 and popts[1].n < 1000 or 2000 < popts[1].n: raise ValueError(f"calculated {popts[1]:i} ADC for WCD charge")
             if (r := popts[1].std_dev / popts[1].n) > 0.2: raise ValueError(f"large fit error for WCD: {r*100:.0f}%")
-
-            return popts
 
         except ValueError as e:
             print(f'WCD SdHisto fit failed: {e}')
-            return [uncertainties.ufloat(np.nan, np.nan) for _ in range(3)]
+            popts = [uncertainties.ufloat(np.nan, np.nan) for _ in range(3)]
+
+        finally: return popts
 
 
     @staticmethod
@@ -189,17 +189,24 @@ class SdHisto:
                 case  99: 
                     bins = CONSTANTS.UUB_SSD_PEAK
                     increment = 5
+                    start = np.argmax(counts)
+
+                    while not np.argmax(counts[start:]):
+                        start += 1
                 case 399: 
                     bins = CONSTANTS.UUB_SSD_CHARGE
                     increment = 20
+                    order = 10
+
+                    while len((dips := argrelextrema(counts[1:], np.less, order=order)[0])) > 1:
+                        order += 1
+                    start = dips[0] + 1
+
                 case _:
                     raise IndexError(f'received histogram with length {len(counts)}')
 
-            guess = np.argmax(counts)
-            while counts[guess] - counts[guess + 1] > 0:
-                guess += 1
 
-            guess = np.argmax(counts[guess:])
+            guess = start + np.argmax(counts[start:])
             start, stop = guess - increment, guess + increment
 
             popts, pcov = curve_fit(SdHisto.parabola, bins[start:stop], counts[start:stop],
@@ -208,14 +215,15 @@ class SdHisto:
                                     nan_policy='omit')
 
             popts = uncertainties.correlated_values(popts, pcov)
-            if popts[1].n < 20 or 100 < popts[1].n: raise ValueError(f"calculated {popts[1]:i} ADC for SSD peak")
+            # if len(counts) == 99 and popts[1].n < 20 or 100 < popts[1].n: raise ValueError(f"calculated {popts[1]:i} ADC for SSD peak")
+            # if len(counts) == 399 and popts[1].n < 20 or 100 < popts[1].n: raise ValueError(f"calculated {popts[1]:i} ADC for SSD charge")
             if (r := popts[1].std_dev / popts[1].n) > 0.2: raise ValueError(f"large fit error for SSD: {r*100:.0f}%")
-        
-            return popts
         
         except ValueError as e:
             print(f'SSD SdHisto fit failed: {e}')
-            return [uncertainties.ufloat(np.nan, np.nan) for _ in range(4)]
+            popts = [uncertainties.ufloat(np.nan, np.nan) for _ in range(4)]
+
+        finally: return popts
     
 
     def plot(self) -> plt.Figure:
@@ -235,8 +243,10 @@ class SdHisto:
             for i, counts in enumerate(self.histos['peak']):
                 factor = 1 if i<3 else f
                 ax1.plot(self.get_bins('peak', i) * factor, counts, c=c[i], ls='-', label=l[i])
-                ax1.axvline(self.popts['peak'][i][1].n * factor, ymin=0.95, c=c[i])
-            
+                ax1.axvline(self.popts['peak'][i][1].n * factor, lw=0.4, ls='--', c=c[i])
+                err = self.popts['peak'][i][1].std_dev * np.array([-1, 1]) + self.popts['peak'][i][1].n
+                ax1.axvspan(*(err * factor), color=c[i], alpha=0.1)
+
             ax1.set_xlim(0, 400)
             ax1.legend(title='Peak')
 
@@ -245,9 +255,9 @@ class SdHisto:
             for i, counts in enumerate(self.histos['charge']):
                 factor = 1 if i<3 else f
                 ax2.plot(self.get_bins('charge', i) * factor, counts, c=c[i], ls='-', label=l[i])
-                ax2.axvline(self.popts['charge'][i][1].n * factor, ymin=0.95, c=c[i])
+                ax2.axvline(self.popts['charge'][i][1].n * factor, lw=0.4, ls='--', c=c[i])
                 err = self.popts['charge'][i][1].std_dev * np.array([-1, 1]) + self.popts['charge'][i][1].n
-                ax2.fill_between(err, *ax2.get_ylim(), color=c[i], alpha=0.2)
+                ax2.axvspan(*(err * factor), color=c[i], alpha=0.1)
             
             ax2.set_xlim(0, 3200)
             ax2.legend(title='Charge')
