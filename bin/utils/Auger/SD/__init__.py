@@ -173,12 +173,11 @@ class SdHisto():
             # if len(counts) == 99 and popts[1].n < 100 or 300 < popts[1].n: raise ValueError(f"calculated {popts[1]:i} ADC for WCD peak")
             # if len(counts) == 399 and popts[1].n < 1000 or 2000 < popts[1].n: raise ValueError(f"calculated {popts[1]:i} ADC for WCD charge")
             if (r := popts[1].std_dev / popts[1].n) > 0.2: raise ValueError(f"large fit error for WCD: {r*100:.0f}%")
+            return popts
 
-        except ValueError as e:
+        except Exception as e:
             print(f'WCD SdHisto fit failed: {e}')
-            popts = [uncertainties.ufloat(np.nan, np.nan) for _ in range(3)]
-
-        finally: return popts
+            return [uncertainties.ufloat(np.nan, np.nan) for _ in range(3)]
 
 
     @staticmethod
@@ -218,12 +217,11 @@ class SdHisto():
             # if len(counts) == 99 and popts[1].n < 20 or 100 < popts[1].n: raise ValueError(f"calculated {popts[1]:i} ADC for SSD peak")
             # if len(counts) == 399 and popts[1].n < 20 or 100 < popts[1].n: raise ValueError(f"calculated {popts[1]:i} ADC for SSD charge")
             if (r := popts[1].std_dev / popts[1].n) > 0.2: raise ValueError(f"large fit error for SSD: {r*100:.0f}%")
-        
-        except ValueError as e:
-            print(f'SSD SdHisto fit failed: {e}')
-            popts = [uncertainties.ufloat(np.nan, np.nan) for _ in range(4)]
+            return popts
 
-        finally: return popts
+        except Exception as e:
+            print(f'SSD SdHisto fit failed: {e}')
+            return [uncertainties.ufloat(np.nan, np.nan) for _ in range(4)]
     
 
     def plot(self) -> plt.Figure:

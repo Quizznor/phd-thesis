@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
       const UInt_t stationId = station.id();
       const Double_t stationEasting = station.easting();
       const Double_t stationNorthing = station.northing();
-      const auto& peakHistoBinning = station.GetMuonPeakHistogramBinning<short>(type, calibVersion);
+      // const auto& peakHistoBinning = station.GetMuonPeakHistogramBinning<short>(type, calibVersion);
 
       // if (inInfillSquare(stationEasting, stationNorthing)) continue;              // skip stations in Infill    
       if (!station.IsUUB) continue;                                               // skip non-UUB stations, unneccesary

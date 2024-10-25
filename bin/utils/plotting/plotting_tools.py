@@ -142,7 +142,7 @@ def shaded_hist(data : Any, cmap : str, **kwargs) -> Normalize :
         return outline_kwargs
 
     # outline
-    _, bins, _ = plt.hist(data, **get_outline_kwargs(kwargs))
+    _, bins, _ = (kwargs.get('ax', plt.gca())).hist(data, **get_outline_kwargs(kwargs))
 
     # shade
     cmap = plt.get_cmap(cmap)
@@ -164,7 +164,7 @@ def shaded_hist(data : Any, cmap : str, **kwargs) -> Normalize :
                 raise NameError(f"{norm=} is not a supported option")
 
     bin_centers = 0.5 * (bins[1:] + bins[:-1])
-    _, _, patches = plt.hist(data, bins=bins)
+    _, _, patches = (kwargs.get('ax', plt.gca())).hist(data, bins=bins)
     for x, b in zip(bin_centers, patches):
         plt.setp(b, 'facecolor', cmap(norm(x)))
 
@@ -181,7 +181,7 @@ def preliminary(ax: plt.Axes = None, text: str = 'Preliminary', fontsize : float
          horizontalalignment='center',
          verticalalignment='center',
          fontsize=fontsize,
-         path_effects=[patheffects.withStroke(foreground='k', linewidth=2)],
+         path_effects=[patheffects.withStroke(foreground='k', linewidth=fontsize/20)],
          zorder=10000,
     )
 
