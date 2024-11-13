@@ -76,6 +76,7 @@ def set_plt_style(styles : str = 'single') -> None :
     from matplotlib import cycler
     plt.rcParams['axes.prop_cycle'] = cycler(
         color=colors,
-        ls=['-', '--', ':', '-.'])
+        ls=['-', '--', ':', '-.'],
+        marker=['o', 's', '^', 'v', '>', '<'])
 
 set_plt_style()
