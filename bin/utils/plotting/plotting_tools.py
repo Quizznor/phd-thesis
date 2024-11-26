@@ -153,14 +153,12 @@ def shaded_hist(data : Any, cmap : str, **kwargs) -> Normalize :
         vmin = kwargs.get('vmin', np.min(data))
         vmax = kwargs.get('vmax', np.max(data))
 
-        match norm:
-            case 'linear':
-                norm = Normalize(vmin, vmax, clip=False)
-            case 'log':
+        if norm == 'linear':
+            norm = Normalize(vmin, vmax, clip=False)
+        elif norm == 'log':
                 from matplotlib.colors import LogNorm
                 norm = LogNorm(vmin, vmax, clip=False)
-            # ...
-            case _:
+        else:
                 raise NameError(f"{norm=} is not a supported option")
 
     bin_centers = 0.5 * (bins[1:] + bins[:-1])

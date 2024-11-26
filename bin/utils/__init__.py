@@ -32,13 +32,6 @@ class Formatter(logging.Formatter):
 
     last_log = 0
 
-    blue = staticmethod(lambda _str : colored(_str, 'blue', attrs=['bold', 'blink']))
-    green = staticmethod(lambda _str : colored(_str, 'green', attrs=['bold', 'blink']))
-    yellow = staticmethod(lambda _str : colored(_str, 'yellow', attrs=['bold', 'blink']))
-    red = staticmethod(lambda _str : colored(_str, 'red', attrs=['bold', 'blink']))
-    critical = staticmethod(lambda _str : colored(_str, 'red', attrs=['bold', 'blink']))
-    purple = staticmethod(lambda _str : colored(_str, 'magenta', attrs=['bold']))
-    levels = [blue, green, yellow, red, critical]
 
     def __init__(self) -> None :
         super().__init__()
@@ -46,7 +39,7 @@ class Formatter(logging.Formatter):
     def format(self, record : logging.LogRecord) -> str :
 
         format_time = lambda t : f"+{int(t)}ms" if t < 1000 else f"+{t/1000:.1f}s"
-        lvl = lambda _str : self.levels[record.levelno // 10 - 1](_str)
+        lvl = record.levelno // 10 - 1
 
         delta_milliseconds = record.relativeCreated - Formatter.last_log
         Formatter.last_log = int(record.relativeCreated)
@@ -55,11 +48,10 @@ class Formatter(logging.Formatter):
         localtime = time.strftime('%H:%M:%S', time.localtime())
         msg = self.highlight_imports(record.msg)
         
-        return f"{lvl(localtime)} ({self.purple(elapsed)}) {lvl(threat)} -- {msg}"
+        return f"{self.color(lvl, localtime)} ({self.color(-1, elapsed)}) {self.color(lvl, threat)} -- {msg}"
 
 
-    @staticmethod
-    def highlight_imports(msg : str) -> str :
+    def highlight_imports(self, msg : str) -> str :
         """filter and format specific keywords in logging messages"""
 
 
@@ -67,20 +59,29 @@ class Formatter(logging.Formatter):
         import_pattern = re.compile('import\s\S*')
         if re.search(import_as_pattern, msg):
             _import, _module, _as, _alias = msg.split()
-            _module = Formatter.red(_module)
-            _alias = Formatter.red(_alias)
+            _module = self.color(3, _module)
+            _alias = self.color(3, _alias)
             msg = ' '.join([_import, _module, _as, _alias])
         elif re.search(import_pattern, msg):
             _import, *_modules = msg.split()
             _module = ''
             for _pkg in _modules:
                 _pkg = _pkg.replace(',', '')
-                _module += Formatter.red(_pkg)
+                _module += self.color(3, _pkg)
             if not _pkg == _modules[-1]:
                 _module += ', '
             msg = ' '.join([_import, _module])
         
         return msg
+
+
+    @staticmethod
+    def color(lvl: int, msg: str) -> str:
+
+        colors = ['blue', 'green', 'yellow', 'red', 'red', 'magenta']
+        return colored(msg, colors[lvl], attrs=['bold'])
+
+
 
 def create_stream_logger(name : str, loglevel : int = logging.DEBUG) -> logging.Logger :
     """create a simple logger that streams to stdout"""

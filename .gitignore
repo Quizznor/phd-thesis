@@ -3,6 +3,7 @@
 
 
 # dotfiles
+.venv
 .expires
 .kshrc
 .lesshst

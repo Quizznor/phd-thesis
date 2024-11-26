@@ -77,6 +77,6 @@ def set_plt_style(styles : str = 'single') -> None :
     plt.rcParams['axes.prop_cycle'] = cycler(
         color=colors,
         ls=['-', '--', ':', '-.'],
-        marker=['o', 's', '^', 'v', '>', '<'])
+        marker=['o', 's', '^', 'v'])
 
 set_plt_style()
