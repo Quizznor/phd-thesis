@@ -433,5 +433,3 @@ def update_runlist_files() -> None :
         pickle.dump(XY_measurements, f, pickle.HIGHEST_PROTOCOL)
 
     print(f"{len(XY_measurements.keys())} bays: {n_runs} written to xy_measurements.pkl")
-
-    
