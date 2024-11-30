@@ -12,6 +12,10 @@ for file in os.listdir('config/calib_runlists'):
         if not run['DB']: continue
         if "OLO" not in run['src']: continue
         if "reversed positions" in run['comment']: continue
-        if run['runid'] in ["14453", ]: continue                  # reject missing Cal A's
+        if run['runid'] in ["14453",                     # missing Cal A's
+                            "16478",                     # LL6 had some HV issues, super weird results
+                            
+                            ]: continue                  # reject missing Cal A's
+
         
         os.system(f"./run_Check.py {run['runid']} -s -d {home_dir}/Desktop/xy-quality-files")
