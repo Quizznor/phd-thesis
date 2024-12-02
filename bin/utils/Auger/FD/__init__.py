@@ -76,3 +76,35 @@ def PixelPlot(pixel_data : np.ndarray, ax=None, title=None,
 
     if kwargs.get('axis_off', True): ax.axis('off')
     return ax
+
+def get_mirror_or_telescope(mirror_or_telescope: str) -> str:
+
+    if mirror_or_telescope.lower().startswith('m'):
+        n_mirror = int(mirror_or_telescope[1:])
+        mirror_number = n_mirror%6 if n_mirror%6 else 6
+
+        if n_mirror > 24:
+            mirror_or_telescope = f"he{mirror_number}"
+        elif n_mirror > 18:
+            mirror_or_telescope = f"co{mirror_number}"
+        elif n_mirror > 12:
+            mirror_or_telescope = f"la{mirror_number}"
+        elif n_mirror > 6:
+            mirror_or_telescope = f"lm{mirror_number}"
+        else:
+            mirror_or_telescope = f"ll{mirror_number}"
+    else:
+        n_mirror = int(mirror_or_telescope[2:])
+
+        if mirror_or_telescope.lower().startswith('he'):
+            n_mirror += 24
+        elif mirror_or_telescope.lower().startswith('co'):
+            n_mirror += 18
+        elif mirror_or_telescope.lower().startswith('la'):
+            n_mirror += 12
+        elif mirror_or_telescope.lower().startswith('lm'):
+            n_mirror += 6
+        
+        mirror_or_telescope = f"m{n_mirror}"
+
+    return mirror_or_telescope
