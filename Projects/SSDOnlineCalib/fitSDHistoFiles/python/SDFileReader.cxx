@@ -40,6 +40,7 @@ int main(int argc, char *argv[])
       const UInt_t startSecond = stationCalib->StartSecond;
       const UInt_t endSecond = startSecond + stationCalib->EndSecond;
       const UInt_t average = 0.5 * (startSecond + endSecond);
+      const UInt_t tubeMask = stationCalib->TubeMask;
 
       // calibration histograms for WCD PMTs
       const auto wcdPeakHisto = calibrationHistograms->Peak;
@@ -58,8 +59,8 @@ int main(int argc, char *argv[])
           chargeHisto += to_string(wcdChargeHisto[iPMT][bin]) + ' ';
         }
 
-        peakFile << stationId << " " << stationCalib->EndSecond << " " << average + gpsOffset << " " << iPMT << " " << peakHisto << '\n';
-        chargeFile << stationId << " " << stationCalib->EndSecond << " " << average + gpsOffset << " " << iPMT << " " << chargeHisto << '\n';
+        peakFile << stationId << " " << stationCalib->EndSecond << " " << average + gpsOffset << " " << tubeMask << " " << iPMT << " " << peakHisto << '\n';
+        chargeFile << stationId << " " << stationCalib->EndSecond << " " << average + gpsOffset << " " << tubeMask << " " << iPMT << " " << chargeHisto << '\n';
       }
 
       string peakHisto = "";

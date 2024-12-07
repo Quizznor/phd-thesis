@@ -15,9 +15,9 @@ import os
 class Monit():
 
     monit_paths = [
-        '/cr/auger02/Prod/monit/Sd/',       # Mirror to Lyon DB
-        '/cr/data01/filip/Data/monit/',     # local repo @ IAP
-        '/home/filip/Desktop/monit/',       # local repo @ Debian12
+        '/cr/auger02/Prod/monit/Sd/',           # Mirror to Lyon DB
+        '/cr/data01/filip/Data/monit/',         # local repo @ IAP
+        '/home/filip/Desktop/monit_and_sd/',    # local repo @ Debian12
     ]
 
     def __init__(self, *args, starting_branch=None, verbosity=logging.INFO) -> None :
@@ -118,6 +118,22 @@ class SdHisto():
             'charge': [[np.nan, np.nan] for _ in range(4)]
         }
 
+        self.fit_was_run = False
+
+
+    def __call__(self) -> list[uncertainties.ufloat]:
+        if not self.fit_was_run:
+            _ = self.fit()
+
+        peak_charge = {
+            'peak': [],
+            'charge': [],
+        }
+        for i in range(4):
+            peak_charge['peak'].append(self.popts['peak'][i][1])
+            peak_charge['charge'].append(self.popts['charge'][i][1])
+
+        return peak_charge
 
     def fit(self) -> dict:
 
@@ -125,6 +141,8 @@ class SdHisto():
             self.popts['peak'] = self.get_peak('peak')
         if self.histos['charge'] is not None:
             self.popts['charge'] = self.get_peak('charge')
+
+        self.fit_was_run = True
 
         return self.popts
 
@@ -179,7 +197,7 @@ class SdHisto():
             return popts
 
         except Exception as e:
-            print(f'WCD SdHisto fit failed: {e}')
+            # print(f'WCD SdHisto fit failed: {e}')
             return [uncertainties.ufloat(np.nan, np.nan) for _ in range(3)]
 
 
@@ -223,7 +241,7 @@ class SdHisto():
             return popts
 
         except Exception as e:
-            print(f'SSD SdHisto fit failed: {e}')
+            # print(f'SSD SdHisto fit failed: {e}')
             return [uncertainties.ufloat(np.nan, np.nan) for _ in range(4)]
     
 
@@ -243,7 +261,7 @@ class SdHisto():
             ax1.set_xlabel('max. pulse height / ADC')
             for i, counts in enumerate(self.histos['peak']):
                 factor = 1 if i<3 else f
-                ax1.plot(self.get_bins('peak', i) * factor, counts, c=c[i], ls='-', label=l[i])
+                ax1.plot(self.get_bins('peak', i) * factor, counts, c=c[i], ls='-', label=l[i], marker='none')
                 ax1.axvline(self.popts['peak'][i][1].n * factor, lw=0.4, ls='--', c=c[i])
                 err = self.popts['peak'][i][1].std_dev * np.array([-1, 1]) + self.popts['peak'][i][1].n
                 ax1.axvspan(*(err * factor), color=c[i], alpha=0.1)
@@ -255,7 +273,7 @@ class SdHisto():
             ax2.set_xlabel('integral / ADC')
             for i, counts in enumerate(self.histos['charge']):
                 factor = 1 if i<3 else f
-                ax2.plot(self.get_bins('charge', i) * factor, counts, c=c[i], ls='-', label=l[i])
+                ax2.plot(self.get_bins('charge', i) * factor, counts, c=c[i], ls='-', label=l[i], marker='none')
                 ax2.axvline(self.popts['charge'][i][1].n * factor, lw=0.4, ls='--', c=c[i])
                 err = self.popts['charge'][i][1].std_dev * np.array([-1, 1]) + self.popts['charge'][i][1].n
                 ax2.axvspan(*(err * factor), color=c[i], alpha=0.1)
@@ -282,3 +300,25 @@ class SdHisto():
             return CONSTANTS.UUB_WCD_CHARGE
         elif mode == 'charge' and pmt == 3:
             return CONSTANTS.UUB_SSD_CHARGE
+        
+
+def read_histos(path_to_file: str) -> list[dict]:
+    
+    return_list = []
+
+    original_data = np.loadtxt(path_to_file, dtype=int)
+    
+    for event in np.split(original_data, len(original_data) // 4):
+
+        assert len(id := np.unique(event[:, 0])) == 1, "Missing data =( (Station Id looks wrong)" 
+        assert len(daq_time := np.unique(event[:, 1])) == 1, "Missing data =( (DAQ time looks wrong)" 
+        assert len(timestamp := np.unique(event[:, 2])) == 1, "Missing data =( (timestamp looks wrong)"
+
+        return_list.append({
+            'id': id[0],
+            'daq_time': daq_time[0],
+            'timestamp': timestamp[0],
+            'data': event[:, 4:]
+        })
+
+    return return_list
