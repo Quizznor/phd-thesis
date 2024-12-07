@@ -6,6 +6,7 @@ from . import so
 
 import datetime
 from matplotlib.colors import Normalize, Colormap
+from matplotlib import dates
 from matplotlib import cm
 
 def __dir__() -> list[str] :
@@ -203,3 +204,13 @@ def to_datetime(timestamps : Iterable) -> list[datetime.datetime] :
 
 def gradient(cmap: Colormap, n_points: int) -> list:
     return [cmap(i/n_points) for i in range(n_points)]
+
+def apply_datetime_format(ax: plt.Axes, which: str = 'xaxis') -> None:
+    
+    locator = dates.AutoDateLocator()
+    formatter = dates.ConciseDateFormatter(locator)
+
+    if which == 'xaxis':
+        ax.xaxis.set_major_formatter(formatter)
+    elif which == 'yaxis':
+        ax.yaxis.set_major_formatter(formatter)

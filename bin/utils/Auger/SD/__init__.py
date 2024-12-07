@@ -14,8 +14,11 @@ import os
 
 class Monit():
 
-    monit_path = '/cr/auger02/Prod/monit/Sd/'
-    monit_path2 = '/cr/data01/filip/Data/monit'
+    monit_paths = [
+        '/cr/auger02/Prod/monit/Sd/',       # Mirror to Lyon DB
+        '/cr/data01/filip/Data/monit/',     # local repo @ IAP
+        '/home/filip/Desktop/monit/',       # local repo @ Debian12
+    ]
 
     def __init__(self, *args, starting_branch=None, verbosity=logging.INFO) -> None :
 
@@ -32,13 +35,13 @@ class Monit():
 
             full_file_paths = []
             for y, m, d in product(years, months, days):
-                if os.path.isfile(f"{self.monit_path}/{y:04}/{m:02}/mc_{y:04}_{m:02}_{d:02}_00h00.root"):
-                    full_file_paths.append(f"{self.monit_path}/{y:04}/{m:02}/mc_{y:04}_{m:02}_{d:02}_00h00.root")
-                elif os.path.isfile(f"{self.monit_path2}/mc_{y:04}_{m:02}_{d:02}_00h00.root"):
-                    full_file_paths.append(f"{self.monit_path2}/mc_{y:04}_{m:02}_{d:02}_00h00.root")
+                for path in self.monit_paths:
+                    if os.path.isfile(f"{path}/{y:04}/{m:02}/mc_{y:04}_{m:02}_{d:02}_00h00.root"):
+                        full_file_paths.append(f"{path}/{y:04}/{m:02}/mc_{y:04}_{m:02}_{d:02}_00h00.root")
+                        break
                 else:
                     self.logger.error(f"I cannot find the monit file for {y:04}-{m:02}-{d:02} !!!")
-                    raise FileNotFoundError
+                    raise FileNotFoundError(f"mc_{y:04}_{m:02}_{d:02}_00h00.root not found in any data path you've specified")
         
         self.logger.info(f'received {len(full_file_paths)} file(s) as input')
 

@@ -1,6 +1,3 @@
-from dataclasses import dataclass
-
-@dataclass
 class CONSTANTS():
 
     import numpy as np
