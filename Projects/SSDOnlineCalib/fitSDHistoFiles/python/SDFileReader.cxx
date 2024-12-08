@@ -75,8 +75,8 @@ int main(int argc, char *argv[])
         chargeHisto += to_string(bin) + ' ';
       }
 
-      peakFile << stationId << " " << stationCalib->EndSecond << " " << average + gpsOffset << " 3 " << peakHisto << '\n';
-      chargeFile << stationId << " " << stationCalib->EndSecond << " " << average + gpsOffset << " 3 " << chargeHisto << '\n';
+      peakFile << stationId << " " << stationCalib->EndSecond << " " << average + gpsOffset << " " << tubeMask <<" 3 " << peakHisto << '\n';
+      chargeFile << stationId << " " << stationCalib->EndSecond << " " << average + gpsOffset << " " << tubeMask << " 3 " << chargeHisto << '\n';
       nData += 1;
     }
     // break;

@@ -104,11 +104,12 @@ class Monit():
 
 
 class SdHisto():
-    def __init__(self, *, peak: list[np.ndarray]=None, charge: list[np.ndarray]=None) -> None:
+    def __init__(self, *, peak: list[np.ndarray]=None, charge: list[np.ndarray]=None, pmt_mask: list = [1,1,1,1]) -> None:
 
         assert peak is None or len(peak) == 4, 'Missing a PMT?'
         assert charge is None or len(charge) == 4, 'Missing a PMT?'
         
+        self.mask = pmt_mask
         self.histos = {
             'peak' : peak,
             'charge' : charge
@@ -136,7 +137,6 @@ class SdHisto():
         return peak_charge
 
     def fit(self) -> dict:
-
         if self.histos['peak'] is not None: 
             self.popts['peak'] = self.get_peak('peak')
         if self.histos['charge'] is not None:
@@ -151,7 +151,6 @@ class SdHisto():
 
         peaks = []
         for i, counts in enumerate(self.histos[mode]):
-
             if i < 3: peaks.append(self.fit_wcd(counts[:(99 if mode=='peak' else 399)]))
             else: peaks.append(self.fit_ssd(counts[:(99 if mode=='peak' else 399)]))
 
@@ -260,8 +259,13 @@ class SdHisto():
         if self.histos['peak'] is not None:
             ax1.set_xlabel('max. pulse height / ADC')
             for i, counts in enumerate(self.histos['peak']):
+
+                linestyle = '-' if self.mask[i] else ':'
+                label = l[i] if self.mask[i] else l[i] + ", (masked)"
+                lw = 1 if self.mask[i] else 0.5
                 factor = 1 if i<3 else f
-                ax1.plot(self.get_bins('peak', i) * factor, counts, c=c[i], ls='-', label=l[i], marker='none')
+
+                ax1.plot(self.get_bins('peak', i) * factor, counts, c=c[i], ls=linestyle, label=label, marker='none', lw=lw)
                 ax1.axvline(self.popts['peak'][i][1].n * factor, lw=0.4, ls='--', c=c[i])
                 err = self.popts['peak'][i][1].std_dev * np.array([-1, 1]) + self.popts['peak'][i][1].n
                 ax1.axvspan(*(err * factor), color=c[i], alpha=0.1)
@@ -272,8 +276,13 @@ class SdHisto():
         if self.histos['charge'] is not None:
             ax2.set_xlabel('integral / ADC')
             for i, counts in enumerate(self.histos['charge']):
+
+                linestyle = '-' if self.mask[i] else ':'
+                label = l[i] if self.mask[i] else l[i] + ", (masked)"
+                lw = 1 if self.mask[i] else 0.5
                 factor = 1 if i<3 else f
-                ax2.plot(self.get_bins('charge', i) * factor, counts, c=c[i], ls='-', label=l[i], marker='none')
+
+                ax2.plot(self.get_bins('charge', i) * factor, counts, c=c[i], ls=linestyle, label=label, marker='none', lw=lw)
                 ax2.axvline(self.popts['charge'][i][1].n * factor, lw=0.4, ls='--', c=c[i])
                 err = self.popts['charge'][i][1].std_dev * np.array([-1, 1]) + self.popts['charge'][i][1].n
                 ax2.axvspan(*(err * factor), color=c[i], alpha=0.1)
@@ -305,6 +314,16 @@ class SdHisto():
 def read_histos(path_to_file: str) -> list[dict]:
     
     return_list = []
+    mask = [
+        [0, 0, 0, 1],
+        [1, 0, 0, 1],
+        [0, 1, 0, 1],
+        [1, 1, 0, 1],
+        [0, 0, 1, 1],
+        [1, 0, 1, 1],
+        [0, 1, 1, 1],
+        [1, 1, 1, 1],
+    ]
 
     original_data = np.loadtxt(path_to_file, dtype=int)
     
@@ -313,12 +332,14 @@ def read_histos(path_to_file: str) -> list[dict]:
         assert len(id := np.unique(event[:, 0])) == 1, "Missing data =( (Station Id looks wrong)" 
         assert len(daq_time := np.unique(event[:, 1])) == 1, "Missing data =( (DAQ time looks wrong)" 
         assert len(timestamp := np.unique(event[:, 2])) == 1, "Missing data =( (timestamp looks wrong)"
+        assert len(pmt_mask := np.unique(event[:, 3])) == 1, "Missing data =( (PMT mask looks wrong)"
 
         return_list.append({
             'id': id[0],
             'daq_time': daq_time[0],
             'timestamp': timestamp[0],
-            'data': event[:, 4:]
+            'pmt_mask': mask[pmt_mask[0]],
+            'data': event[:, 5:]
         })
 
     return return_list
