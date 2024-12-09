@@ -114,9 +114,11 @@ class SdHisto():
             'peak' : peak,
             'charge' : charge
         }
+
+        fill_value = uncertainties.ufloat(np.nan, np.nan)
         self.popts = {
-            'peak': [[np.nan, np.nan] for _ in range(4)], 
-            'charge': [[np.nan, np.nan] for _ in range(4)]
+            'peak': [[fill_value for _ in range(3)] for _ in range(4)], 
+            'charge': [[fill_value for _ in range(3)] for _ in range(4)]
         }
 
         self.fit_was_run = False
@@ -290,6 +292,7 @@ class SdHisto():
             ax2.set_xlim(0, 3200)
             ax2.legend(title='Charge')
 
+        ax1.set_ylabel('Counts')
         return fig
     
 
