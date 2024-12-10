@@ -8,6 +8,7 @@ from ...binaries import np
 from ... import CONSTANTS
 import uproot
 import typing
+import glob
 import json
 import os
 
@@ -36,9 +37,25 @@ class Monit():
             full_file_paths = []
             for y, m, d in product(years, months, days):
                 for path in self.monit_paths:
-                    if os.path.isfile(f"{path}/{y:04}/{m:02}/mc_{y:04}_{m:02}_{d:02}_00h00.root"):
-                        full_file_paths.append(f"{path}/{y:04}/{m:02}/mc_{y:04}_{m:02}_{d:02}_00h00.root")
-                        break
+                    candidates = glob.glob(f"mc_{y:04}_{m:02}_{d:02}_*.root", root_dir=f"{path}/{y:04}/{m:02}")
+
+                    if not len(candidates): continue
+                    elif len(candidates) == 1:
+                        full_file_paths.append(f"{path}/{y:04}/{m:02}/{candidates[0]}")
+                    elif len(candidates) > 1:
+                        query = "(0) ALL FILES BELOW\n"
+                        for i, c in enumerate(candidates, 1):
+                            query += f"({i}) {c}\n"
+                        print(query, flush=True)
+                        which = int(input(f"More than one file found, which to choose? "))
+
+                        if which:
+                            full_file_paths.append(f"{path}/{y:04}/{m:02}/{candidates[which-1]}")
+                        else:
+                            for c in candidates:
+                                full_file_paths.append(f"{path}/{y:04}/{m:02}/{c}")
+                        
+                    break
                 else:
                     self.logger.error(f"I cannot find the monit file for {y:04}-{m:02}-{d:02} !!!")
                     raise FileNotFoundError(f"mc_{y:04}_{m:02}_{d:02}_00h00.root not found in any data path you've specified")
@@ -115,10 +132,10 @@ class SdHisto():
             'charge' : charge
         }
 
-        fill_value = uncertainties.ufloat(np.nan, np.nan)
+        self.fill_value = uncertainties.ufloat(np.nan, np.nan)
         self.popts = {
-            'peak': [[fill_value for _ in range(3)] for _ in range(4)], 
-            'charge': [[fill_value for _ in range(3)] for _ in range(4)]
+            'peak': [[self.fill_value for _ in range(3)] for _ in range(4)], 
+            'charge': [[self.fill_value for _ in range(3)] for _ in range(4)]
         }
 
         self.fit_was_run = False
@@ -153,8 +170,14 @@ class SdHisto():
 
         peaks = []
         for i, counts in enumerate(self.histos[mode]):
-            if i < 3: peaks.append(self.fit_wcd(counts[:(99 if mode=='peak' else 399)]))
-            else: peaks.append(self.fit_ssd(counts[:(99 if mode=='peak' else 399)]))
+            if i < 3: 
+                peak = [self.fill_value for _ in range(3)] if not self.mask[i] \
+                        else self.fit_wcd(counts[:(99 if mode=='peak' else 399)])
+                peaks.append(peak)
+            else: 
+                peak = [self.fill_value for _ in range(3)] if not self.mask[i] \
+                        else self.fit_ssd(counts[:(99 if mode=='peak' else 399)])
+                peaks.append(peak)
 
         return peaks
     
@@ -243,7 +266,7 @@ class SdHisto():
 
         except Exception as e:
             # print(f'SSD SdHisto fit failed: {e}')
-            return [uncertainties.ufloat(np.nan, np.nan) for _ in range(4)]
+            return [uncertainties.ufloat(np.nan, np.nan) for _ in range(3)]
     
 
     def plot(self) -> plt.Figure:
