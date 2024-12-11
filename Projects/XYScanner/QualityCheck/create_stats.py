@@ -36,13 +36,14 @@ for file in os.listdir(f'{home_dir}/xy-calibration/config/calib_runlists'):
 print('\n\n')
 
 for k, v in status.items():
-    try:
-        v.sort(key=lambda v: v[0])
-        for i in range(len(v)):
-            v[i][1] = (fr"\fail" if v[i][2] else "\ok") + f"{{{v[i][1]}}}"
-        print(k.upper(), "& ".join(*v))
-    except TypeError: 
-        v[1] = (fr"\fail" if v[2] else "\\ok") + f"{{{v[1]}}}"
-        print(k.upper(), v[:-1])
+    print(k, v)
+    # try:
+    #     v.sort(key=lambda v: v[0])
+    #     for i in range(len(v)):
+    #         v[i][1] = (fr"\fail" if v[i][2] else "\ok") + f"{{{v[i][1]}}}"
+    #     print(k.upper(), "& ".join(*v))
+    # except TypeError: 
+    #     v[1] = (fr"\fail" if v[2] else "\\ok") + f"{{{v[1]}}}"
+    #     print(k.upper(), v[:-1])
                            
 print(f'Accept: {all - failed}/{all}: {(all - failed)/all*1e2:.0f}%')
