@@ -24,10 +24,10 @@ import datetime
 phd_start, phd_end = datetime.datetime(2023, 8, 1), datetime.datetime(2026, 7, 31)
 
 cmds = [
-    "git",          # Introduction
-    "lyon",         # Pierre Auger Observatory
-    "git",          # Bibliography
-    "ls",           # Hallo
+    "git",  # Introduction
+    "lyon",  # Pierre Auger Observatory
+    "git",  # Bibliography
+    "ls",  # Hallo
 ]
 
 titles = [
@@ -38,17 +38,31 @@ titles = [
 ]
 
 quotes = [
-    ["In the beginning the universe was created. This has made a lot of people angry, and has been widely regarded as a bad move", "Douglas Adams, The Restaurant at the End of the Universe"],
-    ["I am happy you are here with me. Here at the end of all things, Sam", "Frodo Baggins, Return of the King"],
-    ["I am happy you are here with me. Here at the end of all things, Sam", "Frodo Baggins, Return of the King"],
-    ["If I have seen further, it is by standing on the shoulders of giants", "Sir Isaac Newton"],
+    [
+        "In the beginning the universe was created. This has made a lot of people angry, and has been widely regarded as a bad move",
+        "Douglas Adams, The Restaurant at the End of the Universe",
+    ],
+    [
+        "I am happy you are here with me. Here at the end of all things, Sam",
+        "Frodo Baggins, Return of the King",
+    ],
+    [
+        "I am happy you are here with me. Here at the end of all things, Sam",
+        "Frodo Baggins, Return of the King",
+    ],
+    [
+        "If I have seen further, it is by standing on the shoulders of giants",
+        "Sir Isaac Newton",
+    ],
 ]
+
 
 def make_tooltip(i):
     this_title = titles[i]
     quote, author = quotes[i]
-    
+
     return f"{i}. {this_title}\n\n{quote}\n{f'- {author}'.rjust(len(quote))}"
+
 
 def add_to_dict(original, new):
 
@@ -60,24 +74,28 @@ def add_to_dict(original, new):
 
     return original
 
+
 def get_timestamps(original, timestamp):
 
     new = {}
 
     for key, value in original.items():
         new[key] = [int(timestamp + np.random.randint(3600)) for _ in range(value)]
-    
+
     return new
 
 
 all_of_history = {}
 
 for hour in os.listdir(basedir):
-    if hour == "README.md": continue
-    
-    timestamp = datetime.datetime(*[int(i) for i in hour[:-7].split("_")]).timestamp() + np.random.randint(3600)
+    if hour == "README.md":
+        continue
 
-    with open(basedir + hour, "rb") as f: 
+    timestamp = datetime.datetime(
+        *[int(i) for i in hour[:-7].split("_")]
+    ).timestamp() + np.random.randint(3600)
+
+    with open(basedir + hour, "rb") as f:
         history = pickle.load(f)
 
     timestamps = get_timestamps(history, timestamp)
@@ -98,10 +116,10 @@ for key in keys_to_delete:
 
 
 # dict modification ##############################################################
-    
+
 # add lyon keyword
 all_of_history["lyon"] = []
-for key in ['ssh', './copy_data_to_iap.sh', './copy_to_iap.sh']:
+for key in ["ssh", "./copy_data_to_iap.sh", "./copy_to_iap.sh"]:
     all_of_history["lyon"] += all_of_history[key]
 
 ##################################################################################
@@ -109,13 +127,13 @@ for key in ['ssh', './copy_data_to_iap.sh', './copy_to_iap.sh']:
 plt.rcParams["figure.figsize"] = [11, 2.5]
 
 for i, cmd in enumerate(cmds, 0):
-    
+
     tooltip = make_tooltip(i)
 
     plt.figure()
     data = all_of_history[cmd]
     for year in [2024, 2025, 2026]:
-        plt.axvline(datetime.datetime(year, 1, 1).timestamp(), 0, .066, c="k", ls="--")
+        plt.axvline(datetime.datetime(year, 1, 1).timestamp(), 0, 0.066, c="k", ls="--")
 
     line = tool.kd1d_estimate(data, bandwidth=3e5)
     X = np.linspace(min(data), max(data), 10000)
@@ -131,7 +149,7 @@ for i, cmd in enumerate(cmds, 0):
 
     format = f"{tooltip}\n\ngit\n{{"
     n_chars = len(str(data))
-    width = np.sqrt(5/3 * n_chars)
+    width = np.sqrt(5 / 3 * n_chars)
 
     matrix = ""
     row = ""
@@ -140,7 +158,7 @@ for i, cmd in enumerate(cmds, 0):
         if len(row) // width:
             matrix += "\n\t" + row
             row = ""
-        
+
         row += str(hex(number))[2:].upper() + " "
 
     format += matrix + "\n}"

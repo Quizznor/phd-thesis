@@ -1,4 +1,4 @@
-#!/bin/python3 
+#!/bin/python3
 
 import sys, os
 import numpy as np
@@ -20,18 +20,18 @@ q_peak = {
     # 'NadiaEarlyFilteredDownsampledT1' : np.array([148.9, 162.2, 151.8]),
     # 'NadiaLateOnline' :                 np.array([144.0, 149.7, 149.2]),
     # 'NadiaEarlyOnline' :                np.array([144.0, 149.7, 149.2]),
-
-    'NuriaJr' :                         np.array([156.50, 163.65, 162.70]),
-    'NuriaJrFiltered' :                 np.array([156.50, 163.65, 162.70]),
-    'NuriaJrDownsampled' :              np.array([156.50, 163.65, 162.70]),
-    'NuriaJrFilteredDownsampled' :      np.array([156.50, 163.65, 162.70]),
-    'PeruFiltered' :                    np.array([150.30, 117.50, 153.35]),
-    'PeruFilteredDownsampled' :         np.array([150.30, 117.50, 153.35]),
-    'NadiaEarlyFilteredDownsampled' :   np.array([148.90, 162.20, 151.75]),
-    'NadiaLateFilteredDownsampled' :    np.array([148.90, 162.20, 151.75]),
+    "NuriaJr": np.array([156.50, 163.65, 162.70]),
+    "NuriaJrFiltered": np.array([156.50, 163.65, 162.70]),
+    "NuriaJrDownsampled": np.array([156.50, 163.65, 162.70]),
+    "NuriaJrFilteredDownsampled": np.array([156.50, 163.65, 162.70]),
+    "PeruFiltered": np.array([150.30, 117.50, 153.35]),
+    "PeruFilteredDownsampled": np.array([150.30, 117.50, 153.35]),
+    "NadiaEarlyFilteredDownsampled": np.array([148.90, 162.20, 151.75]),
+    "NadiaLateFilteredDownsampled": np.array([148.90, 162.20, 151.75]),
 }
 
-def check_T1(trace : np.ndarray, station : str) -> int :
+
+def check_T1(trace: np.ndarray, station: str) -> int:
 
     # Maybe adjust thresholds instead of calibrating trace?
     # likely faster and more reflective of actual algorithm
@@ -42,13 +42,18 @@ def check_T1(trace : np.ndarray, station : str) -> int :
             if trace[1][i] > threshold[1]:
                 if trace[2][i] > threshold[2]:
                     return 1
-                else: continue
-            else: continue
-        else:continue
-    else: return 0 
+                else:
+                    continue
+            else:
+                continue
+        else:
+            continue
+    else:
+        return 0
+
 
 os.system(f"mkdir -p /cr/tempdata01/filip/SSDCalib/UUBCrosscheck/{date}/{station}")
-wcd_file=f"/cr/tempdata01/filip/UubRandoms/{date}/converted/{station}/randoms{int(sys.argv[3]):04d}_WCD.dat"
+wcd_file = f"/cr/tempdata01/filip/UubRandoms/{date}/converted/{station}/randoms{int(sys.argv[3]):04d}_WCD.dat"
 
 traces = np.loadtxt(wcd_file)
 traces = np.split(traces, len(traces) // 3)
@@ -57,4 +62,8 @@ t1_info = []
 for i, trace in enumerate(traces):
     t1_info.append(check_T1(trace, station))
 
-np.savetxt(wcd_file.replace(f"UubRandoms/{date}/converted", f"SSDCalib/UUBCrosscheck/{date}"), np.array(t1_info), fmt='%i')
+np.savetxt(
+    wcd_file.replace(f"UubRandoms/{date}/converted", f"SSDCalib/UUBCrosscheck/{date}"),
+    np.array(t1_info),
+    fmt="%i",
+)

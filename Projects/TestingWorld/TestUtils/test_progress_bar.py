@@ -1,6 +1,6 @@
 import sys, os
 
-sys.path.append('/cr/users/filip/bin')
+sys.path.append("/cr/users/filip/bin")
 
 from utils.binaries import *
 

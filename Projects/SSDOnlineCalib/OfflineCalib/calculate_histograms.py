@@ -3,7 +3,8 @@
 import sys, os
 import numpy as np
 
-def single_bin_trigger(trace, threshold : int, multiplicity : int = 1) -> int :
+
+def single_bin_trigger(trace, threshold: int, multiplicity: int = 1) -> int:
 
     if isinstance(trace, np.ndarray):
         return sum(trace >= threshold) >= multiplicity
@@ -20,9 +21,10 @@ def single_bin_trigger(trace, threshold : int, multiplicity : int = 1) -> int :
         else:
             return False
 
-def threshold_trigger(trace : list, threshold : float = 1.75) -> int :
+
+def threshold_trigger(trace: list, threshold: float = 1.75) -> int:
     # q_peak comes from analysis done during my Masters'
-    q_peak = np.array([180.23, 182.52, 169.56]) * (1 - 11.59/100)
+    q_peak = np.array([180.23, 182.52, 169.56]) * (1 - 11.59 / 100)
 
     pmt1, pmt2, pmt3 = trace
     pmt1 = pmt1 / q_peak[0]
@@ -35,38 +37,45 @@ def threshold_trigger(trace : list, threshold : float = 1.75) -> int :
             if pmt2[i] > threshold:
                 if pmt3[i] > threshold:
                     return True
-                else: continue
-            else: continue
-        else: continue
-    
+                else:
+                    continue
+            else:
+                continue
+        else:
+            continue
+
     return False
 
-file=f"/cr/tempdata01/filip/iRODS/UubRandoms/converted/{sys.argv[1]}/randoms{int(sys.argv[2]) + 1:04d}"
+
+file = f"/cr/tempdata01/filip/iRODS/UubRandoms/converted/{sys.argv[1]}/randoms{int(sys.argv[2]) + 1:04d}"
 os.system(f"mkdir /cr/tempdata01/filip/SSDCalib/UubRates/{sys.argv[1]}/")
 
 # Load data and split into appropriate structure
 SSD_data = np.loadtxt(f"{file}_SSD.dat", dtype=int)
-#WCD_data = np.split(WCD_data, len(WCD_data) // 3)
-#WCD_data = np.loadtxt(f"{file}_WCD.dat", dtype=int)
+# WCD_data = np.split(WCD_data, len(WCD_data) // 3)
+# WCD_data = np.loadtxt(f"{file}_WCD.dat", dtype=int)
 WCD_data = np.zeros_like(SSD_data)
 
-thresholds = range(1,351)
+thresholds = range(1, 351)
 SSD_rates_T1 = np.zeros_like(thresholds)
 SSD_rates = np.zeros_like(thresholds)
 
 # Subtract baseline and perform rate calculation
 for step, (SSD, WCD) in enumerate(zip(SSD_data, WCD_data)):
 
-    #print(f"{step}/5000", end = "\r")
-    #WCD = [pmt[1:] - pmt[0] for pmt in WCD]
+    # print(f"{step}/5000", end = "\r")
+    # WCD = [pmt[1:] - pmt[0] for pmt in WCD]
     SSD = SSD[1:] - SSD[0]
 
-    #is_T1 = threshold_trigger(WCD)
+    # is_T1 = threshold_trigger(WCD)
 
     for t in thresholds:
         is_SB = single_bin_trigger(SSD, t)
-        #SSD_rates_T1[t-1] += (is_SB and is_T1)
-        SSD_rates[t-1] += is_SB
+        # SSD_rates_T1[t-1] += (is_SB and is_T1)
+        SSD_rates[t - 1] += is_SB
 
-#np.savetxt(f"/cr/tempdata01/filip/SSDCalib/Rates/with_T1/randoms_{int(sys.argv[1]) +1:04d}.dat", SSD_rates_T1)
-np.savetxt(f"/cr/tempdata01/filip/SSDCalib/UubRates/{sys.argv[1]}/randoms{int(sys.argv[2]) +1:04d}.dat", SSD_rates)
+# np.savetxt(f"/cr/tempdata01/filip/SSDCalib/Rates/with_T1/randoms_{int(sys.argv[1]) +1:04d}.dat", SSD_rates_T1)
+np.savetxt(
+    f"/cr/tempdata01/filip/SSDCalib/UubRates/{sys.argv[1]}/randoms{int(sys.argv[2]) +1:04d}.dat",
+    SSD_rates,
+)

@@ -1,8 +1,9 @@
 import numpy as np
 
-class Event():
 
-    def __init__(self, file_path : str) -> None :
+class Event:
+
+    def __init__(self, file_path: str) -> None:
 
         data = np.loadtxt(file_path)
 
@@ -15,17 +16,17 @@ class Event():
 
         self.stations = []
         for count in range(0, len(data), 4):
-            self.stations.append(Station(data[count : count+4, 2:]))
+            self.stations.append(Station(data[count : count + 4, 2:]))
 
-    def __getitem__(self, station_id : int):
+    def __getitem__(self, station_id: int):
 
         for station in self.stations:
-            if station_id == station.id: return station
+            if station_id == station.id:
+                return station
         else:
             raise ValueError(f"Station {station_id} not found")
-        
-    
-    def __str__(self) -> str :
+
+    def __str__(self) -> str:
         return_str = ""
 
         for station in self.stations:
@@ -33,20 +34,19 @@ class Event():
 
         return return_str
 
-    def __len__(self) -> int :
-        return len(self.stations) 
-    
-    def get_ids(self) -> list[int] :
+    def __len__(self) -> int:
+        return len(self.stations)
+
+    def get_ids(self) -> list[int]:
         return [station.id for station in self.stations]
-    
-    
-    def get_spds(self) -> list[int] :
+
+    def get_spds(self) -> list[int]:
         return [station.spd for station in self.stations]
 
 
-class Station():
+class Station:
 
-    def __init__(self, station_data) -> None : 
+    def __init__(self, station_data) -> None:
 
         self.id = set(station_data[:, 0])
         self.spd = set(station_data[:, 1])
@@ -58,50 +58,58 @@ class Station():
         self.wcd_traces = station_data[:-1, 3:]
         self.ssd = station_data[-1, 3:]
 
-    def isWCDT2(self, cfg) -> int : return self.isTh_WCD(cfg) or self.isToT_WCD(cfg)
+    def isWCDT2(self, cfg) -> int:
+        return self.isTh_WCD(cfg) or self.isToT_WCD(cfg)
 
-    def isToT_SSD(self, cfg) -> int : 
-        
-        running_sum = (self.ssd[:120] > cfg.threshold['ssd_tot']).sum()
+    def isToT_SSD(self, cfg) -> int:
+
+        running_sum = (self.ssd[:120] > cfg.threshold["ssd_tot"]).sum()
 
         for i in range(120, len(self.ssd)):
-            if running_sum > cfg.occupancy['ssd']: return i
+            if running_sum > cfg.occupancy["ssd"]:
+                return i
 
-            running_sum += (self.ssd[i      ] > cfg.threshold['ssd_tot'])
-            running_sum -= (self.ssd[i - 120] > cfg.threshold['ssd_tot'])
+            running_sum += self.ssd[i] > cfg.threshold["ssd_tot"]
+            running_sum -= self.ssd[i - 120] > cfg.threshold["ssd_tot"]
 
         else:
             return -1
 
+    def isTh_WCD(self, cfg) -> int:
 
-    def isTh_WCD(self, cfg) -> int :
-        
         wcd1, wcd2, wcd3 = self.wcd_traces
         for i in range(2048):
-            if wcd1[i] < cfg.threshold['wcd_th']: continue
-            if wcd2[i] < cfg.threshold['wcd_th']: continue
-            if wcd3[i] < cfg.threshold['wcd_th']: continue
+            if wcd1[i] < cfg.threshold["wcd_th"]:
+                continue
+            if wcd2[i] < cfg.threshold["wcd_th"]:
+                continue
+            if wcd3[i] < cfg.threshold["wcd_th"]:
+                continue
 
             return i
-        
+
         return -1
 
+    def isToT_WCD(self, cfg) -> int:
 
-    def isToT_WCD(self, cfg) -> int :
-
-        pmt_multiplicity_check = lambda sums : sum(sums > cfg.multiplicity['wcd']) > 1
+        pmt_multiplicity_check = lambda sums: sum(sums > cfg.multiplicity["wcd"]) > 1
 
         first_120_bins = self.wcd_traces[:, :120]
-        pmt_running_sum = (first_120_bins >= cfg.threshold['wcd_tot']).sum(axis=1)
+        pmt_running_sum = (first_120_bins >= cfg.threshold["wcd_tot"]).sum(axis=1)
 
         for i in range(120, self.wcd_traces.shape[1] + 1):
-            if pmt_multiplicity_check(pmt_running_sum) : return i
-            if i == self.wcd_traces.shape[1]: return -1
+            if pmt_multiplicity_check(pmt_running_sum):
+                return i
+            if i == self.wcd_traces.shape[1]:
+                return -1
 
-            new_over_threshold = np.array(self.wcd_traces[:, i] > cfg.multiplicity['wcd'], dtype=int)
-            old_over_threshold = np.array(self.wcd_traces[:, i - 120] > cfg.multiplicity['wcd'], dtype=int)
+            new_over_threshold = np.array(
+                self.wcd_traces[:, i] > cfg.multiplicity["wcd"], dtype=int
+            )
+            old_over_threshold = np.array(
+                self.wcd_traces[:, i - 120] > cfg.multiplicity["wcd"], dtype=int
+            )
             pmt_running_sum += new_over_threshold - old_over_threshold
 
-
-    def __str__(self) -> str :
-        return f"Station {self.id} at {self.spd}m"    
+    def __str__(self) -> str:
+        return f"Station {self.id} at {self.spd}m"

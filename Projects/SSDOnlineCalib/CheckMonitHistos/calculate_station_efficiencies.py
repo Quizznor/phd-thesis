@@ -5,13 +5,16 @@ from utils.binaries import *
 from utils.plotting import *
 
 from utils.Auger.SD.UubRandoms import UubRandom
+
 # stations = ['NuriaJr', 'Constanza', 'Nadia']
-stations = ['Svenja']
+stations = ["Svenja"]
 
 for station in stations:
     all_peaks, t1_peaks = [], []
 
-    for file in tools.ProgressBar(UubRandom(station, 'ssd'), newline=False, desc=station, len=35):
+    for file in tools.ProgressBar(
+        UubRandom(station, "ssd"), newline=False, desc=station, len=35
+    ):
         for trace in file:
             _, t1, mip, baseline, trace = trace
             max_ssd = trace[max_ssd_bin := np.argmax(trace)]
@@ -22,8 +25,8 @@ for station in stations:
             all_peaks.append(max_ssd)
 
     all_peaks, t1_peaks = np.array(all_peaks), np.array(t1_peaks)
-    np.savetxt(f'/cr/users/filip/Data/StationEfficiencies/{station}_t1s.gz', t1_peaks)
-    np.savetxt(f'/cr/users/filip/Data/StationEfficiencies/{station}_all.gz', all_peaks)
+    np.savetxt(f"/cr/users/filip/Data/StationEfficiencies/{station}_t1s.gz", t1_peaks)
+    np.savetxt(f"/cr/users/filip/Data/StationEfficiencies/{station}_all.gz", all_peaks)
 
 
 # date, station = sys.argv[1] + '/', sys.argv[2] + '/'
@@ -51,7 +54,7 @@ for station in stations:
 #         if b1 / q_peak[station][0] < 1.75: continue
 #         if b2 / q_peak[station][1] < 1.75: continue
 #         if b3 / q_peak[station][2] < 1.75: continue
-        
+
 #         return i * 3
 #     else: return -1
 
