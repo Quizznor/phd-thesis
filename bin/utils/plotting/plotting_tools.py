@@ -9,31 +9,38 @@ from matplotlib.colors import Normalize, Colormap
 from matplotlib import dates
 from matplotlib import cm
 
-def __dir__() -> list[str] :
+
+def __dir__() -> list[str]:
     """spoof dir function for a clean namespace"""
 
     _globals = globals()
     private_functions = []
     for _global in _globals:
-        if _global.startswith('__test'):
+        if _global.startswith("__test"):
             private_functions.append(_global)
-        
-    del _globals['Union']
-    del _globals['Iterable']
-    del _globals['Any']
-    del _globals['plt']
-    del _globals['so']
-    del _globals['pd']
-    del _globals['np']
+
+    del _globals["Union"]
+    del _globals["Iterable"]
+    del _globals["Any"]
+    del _globals["plt"]
+    del _globals["so"]
+    del _globals["pd"]
+    del _globals["np"]
 
     for fcn in private_functions:
         del _globals[fcn]
 
     return _globals
 
-def box_series(x : Union[str, Iterable], y : Union[str, Iterable], data : Union[pd.DataFrame, Iterable] = None, **kwargs) -> None :
+
+def box_series(
+    x: Union[str, Iterable],
+    y: Union[str, Iterable],
+    data: Union[pd.DataFrame, Iterable] = None,
+    **kwargs,
+) -> None:
     """draw a series of box plots for a sequential dataset
-    
+
     Parameters:
         * *x* (``str``)                         : data or name of the column used for the x axis
         * *y* (``str``)                         : data or name of the column used for the y axis
@@ -57,51 +64,64 @@ def box_series(x : Union[str, Iterable], y : Union[str, Iterable], data : Union[
         if isinstance(scatter_x[0], datetime.datetime):
             is_datetime = True
             scatter_x = np.array([x.timestamp() for x in scatter_x])
-        else: is_datetime = False
+        else:
+            is_datetime = False
     else:
         scatter_x, scatter_y = data[x], data[y]
 
-    bins = kwargs.get('bins', 10)
+    bins = kwargs.get("bins", 10)
     if isinstance(bins, int):
-        bins = np.linspace(0.9*min(scatter_x), 1.1*max(scatter_x), bins+1)
+        bins = np.linspace(0.9 * min(scatter_x), 1.1 * max(scatter_x), bins + 1)
 
     # split the data into different boxes
     positions = 0.5 * (bins[1:] + bins[:-1])
     binplace = np.digitize(scatter_x, bins)
-    boxes = [scatter_y[np.where(binplace == i+1)] for i in range(len(bins)-1)]
+    boxes = [scatter_y[np.where(binplace == i + 1)] for i in range(len(bins) - 1)]
 
     # visualize results
-    ax = kwargs.get('ax', plt.gca())
+    ax = kwargs.get("ax", plt.gca())
     # color = next(ax._get_lines.prop_cycler)['color']
-    color = kwargs.get('c', 'k')
-    ax.boxplot(boxes,
-               positions=positions, 
-               widths=np.diff(bins), 
-               showfliers=False, 
-               manage_ticks=False,
-               medianprops={'color':color},
+    color = kwargs.get("c", "k")
+    ax.boxplot(
+        boxes,
+        positions=positions,
+        widths=np.diff(bins),
+        showfliers=False,
+        manage_ticks=False,
+        medianprops={"color": color},
     )
-    ax.scatter(scatter_x, scatter_y, 
-               label=kwargs.get('label', fr"$\bar{{y}}={np.mean(scatter_y):.2f}\pm{np.std(scatter_y):.2f}$"),
-               s=kwargs.get('markersize', 10),
-               edgecolors=color,
-               linewidths=0.2,
-               facecolor='white', 
-               alpha=0.4,
+    ax.scatter(
+        scatter_x,
+        scatter_y,
+        label=kwargs.get(
+            "label", rf"$\bar{{y}}={np.mean(scatter_y):.2f}\pm{np.std(scatter_y):.2f}$"
+        ),
+        s=kwargs.get("markersize", 10),
+        edgecolors=color,
+        linewidths=0.2,
+        facecolor="white",
+        alpha=0.4,
     )
 
     # run a linear regression, if desired
-    if kwargs.get('analyze_drift', False):
+    if kwargs.get("analyze_drift", False):
         popt, pcov = np.polyfit(scatter_x, scatter_y, 1, cov=True)
-        gradient = lambda x : np.array([x, np.ones_like(x)])
-        
+        gradient = lambda x: np.array([x, np.ones_like(x)])
+
         model = np.poly1d(popt)
-        error = lambda x : [np.sqrt( gradient(i).T @ pcov @ gradient(i) ) for i in x]
+        error = lambda x: [np.sqrt(gradient(i).T @ pcov @ gradient(i)) for i in x]
 
         X = np.linspace(bins[0], bins[-1], 100)
-        ax.plot(X, model(X), color=color, lw=0.4,
-                label=fr"$\hat{{y}}\,\approx\,{popt[0]:.2f}\,$x$\,{'+' if popt[1]>0 else ''}{popt[1]:.2f}$")
-        ax.fill_between(X, model(X)-error(X), model(X)+error(X), color=color, alpha = 0.3)
+        ax.plot(
+            X,
+            model(X),
+            color=color,
+            lw=0.4,
+            label=rf"$\hat{{y}}\,\approx\,{popt[0]:.2f}\,$x$\,{'+' if popt[1]>0 else ''}{popt[1]:.2f}$",
+        )
+        ax.fill_between(
+            X, model(X) - error(X), model(X) + error(X), color=color, alpha=0.3
+        )
 
     # if is_datetime:
     #     xticks = ax.get_xticks()
@@ -109,108 +129,133 @@ def box_series(x : Union[str, Iterable], y : Union[str, Iterable], data : Union[
     #     ticklabels = [datetime.datetime.fromtimestamp(x).strftime(fmt) for x in xticks]
     #     ax.set_xticklabels(ticklabels)
 
-def performance_plot(kernels : Iterable[callable], input : callable, n_range : Iterable[int], repeat : int = 100, skip_verification : bool = False) -> None :
+
+def performance_plot(
+    kernels: Iterable[callable],
+    input: callable,
+    n_range: Iterable[int],
+    repeat: int = 100,
+    skip_verification: bool = False,
+) -> None:
     """visualize the results of a runtime performance test of various kernels over an input range defined by n_range"""
 
     from ..testing.testing_tools import time_performance
-    results = time_performance(kernels, input, n_range, repeat=repeat, skip_verification=skip_verification)
 
-    plt.figure()    
-    plt.suptitle(f'Performance results, {repeat} runs avg., verify = {not skip_verification}')
+    results = time_performance(
+        kernels, input, n_range, repeat=repeat, skip_verification=skip_verification
+    )
+
+    plt.figure()
+    plt.suptitle(
+        f"Performance results, {repeat} runs avg., verify = {not skip_verification}"
+    )
     plt.loglog()
     plt.xlabel("Input size")
     plt.ylabel("Runtime / ns")
 
     for fcn, runtimes in results.items():
         y, delta_y = np.mean(runtimes, axis=1) * 1e9, np.std(runtimes, axis=1) * 1e9
-        plt.fill_between(n_range, y-delta_y, y+delta_y, alpha=0.4)
+        plt.fill_between(n_range, y - delta_y, y + delta_y, alpha=0.4)
         plt.plot(n_range, y, label=fcn)
 
     plt.legend()
 
-def shaded_hist(data : Any, cmap : str, **kwargs) -> Normalize :
+
+def shaded_hist(data: Any, cmap: str, **kwargs) -> Normalize:
     """wrapper for the standard plt.hist, which plots the individual bins in a cmap depending on the x-value"""
 
-    def get_outline_kwargs(kwargs) -> dict :
+    def get_outline_kwargs(kwargs) -> dict:
         outline_kwargs = {
-            'color' : kwargs.get('c', 'k'),
-            'ls' : kwargs.get('ls', 'solid'),
-            'lw' : kwargs.get('lw', 1),
-            'bins' : kwargs.get('bins', None),
-            'histtype' : 'step'
+            "color": kwargs.get("c", "k"),
+            "ls": kwargs.get("ls", "solid"),
+            "lw": kwargs.get("lw", 1),
+            "bins": kwargs.get("bins", None),
+            "histtype": "step",
         }
 
         return outline_kwargs
 
     # outline
-    _, bins, _ = (kwargs.get('ax', plt.gca())).hist(data, **get_outline_kwargs(kwargs))
+    _, bins, _ = (kwargs.get("ax", plt.gca())).hist(data, **get_outline_kwargs(kwargs))
 
     # shade
     cmap = plt.get_cmap(cmap)
 
-    norm = kwargs.get('norm', 'linear')
+    norm = kwargs.get("norm", "linear")
     if isinstance(norm, str):
 
-        vmin = kwargs.get('vmin', np.min(data))
-        vmax = kwargs.get('vmax', np.max(data))
+        vmin = kwargs.get("vmin", np.min(data))
+        vmax = kwargs.get("vmax", np.max(data))
 
-        if norm == 'linear':
+        if norm == "linear":
             norm = Normalize(vmin, vmax, clip=False)
-        elif norm == 'log':
-                from matplotlib.colors import LogNorm
-                norm = LogNorm(vmin, vmax, clip=False)
+        elif norm == "log":
+            from matplotlib.colors import LogNorm
+
+            norm = LogNorm(vmin, vmax, clip=False)
         else:
-                raise NameError(f"{norm=} is not a supported option")
+            raise NameError(f"{norm=} is not a supported option")
 
     bin_centers = 0.5 * (bins[1:] + bins[:-1])
-    _, _, patches = (kwargs.get('ax', plt.gca())).hist(data, bins=bins)
+    _, _, patches = (kwargs.get("ax", plt.gca())).hist(data, bins=bins)
     for x, b in zip(bin_centers, patches):
-        plt.setp(b, 'facecolor', cmap(norm(x)))
+        plt.setp(b, "facecolor", cmap(norm(x)))
 
     return norm
 
-def preliminary(ax: plt.Axes = None, text: str = 'Preliminary', fontsize : float = 60):
+
+def preliminary(ax: plt.Axes = None, text: str = "Preliminary", fontsize: float = 60):
     """helper that plots a big, fat 'preliminary' on top of your figure"""
     import matplotlib.patheffects as patheffects
-    if ax is None: ax = plt.gca()
 
-    ax.text(0.5, 0.5, text,
-         c='red',
-         rotation=15,
-         horizontalalignment='center',
-         verticalalignment='center',
-         fontsize=fontsize,
-         path_effects=[patheffects.withStroke(foreground='k', linewidth=fontsize/20)],
-         zorder=10000,
+    if ax is None:
+        ax = plt.gca()
+
+    ax.text(
+        0.5,
+        0.5,
+        text,
+        c="red",
+        rotation=15,
+        horizontalalignment="center",
+        verticalalignment="center",
+        fontsize=fontsize,
+        path_effects=[patheffects.withStroke(foreground="k", linewidth=fontsize / 20)],
+        zorder=10000,
     )
 
-def save(fig : plt.Figure = None, path : str = '', **kwargs) -> None :
-    base = '/cr/data01/filip/plots/'
-    path, name = '/'.join(path.split('/')[:-1]), path.split('/')[-1]
-    
+
+def save(fig: plt.Figure = None, path: str = "", **kwargs) -> None:
+    base = "/cr/data01/filip/plots/"
+    path, name = "/".join(path.split("/")[:-1]), path.split("/")[-1]
+
     fig = fig if fig is not None else plt.gcf()
 
     import os
+
     if not os.path.exists(os.path.dirname(base + path)):
-        os.system(f'mkdir -p {base}/{path}')
+        os.system(f"mkdir -p {base}/{path}")
 
-    fig.savefig(base + path + name, bbox_inches='tight', **kwargs)
+    fig.savefig(base + path + name, bbox_inches="tight", **kwargs)
 
-def to_datetime(timestamps : Iterable) -> list[datetime.datetime] :
+
+def to_datetime(timestamps: Iterable) -> list[datetime.datetime]:
     try:
         return [datetime.datetime.fromtimestamp(t) for t in timestamps]
     except TypeError:
         return datetime.datetime.fromtimestamp(timestamps)
 
-def gradient(cmap: Colormap, n_points: int) -> list:
-    return [cmap(i/n_points) for i in range(n_points)]
 
-def apply_datetime_format(ax: plt.Axes, which: str = 'xaxis') -> None:
-    
+def gradient(cmap: Colormap, n_points: int) -> list:
+    return [cmap(x) for x in np.linspace(0, 1, n_points, endpoint=True)]
+
+
+def apply_datetime_format(ax: plt.Axes, which: str = "xaxis") -> None:
+
     locator = dates.AutoDateLocator()
     formatter = dates.ConciseDateFormatter(locator)
 
-    if which == 'xaxis':
+    if which == "xaxis":
         ax.xaxis.set_major_formatter(formatter)
-    elif which == 'yaxis':
+    elif which == "yaxis":
         ax.yaxis.set_major_formatter(formatter)

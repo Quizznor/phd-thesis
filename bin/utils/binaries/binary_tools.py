@@ -3,32 +3,37 @@ from time import perf_counter_ns
 from . import uncertainties
 from . import np
 
-class ProgressBar():
 
-    def __init__(self, data : Iterable, /, **kwargs) -> None :
-        self.print_every = kwargs.get('print_every', 1)
-        self.newline = kwargs.get('newline', False)
-        self.enum = kwargs.get('enum', -1)
-        self.bar_length = kwargs.get('len', 20)
-        self.desc = kwargs.get('desc', '')
-        if self.desc != '': self.desc += ': '
+class ProgressBar:
+
+    def __init__(self, data: Iterable, /, **kwargs) -> None:
+        self.print_every = kwargs.get("print_every", 1)
+        self.newline = kwargs.get("newline", False)
+        self.enum = kwargs.get("enum", -1)
+        self.bar_length = kwargs.get("len", 20)
+        self.desc = kwargs.get("desc", "")
+        if self.desc != "":
+            self.desc += ": "
 
         try:
             self.len = len(data)
             self.data = enumerate(data, self.enum) if self.enum != -1 else iter(data)
         except TypeError:
             from .. import create_stream_logger
-            logger = create_stream_logger('ProgressBar')
-            logger.warning('Consider using enum=True instead of passing a generator, please')
+
+            logger = create_stream_logger("ProgressBar")
+            logger.warning(
+                "Consider using enum=True instead of passing a generator, please"
+            )
             self.len = np.inf
             self.data = data
 
-    def __iter__(self) -> 'ProgressBar' :
+    def __iter__(self) -> "ProgressBar":
         self.start_time = perf_counter_ns()
         self.__index = 0
         return self
-    
-    def __next__(self) -> Any :
+
+    def __next__(self) -> Any:
 
         self.__index += 1
         if self.__index % self.print_every == 0 and self.__index <= self.len:
@@ -41,26 +46,30 @@ class ProgressBar():
             else:
                 iterations_per_time = f"{iterations_per_s: >12.2f} it/s"
 
-            step_info = f"{self.desc}{self.__index:{len(str(self.len))}}/{self.len} " \
-            + f"[{'*' * int(self.__index / self.len * self.bar_length): <{self.bar_length}}]" \
-            + f" || {self.format(elapsed)}>{self.format(eta_ns)}, {iterations_per_time}"
-            print(step_info, end=f'\n' if self.newline else '\r')
-        elif self.__index > self.len: print()
-        
+            step_info = (
+                f"{self.desc}{self.__index:{len(str(self.len))}}/{self.len} "
+                + f"[{'*' * int(self.__index / self.len * self.bar_length): <{self.bar_length}}]"
+                + f" || {self.format(elapsed)}>{self.format(eta_ns)}, {iterations_per_time}"
+            )
+            print(step_info, end=f"\n" if self.newline else "\r")
+        elif self.__index > self.len:
+            print()
+
         return next(self.data)
-    
+
     @staticmethod
-    def format(nanoseconds : int) -> str :
+    def format(nanoseconds: int) -> str:
         seconds = nanoseconds * 1e-9
-        hours   = seconds // 3600
+        hours = seconds // 3600
         minutes = (seconds % 3600) // 60
         seconds = int(seconds % 60)
 
         return f"{int(hours):02}:{int(minutes):02}:{int(seconds):02}"
 
-def kd1d_estimate(samples : Iterable, **kwargs : dict) -> Callable :
+
+def kd1d_estimate(samples: Iterable, **kwargs: dict) -> Callable:
     """approximate a pdf from an underlaying sample of datapoints
-    
+
     Parameters:
         * *samples* (``str``)                                                                                        : the samples for which a PDF is estimated via KDE
 
@@ -72,49 +81,67 @@ def kd1d_estimate(samples : Iterable, **kwargs : dict) -> Callable :
     Todo:
         * implement this in Nd-case?
     """
-    
+
     from sklearn import neighbors
 
     kernel_density = neighbors.KernelDensity(
-        bandwidth=kwargs.get('bandwidth', 1.0), 
-        algorithm=kwargs.get('algorithm', 'auto'), 
-        kernel=kwargs.get('kernel', 'gaussian'),
+        bandwidth=kwargs.get("bandwidth", 1.0),
+        algorithm=kwargs.get("algorithm", "auto"),
+        kernel=kwargs.get("kernel", "gaussian"),
     )
     kernel_density.fit(np.array(samples)[:, np.newaxis])
 
     return lambda x: np.exp(kernel_density.score_samples(np.array(x)[:, np.newaxis]))
 
-def progress_bar(step : int, all_steps : int, in_place : bool = False, name : str = '') -> None :
+
+def progress_bar(
+    step: int, all_steps: int, in_place: bool = False, name: str = ""
+) -> None:
     """print progress of (typically) for loop to stdout, together with time information"""
 
     import time
+
     global start_of_progressbar
     step += 1
 
-    if step == all_steps: return "done... =)"
+    if step == all_steps:
+        return "done... =)"
 
     try:
         _ = start_of_progressbar
     except NameError:
         start_of_progressbar = time.time()
 
-    convert = lambda x : f"{x//3600:02}:{(x%3600)//60:02}:{x%60:02}"
+    convert = lambda x: f"{x//3600:02}:{(x%3600)//60:02}:{x%60:02}"
 
-    padding = f' {len(str(all_steps)) + 1}'
+    padding = f" {len(str(all_steps)) + 1}"
     steps_info = f"{step:{padding}}/{all_steps} // {f'{step/all_steps * 1e2:.2f}':>6}%"
     elapsed = int(time.time() - start_of_progressbar)
-    per_step = elapsed/step
+    per_step = elapsed / step
     estimated = int(per_step * (all_steps - step))
 
-    time_info = f"running {name} since: {convert(elapsed)} // ETA: {convert(estimated)} // {int(per_step * 1e3):}ms/step" + "         "
+    time_info = (
+        f"running {name} since: {convert(elapsed)} // ETA: {convert(estimated)} // {int(per_step * 1e3):}ms/step"
+        + "         "
+    )
 
-    print(" || ".join([steps_info, time_info]), end = '\r' if in_place else '\n')
+    print(" || ".join([steps_info, time_info]), end="\r" if in_place else "\n")
 
-def bootstrap_ci(fctn : callable, popt : list, pcov : list, x_vals : list, ci : int = 1, n_samples : int = 10000) -> np.ndarray :
+
+def bootstrap_ci(
+    fctn: callable,
+    popt: list,
+    pcov: list,
+    x_vals: list,
+    ci: int = 1,
+    n_samples: int = 10000,
+) -> np.ndarray:
     """propagate errors of a function given by fitting algorithm via MC bootstrapping"""
 
     std = [x.std_dev for x in uncertainties.correlated_values(popt, pcov)]
-    bootstrap_params = np.array([np.random.normal(x, ci * s_x, n_samples) for x, s_x in zip(popt, std)])
+    bootstrap_params = np.array(
+        [np.random.normal(x, ci * s_x, n_samples) for x, s_x in zip(popt, std)]
+    )
 
     err_up, err_down = np.zeros((2, len(x_vals)))
     err_up.fill(-np.inf), err_down.fill(np.inf)
@@ -126,7 +153,8 @@ def bootstrap_ci(fctn : callable, popt : list, pcov : list, x_vals : list, ci : 
 
     return err_up, err_down
 
-def closest(array : list[Any], value, index = False) -> Any :
+
+def closest(array: list[Any], value, index=False) -> Any:
     """return the element closest to value from a collection of values in array"""
     closest_index = np.argmin(np.abs(np.array(array) - value))
     return closest_index if index else array[closest_index]

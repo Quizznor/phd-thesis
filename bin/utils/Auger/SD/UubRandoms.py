@@ -6,73 +6,79 @@ import os
 # maybe make this asynchronous at some point?
 TUPLE_OR_ARRAY = Union[tuple, np.ndarray]
 
-class UubRandom():
 
-    dir = '/cr/data02/AugerPrime/UUB/UubRandoms/'
+class UubRandom:
+
+    dir = "/cr/data02/AugerPrime/UUB/UubRandoms/"
     dates = {
-        'NuriaJr' : '2022_11',
-        'Constanza' : '2023_03',
-        'Nadia' : '2023_03',
-        'Svenja' : '2022_11'
+        "NuriaJr": "2022_11",
+        "Constanza": "2023_03",
+        "Nadia": "2023_03",
+        "Svenja": "2022_11",
     }
     fmt = {
-        'wcd' : np.dtype([
-            ('timestamp', 'I'), 
-            ('t1_latch_bin', 'h'), 
-            ('vem_peak', ('e', 3)), 
-            ('baseline', ('H', 3)), 
-            ('traces', ('h', (3, 2048)))
-        ]),
-        'ssd' : np.dtype([
-            ('timestamp', 'I'), 
-            ('t1_latch_bin', 'h'), 
-            ('mip_peak', 'e'), 
-            ('baseline', 'H'), 
-            ('trace', ('h', 2048))
-        ])
+        "wcd": np.dtype(
+            [
+                ("timestamp", "I"),
+                ("t1_latch_bin", "h"),
+                ("vem_peak", ("e", 3)),
+                ("baseline", ("H", 3)),
+                ("traces", ("h", (3, 2048))),
+            ]
+        ),
+        "ssd": np.dtype(
+            [
+                ("timestamp", "I"),
+                ("t1_latch_bin", "h"),
+                ("mip_peak", "e"),
+                ("baseline", "H"),
+                ("trace", ("h", 2048)),
+            ]
+        ),
     }
 
-    def __init__(self, station : str, detectors : str = 'all') -> None :
+    def __init__(self, station: str, detectors: str = "all") -> None:
 
         try:
             date = self.dates[station]
         except KeyError:
-            raise NameError('Station does not exist!')
-        
-        self.path = self.dir + '/'.join([date, station])
+            raise NameError("Station does not exist!")
+
+        self.path = self.dir + "/".join([date, station])
 
         match detectors:
-            case 'all':
-                self.extensions = ['wcd', 'ssd']
-            case 'wcd':
-                self.extensions = ['wcd']
-            case 'ssd':
-                self.extensions = ['ssd']
+            case "all":
+                self.extensions = ["wcd", "ssd"]
+            case "wcd":
+                self.extensions = ["wcd"]
+            case "ssd":
+                self.extensions = ["ssd"]
 
-    def __iter__(self) -> 'UubRandom' :
+    def __iter__(self) -> "UubRandom":
         self.__index = 0
         return self
-    
-    def __next__(self) -> TUPLE_OR_ARRAY  :
 
-        if self.__index == self.__len__(): raise StopIteration
+    def __next__(self) -> TUPLE_OR_ARRAY:
+
+        if self.__index == self.__len__():
+            raise StopIteration
         data = self[self.__index]
         self.__index += 1
         return data
 
-    def __len__(self) -> int :
-        basename = [f.split('.')[0] for f in os.listdir(self.path)]
+    def __len__(self) -> int:
+        basename = [f.split(".")[0] for f in os.listdir(self.path)]
         return len(np.unique(basename))
 
-    def __getitem__(self, index : int) -> TUPLE_OR_ARRAY  :
+    def __getitem__(self, index: int) -> TUPLE_OR_ARRAY:
         return self.read(index)
 
-    def read(self, index : int) -> np.ndarray :
+    def read(self, index: int) -> np.ndarray:
 
         results = []
         for ext in self.extensions:
             file_path = f"{self.path}/randoms{index:04}.{ext}.bz2"
             buffer = bz2.BZ2File(file_path).read()
             results.append(np.frombuffer(buffer, self.fmt[ext]))
-            
+
         return results if len(results) != 1 else results[0]
