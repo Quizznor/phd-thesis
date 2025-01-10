@@ -1,28 +1,14 @@
-import numpy as np
 import mysql.connector
-import pandas as pd
-import sys
-from datetime import timedelta, date, datetime
-import argparse
-import matplotlib.pyplot as plt
-import pickle
-import csv
+from datetime import timedelta, date
 from getpass import getpass
 from pathlib import Path
-import matplotlib.dates as mdates
-xformatter = mdates.DateFormatter('%H:%M\n%d/%m/%Y')
+
+start_dt = date(2025, 1, 1)
+end_dt = date(2025, 1, 5)
 
 def daterange(date1, date2):
     for n in range(int ((date2 - date1).days)+1):
         yield date1 + timedelta(n)
-
-def GPStoUTC(gps):
-    return gps + 315964800
-
-
-def UTCtoGPS(utc):
-    return utc - 315964800
-
 
 def get_E_field_data():
     stations =  ['CRS']
@@ -30,9 +16,6 @@ def get_E_field_data():
     Columns = {'CRS': 'TimeStamp, Pressure, Temperature'}
 
     basepath = '/cr/data01/filip/Data/AeraPressureTemperature/'
-
-    start_dt = date(2025, 1, 1)
-    end_dt = date(2025, 1, 5)
 
     for dt in daterange(start_dt, end_dt):
         print('')
