@@ -3,19 +3,20 @@ from datetime import timedelta, date
 from getpass import getpass
 from pathlib import Path
 
-start_dt = date(2025, 1, 1)
-end_dt = date(2025, 1, 5)
+start_dt = date(2025, 1, 7)
+end_dt = date(2025, 1, 10)
 
 def daterange(date1, date2):
     for n in range(int ((date2 - date1).days)+1):
         yield date1 + timedelta(n)
 
 def get_E_field_data():
-    stations =  ['CRS']
-    TableName = {'CRS': 'Weather'}
-    Columns = {'CRS': 'TimeStamp, Pressure, Temperature'}
+    stations =  ['AERAWS', 'CRS']
+    TableName = {'AERAWS': 'WeatherAERAWS', 'CRS': 'Weather'}
+    Columns = {'CRS': 'TimeStamp, Pressure, Temperature', 
+               'AERAWS': 'TimeStamp, Pressure, Temperature'}
 
-    basepath = '/cr/data01/filip/Data/AeraPressureTemperature/'
+    basepath = '/cr/work/filip/weather_correlation/'
 
     for dt in daterange(start_dt, end_dt):
         print('')
@@ -27,7 +28,7 @@ def get_E_field_data():
         for station in stations:
             print(f'Fetching pressure data from station {station}')
 
-            pressure_file_dir = basepath + f'{station}/{year}/{month:02d}'
+            pressure_file_dir = basepath
             pressure_file_path = pressure_file_dir + f'/{station}_{year}_{month:02d}_{day:02d}.dat'
             # print(pressure_file_path)
             Path(pressure_file_dir).mkdir(parents=True, exist_ok=True)

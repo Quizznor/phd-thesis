@@ -16,10 +16,12 @@ import os
 class Monit:
 
     monit_paths = [
-        "/cr/auger02/Prod/monit/Sd/",  # Mirror to Lyon DB
-        "/cr/data01/filip/Data/monit/",  # local repo @ IAP
+        # "/cr/auger02/Prod/monit/Sd/",  # Mirror to Lyon DB
+        # "/cr/data01/filip/Data/monit/",  # local repo @ IAP
+        "/cr/work/filip/monit_and_sd",  # new local repo @ IAP
         "/home/filip/Desktop/monit_and_sd/",  # local repo @ Debian12
     ]
+    # monit_paths = [CONSTANTS.MONI_PATH]
 
     def __init__(self, *args, starting_branch=None, verbosity=logging.INFO) -> None:
 
@@ -213,11 +215,11 @@ class SdHisto:
             match len(counts):
                 case 99:
                     increment = 5
-                    bins = CONSTANTS.UUB_WCD_PEAK
+                    bins = CONSTANTS.UUB.WCD_PEAK
                     initial_start = 99 - increment
                 case 399:
                     increment = 20
-                    bins = CONSTANTS.UUB_WCD_CHARGE
+                    bins = CONSTANTS.UUB.WCD_CHARGE
                     initial_start = 399 - increment
                 case _:
                     raise IndexError(f"received histogram with length {len(counts)}")
@@ -265,14 +267,14 @@ class SdHisto:
         try:
             match len(counts):
                 case 99:
-                    bins = CONSTANTS.UUB_SSD_PEAK
+                    bins = CONSTANTS.UUB.SSD_PEAK
                     increment = 5
                     start = np.argmax(counts)
 
                     while not np.argmax(counts[start:]):
                         start += 1
                 case 399:
-                    bins = CONSTANTS.UUB_SSD_CHARGE
+                    bins = CONSTANTS.UUB.SSD_CHARGE
                     increment = 20
                     order = 10
 
@@ -309,7 +311,7 @@ class SdHisto:
             return popts
 
         except Exception as e:
-            # print(f'SSD SdHisto fit failed: {e}')
+            print(f'SSD SdHisto fit failed: {e}')
             return [uncertainties.ufloat(np.nan, np.nan) for _ in range(3)]
 
     def plot(self) -> plt.Figure:
@@ -395,13 +397,13 @@ class SdHisto:
     def get_bins(mode: str, pmt: int) -> np.ndarray:
 
         if mode == "peak" and pmt < 3:
-            return CONSTANTS.UUB_WCD_PEAK
+            return CONSTANTS.UUB.WCD_PEAK
         elif mode == "peak" and pmt == 3:
-            return CONSTANTS.UUB_SSD_PEAK
+            return CONSTANTS.UUB.SSD_PEAK
         elif mode == "charge" and pmt < 3:
-            return CONSTANTS.UUB_WCD_CHARGE
+            return CONSTANTS.UUB.WCD_CHARGE
         elif mode == "charge" and pmt == 3:
-            return CONSTANTS.UUB_SSD_CHARGE
+            return CONSTANTS.UUB.SSD_CHARGE
 
 
 def read_histos(path_to_file: str) -> list[dict]:

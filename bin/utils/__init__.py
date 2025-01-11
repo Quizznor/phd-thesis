@@ -6,6 +6,7 @@ import time
 import re
 
 
+
 class Formatter(logging.Formatter):
     """Custom logging class to allow for stylized formatting, and (rough) runtime analysis"""
 
