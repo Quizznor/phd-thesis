@@ -81,12 +81,14 @@ def set_plt_style(styles: str = "single") -> None:
         plt.rcParams["xtick.color"] = TEXT_COLOR
         plt.rcParams["ytick.color"] = TEXT_COLOR
     else:
-        colors = ["k", "r", "b", "g"]
+        colors = ["k", "r", "b", "g", 'c']
 
     from matplotlib import cycler
 
     plt.rcParams["axes.prop_cycle"] = cycler(
-        color=colors, ls=["-", "--", ":", "-."], marker=["o", "s", "^", "v"]
+        color=colors, ls=["-", "--", ":", "-.",
+                          (0, (3, 5, 1, 5))], 
+                          marker=["none", "o", "s", "^", "v"]
     )
 
 

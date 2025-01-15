@@ -7,7 +7,7 @@ import os
 
 CORR_FACTOR = 1.21875
 start_dt = date(2025, 1, 7)
-end_dt = date(2025, 1, 10)
+end_dt = date(2025, 1, 13)
 
 stations = [609, 943, 944, 949, 954]
 

@@ -4,7 +4,7 @@ from getpass import getpass
 from pathlib import Path
 
 start_dt = date(2025, 1, 7)
-end_dt = date(2025, 1, 10)
+end_dt = date(2025, 1, 13)
 
 def daterange(date1, date2):
     for n in range(int ((date2 - date1).days)+1):
