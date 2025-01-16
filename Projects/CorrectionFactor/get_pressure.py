@@ -3,8 +3,8 @@ from datetime import timedelta, date
 from getpass import getpass
 from pathlib import Path
 
-start_dt = date(2025, 1, 7)
-end_dt = date(2025, 1, 13)
+start_dt = date(2024, 10, 25)
+end_dt = date(2024, 10, 25)
 
 def daterange(date1, date2):
     for n in range(int ((date2 - date1).days)+1):

@@ -6,8 +6,8 @@ from pathlib import Path
 import os
 
 CORR_FACTOR = 1.21875
-start_dt = date(2025, 1, 7)
-end_dt = date(2025, 1, 13)
+start_dt = date(2025, 1, 14)
+end_dt = date(2025, 1, 14)
 
 stations = [609, 943, 944, 949, 954]
 
