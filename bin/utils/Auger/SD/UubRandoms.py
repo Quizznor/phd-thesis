@@ -1,10 +1,33 @@
-from ...binaries import np
+from ...binaries import np, uncertainties
+from ...binaries import tools
 from typing import Union
 import bz2
 import os
 
 # maybe make this asynchronous at some point?
 TUPLE_OR_ARRAY = Union[tuple, np.ndarray]
+
+class BackgroundStudy():
+
+    # don't forget to @numba.jist the trigger 
+    def __init__(self, fctn: callable):
+
+        time_passed, triggers = 0, 0
+        RandomFiles = UubRandom(station = "Svenja", detectors = "ssd")
+    
+        self.trigger_examples = []
+        for File in tools.ProgressBar(RandomFiles, newline=False):
+            for event in File:
+
+                calibrated = event['trace'] / event['mip_peak']
+                time_passed += 2048 * 8.33e-9                       # add time
+
+                if fctn(calibrated):                                # add trigger
+                    self.trigger_examples.append(event)
+                    triggers += 1
+            
+            rate = uncertainties.ufloat(triggers, np.sqrt(triggers)) / time_passed
+            if rate.n > 10: print(f"\n   Rate after {time_passed:.3f}s = ({rate}) Hz")
 
 
 class UubRandom:

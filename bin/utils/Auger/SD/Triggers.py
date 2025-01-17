@@ -1,6 +1,5 @@
 from ...binaries import np
 
-
 def filter_and_downsample(*traces: np.ndarray, random_phase: int = 1) -> list:
     """convert UUB trace to UB equivalent, for compatibility mode"""
 
