@@ -12,7 +12,7 @@ class BackgroundStudy():
     # don't forget to @numba.jit the callable
     def __init__(self, fctn: callable):
 
-        time_passed, triggers = 0, 0
+        self.time_passed, self.triggers = 0, 0
         RandomFiles = UubRandom(station = "Svenja", detectors = "ssd")
     
         self.trigger_examples = []
