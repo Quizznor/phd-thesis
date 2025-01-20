@@ -20,14 +20,14 @@ class BackgroundStudy():
             for event in File:
 
                 calibrated = event['trace'] / event['mip_peak']
-                time_passed += 2048 * 8.33e-9                       # add time
+                self.time_passed += 2048 * 8.33e-9                  # add time
 
                 if fctn(calibrated):                                # add trigger
                     self.trigger_examples.append(event)
-                    triggers += 1
+                    self.triggers += 1
             
-            rate = uncertainties.ufloat(triggers, np.sqrt(triggers)) / time_passed
-            if rate.n > 10: print(f"\n   !! HIGH Rate after {time_passed:.3f}s: ({rate}) Hz !!")
+            rate = uncertainties.ufloat(self.triggers, np.sqrt(self.triggers)) / self.time_passed
+            if rate.n > 10: print(f"\n   !! HIGH Rate after {self.time_passed:.3f}s: ({rate}) Hz !!")
 
 
 class UubRandom:
