@@ -53,3 +53,33 @@ class UUB:
     SSD_CHARGE: np.ndarray = 0.5 * (
         SSD_CHARGE_EDGES[1:] + SSD_CHARGE_EDGES[:-1]
     )
+
+
+SIM_HEADER = "\
+# ************************************************************************************************\n\
+#\
+# PRAGUE LIBRARIES - PROTONS            # NAPOLI LIBRARIES - PHOTONS\n\
+# 15_15.5 log E = 4999 Files            # 15_15.5 log E = 11250 Files\n\
+# 15.5_16 log E = 4999 Files            # 15.5_16 log E = 11250 Files\n\
+                                #_|     #                               #_|\n\
+# 16_16.5 log E = 4999 Files    # | R   # 16_16.5 log E = 11250 Files   # | R\n\
+# 16.5_17 log E = 4998 Files    # | E   # 16.5_17 log E = 14998 Files   # | E\n\
+# 17_17.5 log E = 4999 Files    # | L   # 17_17.5 log E = 11250 Files   # | L\n\
+# 17.5_18 log E = 4998 Files    # | E   # 17.5_18 log E = 20000 Files   # | E\n\
+# 18_18.5 log E = 3123 Files    # | V   # 18_18.5 log E = 10000 Files   # | V\n\
+                                # | A   #                               # | A\n\
+# NAPOLI LIBRARIES - PROTONS    # | N   #                               # | N\n\
+# 18.5_19 log E = 5012 Files    # | T   # 18.5_19 log E = 9990 Files    # | T\n\
+# 19_19.5 log E = 5153 Files    # |     # 19_19.5 log E = 10000 Files   # |\n\
+                                # |     #                               # |\n\
+# 19.5_20 log E = 4997 Files            # 19.5_20 log E = 10000 Files\n\
+# 20_20.2 log E = 2012 Files            # 20_20.2 log E = 10000 Files\n\
+#\n\
+# ************************************************************************************************"
+
+SIM_REQS = '\
+Requirements        	=       OpSysName == "Ubuntu"               \\\n\
+                        &&  OpSysMajorVer == 22                     \\\n\
+                        && TARGET.Machine != "crc2.ikp.kit.edu"     \\\n\
+                        && TARGET.Machine != "crc1.ikp.kit.edu"     \\\n\
+                        && TARGET.Machine != "crcds99.iap.kit.edu"'
