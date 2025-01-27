@@ -1,0 +1,53 @@
+#ifndef _MUONACQFMT_H_
+#define _MUONACQFMT_H_
+
+/* the output format should be as:
+ *  |muonAcqFmt_H|muonAcqFmt_xxxx|data|
+ *  |muonAcqFmt_H|muonAcqFmt_xxxx|data|
+ *  ...
+ * 
+ *  in the _H there are a field type which define which
+ *     header data type is selected ("xxxx")
+ *  tHist, tTrace, tSsdHisto or tParam
+ *    
+ *  
+ *
+ */
+enum muonAcqFmt_e
+  {
+    emuonAcqFmt_hist=1,
+    emuonAcqFmt_trace,
+    emuonAcqFmt_ssdHisto,
+    emuonAcqFmt_param,
+    emuonAcqFmt_last
+  };
+
+struct muonAcqFmt_H
+{
+  unsigned char preamble[8];
+  uint32_t Tstart;
+  uint16_t timeInterval;
+  uint16_t type;
+  uint32_t size; //include the type header and the data itself
+};
+
+struct muonAcqFmt_tHist
+{
+  
+};
+struct muonAcqFmt_tTrace
+{
+  uint32_t nentries;
+};
+struct muonAcqFmt_tSsdHisto
+{
+  uint32_t nentries;
+  int16_t pkmin,pkmax;
+  uint16_t nPkUnder,nPkOver;
+};
+struct muonAcqFmt_tParam
+{
+  uint32_t nentries;
+  uint16_t chbase[4];
+};
+#endif

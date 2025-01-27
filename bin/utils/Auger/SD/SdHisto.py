@@ -1,4 +1,4 @@
-__all__ = ['SdHisto']
+__all__ = ['SdHisto', 'read_histos']
 
 from ...binaries import uncertainties, np
 from scipy.signal import argrelextrema

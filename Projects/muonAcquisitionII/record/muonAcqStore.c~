@@ -1,0 +1,420 @@
+#include "muonAcqStore.h"
+#include "muon_read.h" 
+#include <stdlib.h>
+#include <sys/stat.h>
+#include <string.h>
+#include <unistd.h>
+
+void muonAcqStore_endFile(struct muonAcqStore_str *str,int err)
+{
+  FILE *f;
+  int a;
+  if(str->file !=NULL){
+    fclose(str->file);
+    str->file=NULL;
+  }
+  if(str->buff != NULL){
+    free(str->buff);
+    str->buff=NULL;
+    str->head=NULL;
+  }
+  printf("muonAcqStore_endFile: err=%d\n",err);
+  f=fopen("muonAcqStore.start","w");
+  if(f!=NULL){
+    fprintf(f,"%d\n",err);
+    fclose(f);
+  }
+  str->finish=1;
+}
+
+void muonAcqStore_newFile(struct muonAcqStore_str *str)
+{
+  struct stat st;
+  FILE *f;
+  int aux,flag;
+  printf("muonAcqStore - new file\n");
+  if(str->file==NULL) {
+    if(str->buff!=NULL){
+      free(str->buff);
+      str->buff=NULL;
+      exit(0);
+    }
+    if(stat("muonAcqStore.out",&st)!=0){
+      f=fopen("muonAcqStore.start","r");
+      if(f!=NULL){
+	flag=fscanf(f,"%d",&aux);
+	fclose(f);
+	if(flag==1 &&
+	   emuonAcqFmt_trace <= aux && aux < emuonAcqFmt_hist ){
+	  str->file=fopen("muonAcqStore.out","w");
+	  if(str->file!=NULL){
+            int auxx;
+	    str->buff=(uint8_t *)malloc(str->maxBuffSize);
+	    if(str->buff==NULL){
+	      fclose(str->file);
+	      return;
+	    }
+	    f=fopen("muonAcqStore.start","w");
+	    if(f!=NULL){
+              printf("Start success\n");
+	      fprintf(f,"%d\n",emuonAcqFmt_start);
+	      fclose(f);
+	      str->head=(struct muonAcqFmt_H *)(str->buff + 8*sizeof(unsigned char));
+	      str->dataPt=(uint8_t *)(str->head+1);
+	      str->nextBlockSize = str->maxBlockSize;
+	      str->storedSize=0;
+	      str->histStored=0;
+	      str->mode = aux;
+              str->finish=0;
+	    } else {
+              printf("Could not open file muonAcqStore.start to finish\n");
+	      muonAcqStore_endFile(str,emuonAcqFmt_err);
+	    }
+	  }
+	}
+      }
+    }
+  }
+}
+
+
+
+void muonAcqStore_init(struct muonAcqStore_str *str,int ssdTh,int maxSize,
+                       int dtStop,int nEvtsStop)
+{
+  
+  str->maxSize=maxSize;
+  str->maxBuffSize = MUONACQSTORE_BUFFSIZE;
+  if(maxSize < str->maxBuffSize){
+    str->maxBlockSize=maxSize;
+  } else {
+    str->maxBlockSize=str->maxBuffSize;
+  }
+  str->ssdTh=ssdTh;
+  str->buff=NULL;
+  str->file=NULL;
+  str->deltaTime = dtStop;
+  str->nEvts = nEvtsStop;
+  muonAcqStore_newFile(str);
+}
+
+
+
+int muonAcqStore_startHeader(struct muonAcqStore_str *str,int type)
+{
+  if(str->buff!=NULL){
+    memcpy(str->buff,"muonAcq!",8);
+    str->head->Tstart=0;
+    str->head->timeInterval=0;
+    str->head->type=type;
+    str->headSize = 8 + sizeof(struct muonAcqFmt_H);
+    switch(type){
+    case emuonAcqFmt_trace:
+      str->head->size=sizeof(struct muonAcqFmt_tTrace);
+      memset(str->dataPt,0,str->head->size);
+      break;
+    case emuonAcqFmt_ssdHisto:
+      str->head->size=sizeof(struct muonAcqFmt_tSsdHisto) +
+        sizeof(struct muonAcqFmt_tSsdHisto) +
+        1024*sizeof(uint32_t);
+      memset(str->dataPt,0,str->head->size);
+      break;
+    case emuonAcqFmt_param:
+      str->head->size=sizeof(struct muonAcqFmt_tParam);
+      memset(str->dataPt,0,str->head->size);
+      break;
+    case emuonAcqFmt_hist:
+      str->head->size=sizeof(struct muonAcqFmt_tHist);
+      break;
+    default:
+      str->head->size=0;
+    }
+    return(0);
+  }
+  return(1);
+}
+
+int muonAcqStore_write(struct muonAcqStore_str *str)
+{
+  /* write the data into the file
+   * returns 0: successful
+   *         -1: write error.
+   *          1: in up to 5 attempt to write data
+   *          2: the file is not open or there are no data to write.
+   */
+  int tries;
+  int flag;
+  int nw,nremain;
+  int ntowrite;
+  tries=0;
+  nw=0;
+  if(str->file==NULL || str->buff==NULL || str->head->size==0){
+    return(2);
+  }
+  ntowrite = str->headSize + str->head->size;
+  while(nw < ntowrite && tries<5){
+    flag=fwrite(str->buff+nw,1,ntowrite - nw,str->file);
+    if(flag>0){
+      nw+=flag;
+    } else {
+      muonAcqStore_endFile(str,emuonAcqFmt_err);
+      return -1;
+    }
+    tries++;
+  }
+  if(nw==ntowrite){
+    str->storedSize+=ntowrite;
+    str->head->size=0;
+    nremain=str->maxSize - str->storedSize;
+    
+    if( nremain <= (int)sizeof(struct muonAcqFmt_H) + 256){
+      //256 is to consider the minimum amount of bytes for the
+      //  header and data.
+      // it is somehow arbitrary, but is small enough to consider
+      // and important amount of data.
+      muonAcqStore_endFile(str,emuonAcqFmt_end);
+      str->finish=1;
+      return(0);
+    } else {
+      if(str->maxBlockSize<nremain){
+        str->nextBlockSize = str->maxBlockSize;
+      } else {
+        str->nextBlockSize = nremain;
+      }
+    }
+    return 0;
+  }
+  muonAcqStore_endFile(str,emuonAcqFmt_err);
+  return 1;
+}
+
+
+int muonAcqStore_addHist(struct muonAcqStore_str *str,
+			  struct muon_histo_complete *h)
+{
+  //int nd;
+  //nd=8*sizeof(unsigned char) +
+  //  sizeof(struct muonAcqFmt_H) +
+  //  str->head->size;
+  if(str->file==NULL){
+    printf("muonAcqStore_addHist: Look for new file\n");
+    muonAcqStore_newFile(str);
+    if(str->file==NULL){
+      return(1);
+    }
+  }
+  if(str->histStored==1){
+    //the histogram has already stored
+    return(1);
+  }
+
+  muonAcqStore_startHeader(str,emuonAcqFmt_hist);
+  str->head->size += sizeof(struct muon_histo);
+  //this histogram Header has no information, therefore it do not need
+  // to make any thing, and just copy the histogram.
+  memcpy(str->dataPt,&(h->histo),sizeof(struct muon_histo));
+  printf("Store histogram\n");
+  muonAcqStore_write(str);
+  if(str->finish==0){
+    int trigEnable;
+    int th[4];
+    //enable trigger
+    trigEnable=
+      //(1<<0) | //WCD PMT1
+      //(1<<1) | //WCD PMT2
+      //(1<<2) | //WCD PMT3
+      (1<<3) | //SSD PMT
+      (1<<4) | //multiplicity (1,2,3 or 4) PMTs above the threshold
+      //(0<<7) | //SSD delay signal delay for triggering (
+      //(0<<10) | //coincidence overlap bins (0, ... 7) - corresponds from 1 to 8
+      //(0<<13) | //consecutive bins (0,...7) - correspond from 1 to 8.
+      0 ; //this would not change the condition above and allows just uncomment
+    // and set the corresponding value
+    th[0]=0;
+    th[1]=0;
+    th[2]=0;
+    th[3]= h->histo.Offset[3] + str->ssdTh;
+    muon_read_set2(str->read_buff,th,trigEnable,1);
+    muonAcqStore_startHeader(str,str->mode);
+  } else {
+    return(1);
+  }
+  str->histStored=1;
+  return(0);
+}
+
+int muonAcqStore_entry(struct muonAcqStore_str *str ,
+		       int peak[],int charge[],int base[],
+		       int charge_bins[],
+		       int bin_max[],uint16_t Offset[],
+                       int trace[][NBBIN],
+		       int trigType,
+                       int currentTime)
+/* include the event if it is possible
+ * 
+ *   peak   - peak value of each PMT (0,1,2 - WCD HG PMT1,2,3  ; 3 - SSD HG)
+ *   charge - charge 
+ *   base   - baseline of the event
+ *   charge_bins - number of bins which calculate the charge.
+ *   bin_max     - time which maximum of signal happened in the event
+ *   Offset      - which offset is used to generate the histogram 
+ *   trace       - the event trace
+ *   trigType    - trigger type;
+ *   currentTime - the current time. It is used to consider time interval 
+ *                   of the aquisition.
+ */
+  
+{
+  int bsize;
+  uint32_t *lpt;
+  uint16_t *spt;
+  uint8_t *pt;
+  int ch,i;
+
+  struct muonAcqFmt_tTrace *htrace;
+  struct muonAcqFmt_tSsdHisto *hhisto;
+  struct muonAcqFmt_tParam *hparam;
+  int aux;
+
+  
+  if(str->file==NULL || str->buff==NULL ||
+     str->histStored==0 || str->finish==1){
+    return(0);
+  }
+  if(str->head->Tstart==0){
+    str->head->Tstart=currentTime;
+  }
+  
+  //look the size of additional block
+  //   and later verify if it is possible to include additional entry
+  switch(str->mode){
+  case emuonAcqFmt_trace:
+    bsize=4*NBBIN*sizeof(uint16_t);
+    break;
+  case emuonAcqFmt_ssdHisto:
+    bsize=0; //it does not include additonal block.
+    break;
+  case emuonAcqFmt_param:
+    bsize=sizeof(uint16_t) + 4*4*sizeof(uint16_t);
+    break;
+  default:
+    return(1);
+    break;
+  }
+  
+  if(str->nextBlockSize <= str->headSize + str->head->size + bsize ){
+    if(str->head->size==0){
+      muonAcqStore_endFile(str,emuonAcqFmt_end);
+    } else {
+      muonAcqStore_write(str); //store the previous data before
+      if(str->finish==0){
+        muonAcqStore_startHeader(str,str->mode);
+      
+        /* look again if there is enough space in the new block */
+        if(str->nextBlockSize <= str->headSize + str->head->size + bsize ){
+          muonAcqStore_endFile(str,emuonAcqFmt_end);
+        }
+      }
+    }
+    if(str->finish){
+      return(0);
+    }
+    //continue
+  }
+
+  if((bsize + str->headSize + str->head->size < str->nextBlockSize) &&
+     (peak[3] > Offset[3] + str->ssdTh) ){
+    //has enough space to include the entry
+    //  and the signal threshold is high enough to consider in the signal.
+    switch(str->mode){
+    case (emuonAcqFmt_trace):
+      htrace=(struct muonAcqFmt_tTrace *)(str->head +1);
+      pt=(uint8_t *)htrace;
+      pt+=str->head->size;
+      spt=(uint16_t *)pt;
+      for(ch=0;ch<4;ch++){
+	for(i=0;i<NBBIN;i++){
+	  *spt = trace[ch][i] & 0xFFFF;
+	  spt++;
+	}
+      }
+      str->head->size += bsize;
+      htrace->nentries++;
+      break;
+    case emuonAcqFmt_ssdHisto:
+      hhisto=(struct muonAcqFmt_tSsdHisto *)(str->head +1);
+      if(hhisto->nentries==0){
+        //first entry - it should clean everything before starts.
+	hhisto->pkmin=Offset[3]-100;
+	if(hhisto->pkmin<0){
+	  hhisto->pkmin=0;
+	}
+	hhisto->pkmax = hhisto->pkmin + 1024;
+        //it do not need to clean the histogram, because
+        //  it is cleaned in muonAcqStore_startHeader function
+      }
+      //add the entry into the histogram.
+      lpt=(uint32_t *)(hhisto + 1);
+      if(peak[3]<hhisto->pkmin){
+	hhisto->nPkUnder++;
+      } else if(peak[3]<hhisto->pkmax){
+	lpt[peak[3]-hhisto->pkmin]++;
+      } else {
+	hhisto->nPkOver++;
+      }
+      hhisto->nentries++;
+      break;
+    case emuonAcqFmt_param:
+      hparam=(struct muonAcqFmt_tParam *)(str->head +1);
+      if(hparam->nentries==0){
+	hparam->chbase[0]=charge_bins[0]*Offset[0];
+	hparam->chbase[1]=charge_bins[1]*Offset[1];
+	hparam->chbase[2]=charge_bins[2]*Offset[2];
+	hparam->chbase[3]=charge_bins[3]*Offset[3];
+      }
+      /* |trig(2)|pmt1|pmt2|pmt3|ssdpmt|
+       * 
+       *  pmt_i or ssdpmt should have the format:
+       *
+       *  |peak(2)|charge(2)|base(2)|max(2)|
+       */
+      pt=(uint8_t *)(str->head + 1);
+      pt += str->head->size;
+      spt=(uint16_t *)pt;
+      
+      *spt = trigType & 0xFF;
+      spt++;
+      for(ch=0;ch<4;ch++){
+	spt[0] = peak[ch] & 0xFFFF;
+	aux=charge[ch] - hparam->chbase[ch];
+	
+	if(aux<0){
+	  spt[1]=0;
+	} else if(aux<65536){
+	  spt[1] = aux;
+	} else {
+	  spt[1]=65535;
+	}
+	spt[2] = base[ch] & 0xFFFF;
+	spt[3] = bin_max[ch];
+	spt+=4;
+      }
+      str->head->size += bsize;
+      hparam->nentries++;
+      break;
+    }
+     str->head->nentries++;
+
+  }
+
+  if( ( str->head->nentries >= str->nEvts )  || 
+      ( str->deltaTime <= currentTime - str->head->Tstart )){
+    str->head->timeInterval=currentTime - str->head->Tstart;
+    muonAcqStore_write(str);
+    if(str->finish==0){
+      muonAcqStore_endFile(str,emuonAcqFmt_end);
+    }
+  }
+  return(0);
+}
+

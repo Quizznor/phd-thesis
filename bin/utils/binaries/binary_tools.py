@@ -2,6 +2,7 @@ from typing import Iterable, Callable, Any
 from time import perf_counter_ns
 from . import uncertainties
 from . import np
+import pickle
 
 
 class ProgressBar:
@@ -154,7 +155,19 @@ def bootstrap_ci(
     return err_up, err_down
 
 
-def closest(array: list[Any], value, index=False) -> Any:
+def closest(array: list[Any], value, index=True) -> Any:
     """return the element closest to value from a collection of values in array"""
     closest_index = np.argmin(np.abs(np.array(array) - value))
     return closest_index if index else array[closest_index]
+
+
+def pickle_save(path_to_file: str, obj: Any) -> None:
+    with open(path_to_file, "wb") as f:
+        pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
+
+
+def pickle_load(path_to_file: str) -> Any:
+    with open(path_to_file, "rb") as f:
+        data = pickle.load(f)
+
+    return data

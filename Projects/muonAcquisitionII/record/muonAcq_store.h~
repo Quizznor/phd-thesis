@@ -1,0 +1,17 @@
+#ifndef _MUONACQSTORE_H_
+#define _MUONACQSTORE_H_
+
+#include "muonAcqFmt_str.h"
+#include "muonfill.h"
+struct muonAcqStore_str
+{
+  struct muon_histo_complete histo;
+  int maxSize;
+  int ssdTh;
+  uint8_t *buff;
+  struct muonAcqFmt_str *head;
+  uint8_t *dataPt;
+};
+void muonAcqStore_init(struct muonAcqStore *str,int ssdTh,int maxSize);
+void muonAcqStore_entry(...);
+#endif

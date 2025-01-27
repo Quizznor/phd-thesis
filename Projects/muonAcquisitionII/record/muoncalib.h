@@ -1,0 +1,55 @@
+#include "muonfill.h"
+#include "muon_read.h"
+#include "muonAcqStore.h"
+
+struct muoncalib_debug_output_h
+{
+  char preamble[12];
+  uint32_t evt_size;
+  int16_t nevts;
+  int16_t offset[4];
+};
+
+struct muoncalib_debug_output_evt
+{
+  int8_t binmax[4];
+  int16_t b[4],pk[4];
+  int32_t ch[4];
+};
+
+struct muoncalib_debug_str
+{
+  int state;/*state 0 - do nothing;
+             *1 -> start to store data;
+             *2 -> storing data. (after store data, it goes to state 0
+             */
+  int file_index;
+  int nevttot_max;/*total amount of events (in a single request) */
+  int nevttot;
+  int nevt;
+  int nevt_max; /* maximum number of events to be stored */
+  struct muoncalib_debug_output_h h;
+  struct muoncalib_debug_output_evt *evts;
+};
+int muoncalib_debug_init(struct muoncalib_debug_str *debug);
+int muoncalib_debug_io(struct muoncalib_debug_str *debug,
+                       struct muon_histo_complete *h);
+
+
+
+
+void muoncalib_init(int ssd_p_min,int ssd_p_max,
+                    int ssd_a_min,int ssd_a_max,
+                    int wcd_a_min,int wcd_a_max,
+                    int h2Mask,
+                    int h2Th,
+                    int h2Pos0,int h2Pos1,
+                    int integrationInterval,
+                    int h2nacc);
+
+void muoncalib_force_baseline_calc();
+
+int muoncalib_TreatBuffer(struct muon_histo_complete *histo_out,
+                          struct muon_read_info *muonbuffer,
+                          struct muonAcqStore_str *storeSsd,
+                          int force_wr);
