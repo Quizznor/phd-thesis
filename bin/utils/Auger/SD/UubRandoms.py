@@ -10,7 +10,7 @@ TUPLE_OR_ARRAY = Union[tuple, np.ndarray]
 class BackgroundStudy():
 
     # don't forget to @numba.jit the callable
-    def __init__(self, fctn: callable):
+    def __init__(self, fctn: callable, high_rate_warning: bool = False):
 
         self.time_passed, self.triggers = 0, 0
         RandomFiles = UubRandom(station = "Svenja", detectors = "ssd")
@@ -26,8 +26,22 @@ class BackgroundStudy():
                     self.trigger_examples.append(event)
                     self.triggers += 1
             
-            rate = uncertainties.ufloat(self.triggers, np.sqrt(self.triggers)) / self.time_passed
-            if rate.n > 10: print(f"\n   !! HIGH Rate after {self.time_passed:.3f}s: ({rate}) Hz !!")
+            if high_rate_warning:
+                rate = uncertainties.ufloat(self.triggers, np.sqrt(self.triggers)) / self.time_passed
+                if rate.n > 10: print(f"\n   !! HIGH Rate after {self.time_passed:.3f}s: ({rate}) Hz !!")
+
+    def __str__(self) -> str:
+
+        _str =  "*********************************  "
+        _str += "\n*** UUB RANDOMS TRIGGER STUDY ***"
+        _str += "\n*********************************"
+        _str += f"\n\n  time passed:  {self.time_passed:.4f} s"
+        _str +=   f"\n  triggers:     {self.triggers}"
+
+        rate = uncertainties.ufloat(self.triggers, np.sqrt(self.triggers)) / self.time_passed
+        _str += f"\n\n  rate:         {rate} Hz"
+
+        return _str
 
 
 class UubRandom:
