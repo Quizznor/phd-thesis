@@ -6,6 +6,29 @@ from matplotlib import colors
 from . import AperturePlot, PixelPlot
 from ... import CONSTANTS
 
+def load_runlist(year_month: str) -> pd.DataFrame:
+    data = pd.read_csv(
+        f"/cr/data01/filip/xy-calibration/config/calib_runlists/calib_runs_{year_month}.list",
+        names=["id","tel","step","date","source","mA","forDB","jobfile","comment"],
+        dtype=defaultdict(lambda: str, step="int", mA="float", forDB="bool"),
+        index_col=0,
+        comment="#",
+        sep=";",
+    )
+
+    for col in ["source", "jobfile", "comment"]:
+        data[col] = data[col].map(lambda x: x.strip().replace('"',''))
+
+    return data
+
+def get_good_runs(runlist: pd.DataFrame) -> pd.DataFrame:
+    return runlist[
+        runlist['forDB']
+        & (runlist['step'] == 6)
+        & (runlist['source'] == "OLO")
+        & (runlist['mA'] == 15.9)
+        & (runlist['comment'] == "")
+        ]
 
 class Grid:
 
