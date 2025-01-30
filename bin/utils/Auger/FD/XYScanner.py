@@ -5,8 +5,10 @@ from ...plotting import plt
 from matplotlib import colors
 from . import AperturePlot, PixelPlot
 from ... import CONSTANTS
+from collections import defaultdict
 
 def load_runlist(year_month: str) -> pd.DataFrame:
+
     data = pd.read_csv(
         f"/cr/data01/filip/xy-calibration/config/calib_runlists/calib_runs_{year_month}.list",
         names=["id","tel","step","date","source","mA","forDB","jobfile","comment"],
@@ -16,7 +18,7 @@ def load_runlist(year_month: str) -> pd.DataFrame:
         sep=";",
     )
 
-    for col in ["source", "jobfile", "comment"]:
+    for col in ["tel", "date", "source", "jobfile", "comment"]:
         data[col] = data[col].map(lambda x: x.strip().replace('"',''))
 
     return data
