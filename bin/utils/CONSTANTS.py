@@ -1,4 +1,5 @@
 from . import create_stream_logger
+from pathlib import Path
 import numpy as np
 import os
 
@@ -13,10 +14,10 @@ match hostname := os.uname()[1]:
     case "debian12":
         raise NotImplementedError("Set up your machine!")
     case x if x.startswith("crc"):
-        MONI_PATH: str = "/cr/work/filip/monit_and_sd/"
-        HIST_PATH: str = "/cr/work/filip/monit_and_sd/"
-        PLOT_PATH: str = "/cr/data01/filip/plots/"
-        DATA_PATH: str = "/cr/data01/filip/Data/"
+        MONI_PATH: Path = Path("/cr/work/filip/monit_and_sd")
+        HIST_PATH: Path = Path("/cr/work/filip/monit_and_sd")
+        PLOT_PATH: Path = Path("/cr/data01/filip/plots")
+        DATA_PATH: Path = Path("/cr/data01/filip/Data")
     case _:
         const_logger.error(f"pathspecs for {hostname} not found")
         path_set = False

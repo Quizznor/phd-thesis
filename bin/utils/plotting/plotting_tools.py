@@ -1,6 +1,8 @@
 from typing import Union, Iterable, Any
 from ..binaries import pd
 from ..binaries import np
+from .. import CONSTANTS
+from pathlib import Path
 from . import plt
 from . import so
 
@@ -226,17 +228,12 @@ def preliminary(ax: plt.Axes = None, text: str = "Preliminary", fontsize: float 
 
 
 def save(fig: plt.Figure = None, path: str = "", **kwargs) -> None:
-    base = "/cr/data01/filip/plots/"
-    path, name = "/".join(path.split("/")[:-1]), path.split("/")[-1]
+
+    full_path = CONSTANTS.PLOT_PATH / path
+    full_path.parents[0].mkdir(parents=True, exist_ok=True)
 
     fig = fig if fig is not None else plt.gcf()
-
-    import os
-
-    if not os.path.exists(os.path.dirname(base + path)):
-        os.system(f"mkdir -p {base}/{path}")
-
-    fig.savefig(base + path + name, bbox_inches="tight", **kwargs)
+    fig.savefig(full_path, bbox_inches="tight", **kwargs)
 
 
 def to_datetime(timestamps: Iterable) -> list[datetime.datetime]:
