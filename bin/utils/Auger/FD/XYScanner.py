@@ -23,7 +23,12 @@ def load_runlist(year_month: str) -> pd.DataFrame:
 
     return data
 
-def get_good_runs(runlist: pd.DataFrame) -> pd.DataFrame:
+def get_xy_runs(runlist: pd.DataFrame) -> pd.DataFrame:
+    return runlist[
+        runlist['forDB']
+        ]
+
+def get_good_xy_runs(runlist: pd.DataFrame) -> pd.DataFrame:
     return runlist[
         runlist['forDB']
         & (runlist['step'] == 6)
@@ -31,6 +36,34 @@ def get_good_runs(runlist: pd.DataFrame) -> pd.DataFrame:
         & (runlist['mA'] == 15.9)
         & (runlist['comment'] == "")
         ]
+
+def get_cal_a_runs(runlist: pd.DataFrame) -> pd.DataFrame:
+    return runlist[
+        (runlist['step'] == 0)
+        & (runlist['source'] == "")
+        & (runlist['mA'] == 0)
+        ]
+
+def get_cal_a_open_shutter_runs(runlist: pd.DataFrame) -> pd.DataFrame:
+    return runlist[
+        (runlist['step'] == 0)
+        & (runlist['source'] == "")
+        & (runlist['mA'] == 0)
+        & (runlist['comment'].str.contains("open shutter"))
+        ]
+
+def get_date(runlist: pd.DataFrame, date: str) -> pd.DataFrame:
+    return runlist[runlist['date'] == date]
+
+def get_tel(runlist: pd.DataFrame, tel: str) -> pd.DataFrame:
+    return runlist[runlist['tel'] == tel]
+
+def get_tel_and_date(runlist: pd.DataFrame, tel: str, date: str) -> pd.DataFrame:
+    return runlist[
+        (runlist['date'] == date)
+        & (runlist['tel'] == tel)
+        ]
+
 
 class Grid:
 
