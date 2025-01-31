@@ -229,7 +229,7 @@ def preliminary(ax: plt.Axes = None, text: str = "Preliminary", fontsize: float 
 
 def save(fig: plt.Figure = None, path: str = "", **kwargs) -> None:
 
-    full_path = CONSTANTS.PLOT_PATH / path
+    full_path = CONSTANTS.PLOT_PATH / f"{path}.png"
     full_path.parents[0].mkdir(parents=True, exist_ok=True)
 
     fig = fig if fig is not None else plt.gcf()
