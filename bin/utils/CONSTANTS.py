@@ -3,9 +3,6 @@ from pathlib import Path
 import numpy as np
 import os
 
-# backwards compatibility
-AUGER_FD_ROOT: str = "/cr/users/filip/bin/utils/Auger/FD"
-
 const_logger = create_stream_logger("const")
 
 # fails if run on windows, but that's on you
@@ -18,6 +15,7 @@ match hostname := os.uname()[1]:
         HIST_PATH: Path = Path("/cr/work/filip/monit_and_sd")
         PLOT_PATH: Path = Path("/cr/data01/filip/plots")
         DATA_PATH: Path = Path("/cr/data01/filip/Data")
+        SCAN_PATH: Path = Path("/cr/data01/filip/xy-calibration")
     case _:
         const_logger.error(f"pathspecs for {hostname} not found")
         path_set = False
@@ -27,6 +25,7 @@ if path_set:
     const_logger.info(f"set {HIST_PATH = }")
     const_logger.info(f"set {PLOT_PATH = }")
     const_logger.info(f"set {DATA_PATH = }")
+    const_logger.info(f"set {SCAN_PATH = }")
 
 GPS_OFFSET: int = 315964800
 

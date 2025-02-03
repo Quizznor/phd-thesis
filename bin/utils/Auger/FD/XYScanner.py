@@ -4,8 +4,20 @@ from ...binaries import np
 from ...plotting import plt
 from matplotlib import colors
 from . import AperturePlot, PixelPlot
-from ... import CONSTANTS
+from ... import CONST
 from collections import defaultdict
+import os
+
+class Campaign():
+
+
+    def __init__(self, year: int, month: int) -> None:
+
+        runlists = "config/calib_runlists"
+        if not os.path.isfile(CONST.SCAN_PATH / f"{runlists}/calib_runs_{year}-{month}.list"):
+            raise FileNotFoundError("Pick a campaign from:\n" + 
+                                    "\n".join(os.listdir(CONST.SCAN_PATH / runlists)))
+
 
 def load_runlist(year_month: str) -> pd.DataFrame:
 
@@ -67,14 +79,16 @@ def get_tel_and_date(runlist: pd.DataFrame, tel: str, date: str) -> pd.DataFrame
 
 class Grid:
 
-    data_path: str = f"{CONSTANTS.AUGER_FD_ROOT}/xy_measurements.pkl"
+    # data_path: str = f"{CONST.AUGER_FD_ROOT}/xy_measurements.pkl"
     n_bays: dict = {t: 6 if t != "HE" else 3 for t in ["LL", "LM", "LA", "CO", "HE"]}
 
     def __init__(self, *args, compare="none") -> None:
 
+        raise DeprecationWarning("change this")
+
         import pickle
 
-        with open(f"{CONSTANTS.AUGER_FD_ROOT}/xy_measurements.pkl", "rb") as f:
+        with open(f"{CONST.AUGER_FD_ROOT}/xy_measurements.pkl", "rb") as f:
             measurements = pickle.load(f)
 
         telescopes = [eye.upper() for eye in args]

@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 
 
   ofstream peakFile("peak.txt", ios_base::trunc);
-  ofstream chargeFile("charge.txt", ios_base::trunc);
+  // ofstream chargeFile("charge.txt", ios_base::trunc);
   EventPos pos; IoSd input(argc - 1, argv + 1);
   int nData = 0;
 
@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
         }
 
         peakFile << stationId << " " << stationCalib->EndSecond << " " << average + gpsOffset << " " << tubeMask << " " << iPMT << " " << peakHisto << '\n';
-        chargeFile << stationId << " " << stationCalib->EndSecond << " " << average + gpsOffset << " " << tubeMask << " " << iPMT << " " << chargeHisto << '\n';
+        // chargeFile << stationId << " " << stationCalib->EndSecond << " " << average + gpsOffset << " " << tubeMask << " " << iPMT << " " << chargeHisto << '\n';
       }
 
       string peakHisto = "";
@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
       }
 
       peakFile << stationId << " " << stationCalib->EndSecond << " " << average + gpsOffset << " " << tubeMask <<" 3 " << peakHisto << '\n';
-      chargeFile << stationId << " " << stationCalib->EndSecond << " " << average + gpsOffset << " " << tubeMask << " 3 " << chargeHisto << '\n';
+      // chargeFile << stationId << " " << stationCalib->EndSecond << " " << average + gpsOffset << " " << tubeMask << " 3 " << chargeHisto << '\n';
       nData += 1;
     }
     // break;
