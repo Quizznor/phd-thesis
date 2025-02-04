@@ -16,6 +16,7 @@ match hostname := os.uname()[1]:
         PLOT_PATH: Path = Path("/cr/data01/filip/plots")
         DATA_PATH: Path = Path("/cr/data01/filip/Data")
         SCAN_PATH: Path = Path("/cr/data01/filip/xy-calibration")
+        OFLN_PATH: Path = Path("/cr/data01/filip/offline/install/")
     case _:
         const_logger.error(f"pathspecs for {hostname} not found")
         path_set = False
@@ -26,6 +27,7 @@ if path_set:
     const_logger.info(f"set {PLOT_PATH = }")
     const_logger.info(f"set {DATA_PATH = }")
     const_logger.info(f"set {SCAN_PATH = }")
+    const_logger.info(f"set {OFLN_PATH = }")
 
 GPS_OFFSET: int = 315964800
 

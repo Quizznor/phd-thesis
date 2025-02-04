@@ -4,77 +4,139 @@ from ...binaries import np
 from ...plotting import plt
 from matplotlib import colors
 from . import AperturePlot, PixelPlot
-from ... import CONST
+from ... import CONSTANTS as CONST
 from collections import defaultdict
+from tabulate import tabulate, SEPARATING_LINE
+import subprocess
 import os
 
+
+class XYRun():
+
+    def __init__(self, runs: pd.DataFrame) -> None:
+
+        self.runs = self.scan_runs(runs)
+        xy_run = runs[runs['forDB']]
+        self.year_and_month = xy_run.values[0,2].strftime("%Y-%m")
+    
+
+    def __repr__(self):
+        return str(self.runs)
+
+    
+    def __getitem__(self, key):
+        return self.runs.get(key, "")
+
+    
+    def run_calib(self, /, offline_version, *, rerun=True) -> None:
+
+        if offline_version is None:
+            offline_version = "../bd0e9e"
+        
+        ids = " ".join(self.runs.values())
+        r = "-r" if rerun else ""
+
+        move = f"cd {CONST.SCAN_PATH}"
+        run_calib = f"./run_Calib.py -i {ids} {r} -cfg {self.year_and_month}"
+        source_offline = f"source {CONST.OFLN_PATH / offline_version / 'set_offline_env.sh'}"
+
+        subprocess.call("; ".join([move, source_offline, run_calib]), shell=True, executable='/bin/bash')
+
+
+    @staticmethod
+    def scan_runs(runs: pd.DataFrame) -> dict:
+        run_dict, postXY = {}, False
+        for _id, info in runs.iterrows():
+
+            if info['forDB']: 
+                postXY = True
+                key = "XY"
+            else:
+                try:
+                    key = "post" if postXY else "pre"
+                    if "open shutter" in info["comment"]:
+                        key += "XY"
+                    else: 
+                        key += "DAQ"
+                except TypeError: continue
+
+            if run_dict.get(key, None) is None or not postXY:
+                run_dict[key] = _id
+
+        return run_dict
+
+
 class Campaign():
-
-
+    
     def __init__(self, year: int, month: int) -> None:
 
-        runlists = "config/calib_runlists"
-        if not os.path.isfile(CONST.SCAN_PATH / f"{runlists}/calib_runs_{year}-{month}.list"):
-            raise FileNotFoundError("Pick a campaign from:\n" + 
-                                    "\n".join(os.listdir(CONST.SCAN_PATH / runlists)))
+        runlist = CONST.SCAN_PATH / f"config/calib_runlists/calib_runs_{year}-{month:02}.list"
+        
+        if not os.path.isfile(runlist):
+            raise FileNotFoundError(f"{runlist} not found!\nAvailable campaigns are:\n" + 
+                                    "\n".join(os.listdir(CONST.SCAN_PATH / "config/calib_runlists")))
+
+        self.data = pd.read_csv(runlist,
+                                names=["id","tel","step","date","source","mA","forDB","jobfile","comment"],
+                                dtype=defaultdict(lambda: "str", step="int", mA="float", forDB="bool"),
+                                skipinitialspace=True,
+                                parse_dates=["date"],
+                                index_col=0,
+                                comment="#",
+                                sep=";")
+        
+        self.runs = self.split_runlist(self.data)
 
 
-def load_runlist(year_month: str) -> pd.DataFrame:
+    def __getitem__(self, tel) -> XYRun:
+        return self.runs[tel.upper()]
 
-    data = pd.read_csv(
-        f"/cr/data01/filip/xy-calibration/config/calib_runlists/calib_runs_{year_month}.list",
-        names=["id","tel","step","date","source","mA","forDB","jobfile","comment"],
-        dtype=defaultdict(lambda: str, step="int", mA="float", forDB="bool"),
-        index_col=0,
-        comment="#",
-        sep=";",
-    )
 
-    for col in ["tel", "date", "source", "jobfile", "comment"]:
-        data[col] = data[col].map(lambda x: x.strip().replace('"',''))
+    @staticmethod
+    def split_runlist(runlist: pd.DataFrame) -> dict:
 
-    return data
+        run_dict = {}
+        for _, info in runlist[runlist['forDB']].iterrows():
+            
+            run_dict[info['tel'].upper()] = XYRun(runlist[
+                (runlist['date'] == info['date'])
+                & (runlist['tel'] == info['tel'])
+                ])
+        
+        return run_dict
 
-def get_xy_runs(runlist: pd.DataFrame) -> pd.DataFrame:
-    return runlist[
-        runlist['forDB']
-        ]
 
-def get_good_xy_runs(runlist: pd.DataFrame) -> pd.DataFrame:
-    return runlist[
-        runlist['forDB']
-        & (runlist['step'] == 6)
-        & (runlist['source'] == "OLO")
-        & (runlist['mA'] == 15.9)
-        & (runlist['comment'] == "")
-        ]
+    def __repr__(self) -> True:
+        
+        data = dict(sorted(self.runs.items()))
+        table_data = []
 
-def get_cal_a_runs(runlist: pd.DataFrame) -> pd.DataFrame:
-    return runlist[
-        (runlist['step'] == 0)
-        & (runlist['source'] == "")
-        & (runlist['mA'] == 0)
-        ]
+        last = "LLLMLACOHE"
+        for tel, runs in data.items():
+            if tel[:-1] not in last:
+                table_data.append(SEPARATING_LINE)
+            
+            table_data.append(
+                [tel,
+                 runs['preDAQ'],
+                 runs['preXY'],
+                 runs['XY'],
+                 runs['postXY'],
+                 runs['postDAQ']
+                 ]
+            )
+            
+            last = tel[:-1]
 
-def get_cal_a_open_shutter_runs(runlist: pd.DataFrame) -> pd.DataFrame:
-    return runlist[
-        (runlist['step'] == 0)
-        & (runlist['source'] == "")
-        & (runlist['mA'] == 0)
-        & (runlist['comment'].str.contains("open shutter"))
-        ]
+        return tabulate(table_data, disable_numparse=True,
+                        headers=['tel', 'preDAQ', 'preXY', 'XY', 'postXY', 'postDAQ'])
 
-def get_date(runlist: pd.DataFrame, date: str) -> pd.DataFrame:
-    return runlist[runlist['date'] == date]
+    
+    def run_calib(self, /, offline_version, *, rerun=False) -> None:
+        for run in self.runs.values():
+            run.run_calib(rerun, offline_version)
 
-def get_tel(runlist: pd.DataFrame, tel: str) -> pd.DataFrame:
-    return runlist[runlist['tel'] == tel]
 
-def get_tel_and_date(runlist: pd.DataFrame, tel: str, date: str) -> pd.DataFrame:
-    return runlist[
-        (runlist['date'] == date)
-        & (runlist['tel'] == tel)
-        ]
 
 
 class Grid:
