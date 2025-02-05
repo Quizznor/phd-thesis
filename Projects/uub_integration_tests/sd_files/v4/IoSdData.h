@@ -262,7 +262,7 @@ public:
   UShort_t NbTDA[kIoSd::NPMT];
   UShort_t Evolution[kIoSd::NPMT];
   Float_t Rate[kIoSd::NPMT];
-  Float_t Peak[kIoSd::NPMT + 1];       ///< VEM Peak in ADC counts estimated by the LS. It is the one used for local triggering
+  Float_t Peak[kIoSd::NPMT + 1];   ///< VEM Peak in ADC counts estimated by the LS. It is the one used for local triggering
   Float_t VemCharge[kIoSd::NPMT];     ///< VEM Charge estimated by the LS
   Float_t Base[2 * kIoSd::NPMT];      ///< Baselines of the 6 channels
   Float_t SigmaBase[2 * kIoSd::NPMT]; ///< Standard deviation of the baselines

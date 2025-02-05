@@ -34,7 +34,11 @@ int main(int argc, char *argv[])
       // {
       //   std::cout << peak << std::endl;
       // }
-      std::cout << stationCalib->StartSecond + gpsOffset << " " << stationId << " " << stationCalib->Peak[3] << std::endl;
+      std::cout << stationCalib->StartSecond + gpsOffset 
+                << " " << stationId 
+                << " " << stationCalib->Peak[3] 
+                << " " << stationCalib->Rate[2]
+                << std::endl;
 
       // const IoSdHisto* const calibrationHistograms = station.histo();
       // if (!calibrationHistograms || calibrationHistograms->type != 1) continue;   // ensure SSD Histograms are "normal"
