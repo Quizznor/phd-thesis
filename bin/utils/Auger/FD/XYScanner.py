@@ -1,23 +1,25 @@
+from ... import CONSTANTS as CONST
 from ...binaries import uncertainties
 from ...binaries import pd
 from ...binaries import np
 from ...plotting import plt
-from matplotlib import colors
 from . import AperturePlot, PixelPlot
-from ... import CONSTANTS as CONST
+
+from matplotlib import colors
 from collections import defaultdict
 from tabulate import tabulate, SEPARATING_LINE
 import subprocess
 import os
 
-
 class XYRun():
 
     def __init__(self, runs: pd.DataFrame) -> None:
 
-        self.runs = self.scan_runs(runs)
-        xy_run = runs[runs['forDB']]
-        self.year_and_month = xy_run.values[0,2].strftime("%Y-%m")
+        self.year_and_month = runs[runs['forDB']].values[0,2].strftime("%Y-%m")
+        self.runs = self._scan_runs(runs)
+        
+        self.calib_data = np.loadtxt(CONST.SCAN_PATH / f"results/outCorr_{self.runs['XY']}.txt",
+                                     usecols=[3, 4], unpack=True)
     
 
     def __repr__(self):
@@ -27,24 +29,9 @@ class XYRun():
     def __getitem__(self, key):
         return self.runs.get(key, "")
 
-    
-    def run_calib(self, /, offline_version, *, rerun=True) -> None:
-
-        if offline_version is None:
-            offline_version = "../bd0e9e"
-        
-        ids = " ".join(self.runs.values())
-        r = "-r" if rerun else ""
-
-        move = f"cd {CONST.SCAN_PATH}"
-        run_calib = f"./run_Calib.py -i {ids} {r} -cfg {self.year_and_month}"
-        source_offline = f"source {CONST.OFLN_PATH / offline_version / 'set_offline_env.sh'}"
-
-        subprocess.call("; ".join([move, source_offline, run_calib]), shell=True, executable='/bin/bash')
-
 
     @staticmethod
-    def scan_runs(runs: pd.DataFrame) -> dict:
+    def _scan_runs(runs: pd.DataFrame) -> dict:
         run_dict, postXY = {}, False
         for _id, info in runs.iterrows():
 
@@ -64,13 +51,41 @@ class XYRun():
                 run_dict[key] = _id
 
         return run_dict
+    
+
+    def run_calib(self, offline_version=None, rerun=True) -> None:
+
+        if offline_version is None:
+            offline_version = "../bd0e9e"
+        
+        ids = " ".join(self.runs.values())
+        r = "-r" if rerun else ""
+
+        move = f"cd {CONST.SCAN_PATH}"
+        run_calib = f"./run_Calib.py -i {ids} {r} -cfg {self.year_and_month}"
+        source_offline = f"source {CONST.OFLN_PATH / offline_version / 'set_offline_env.sh'}"
+
+        subprocess.call("; ".join([move, source_offline, run_calib]), shell=True, executable='/bin/bash')
+
+
+    def summary(self) -> plt.Figure:
+        raise NotImplementedError
 
 
 class Campaign():
+
+    mirrors = [
+        "LL1", "LL2", "LL3", "LL4", "LL5", "LL6", 
+        "LM1", "LM2", "LM3", "LM4", "LM5", "LM6", 
+        "LA1", "LA2", "LA3", "LA4", "LA5", "LA6", 
+        "CO1", "CO2", "CO3", "CO4", "CO5", "CO6", 
+        "HE1", "HE2", "HE3"
+    ]
     
     def __init__(self, year: int, month: int) -> None:
 
-        runlist = CONST.SCAN_PATH / f"config/calib_runlists/calib_runs_{year}-{month:02}.list"
+        self.year_and_month = f"{year}-{month:02}"
+        runlist = CONST.SCAN_PATH / f"config/calib_runlists/calib_runs_{self.year_and_month}.list"
         
         if not os.path.isfile(runlist):
             raise FileNotFoundError(f"{runlist} not found!\nAvailable campaigns are:\n" + 
@@ -85,34 +100,23 @@ class Campaign():
                                 comment="#",
                                 sep=";")
         
-        self.runs = self.split_runlist(self.data)
+        self.runs = self._split_runlist(self.data)
 
 
-    def __getitem__(self, tel) -> XYRun:
+    def __getitem__(self, tel: str) -> XYRun:
+
+        if isinstance(tel, int):
+            if tel > len(self.runs): return StopIteration
+            tel = list(self.runs.keys())[tel]
+
         return self.runs[tel.upper()]
-
-
-    @staticmethod
-    def split_runlist(runlist: pd.DataFrame) -> dict:
-
-        run_dict = {}
-        for _, info in runlist[runlist['forDB']].iterrows():
-            
-            run_dict[info['tel'].upper()] = XYRun(runlist[
-                (runlist['date'] == info['date'])
-                & (runlist['tel'] == info['tel'])
-                ])
-        
-        return run_dict
 
 
     def __repr__(self) -> True:
         
-        data = dict(sorted(self.runs.items()))
         table_data = []
-
         last = "LLLMLACOHE"
-        for tel, runs in data.items():
+        for tel, runs in self.runs.items():
             if tel[:-1] not in last:
                 table_data.append(SEPARATING_LINE)
             
@@ -131,12 +135,133 @@ class Campaign():
         return tabulate(table_data, disable_numparse=True,
                         headers=['tel', 'preDAQ', 'preXY', 'XY', 'postXY', 'postDAQ'])
 
+  
+    def _split_runlist(self, runlist: pd.DataFrame) -> dict:
+
+        run_dict = {}
+        for _, info in runlist[runlist['forDB']].iterrows():
+            
+            run_dict[info['tel'].upper()] = XYRun(runlist[
+                (runlist['date'] == info['date'])
+                & (runlist['tel'] == info['tel'])
+                ])
+        
+        telescopes_ordered = sorted([self._get_mirror_number(t) for t in run_dict.keys()])
+        telescopes_ordered = [self._get_mirror_name(t) for t in telescopes_ordered]
+        run_dict = {t : run_dict[t] for t in telescopes_ordered}
+
+        return run_dict
+
+
+    @staticmethod
+    def _get_mirror_name(tel: int) -> str:
+        if tel <= 6:
+            return f"LL{tel}"
+        elif tel <= 12:
+            return f"LM{tel - 6}"
+        elif tel <= 18:
+            return f"LA{tel - 12}"
+        elif tel <= 24:
+            return f"CO{tel - 18}"
+        else:
+            return f"HE{tel - 24}"
     
-    def run_calib(self, /, offline_version, *, rerun=False) -> None:
-        for run in self.runs.values():
-            run.run_calib(rerun, offline_version)
+    
+    @staticmethod
+    def _get_mirror_number(tel:str) -> int:
+        if "LL" in tel:
+            return int(tel[-1])
+        elif "LM" in tel:
+            return int(tel[-1]) + 6
+        elif "LA" in tel:
+            return int(tel[-1]) + 12
+        elif "CO" in tel:
+            return int(tel[-1]) + 18
+        elif "HE" in tel:
+            return int(tel[-1]) + 24
 
 
+    def _sort_mirrors(self, tel1: str, tel2: str) -> bool:
+        mirror1 = self._get_mirror_number(tel1)
+        mirror2 = self._get_mirror_number(tel2)
+        return mirror1 < mirror2 
+
+
+    def run_calib(self, /, offline_version=None, *, rerun=False) -> None:
+        for run in self:
+            run.run_calib(offline_version, rerun)
+
+    
+    def summary(self, normalize='none', **kwargs) -> plt.Figure:
+
+        fig, ax = plt.subplots()
+        data, positions, labels = [], [], []
+        for pos, tel in enumerate(self.mirrors, 1):
+            try:
+                std_calib, xy_calib = self[tel].calib_data
+                
+                if tel == "LL1":
+                    pixel_mask = np.loadtxt(CONST.SCAN_PATH / "config/pixel_masks/ll1.txt", dtype=bool, usecols=[1])
+                elif tel == "LL6":
+                    pixel_mask = np.loadtxt(CONST.SCAN_PATH / "config/pixel_masks/ll6-xp3062.txt", dtype=bool, usecols=[1])
+                else:
+                    pixel_mask = np.ones(440, dtype=bool)
+
+                if normalize == 'none':
+                    norm = np.ones(440)
+                elif normalize.lower() == 'cala':
+                    norm = std_calib
+                else:
+                    norm = normalize
+
+
+                pixel_mask[np.isnan(std_calib)] = False
+                pixel_mask[np.isnan(xy_calib)] = False
+                pixel_mask[std_calib == 0] = False
+
+                ratio = xy_calib[pixel_mask] / norm[pixel_mask]
+                data.append(ratio)
+                labels.append(tel)
+
+                match tel:
+                    case _ if "LL" in tel: increment = 0
+                    case _ if "LM" in tel: increment = 1
+                    case _ if "LA" in tel: increment = 2
+                    case _ if "CO" in tel: increment = 3
+                    case _ if "HE" in tel: increment = 4
+                positions.append(pos + increment)
+
+            except KeyError:
+                continue
+
+        if normalize == 'none':
+            ax.set_ylabel(r'calib. const. / $\left( \gamma\,/\,\mathrm{ADC} \right)$')
+        elif normalize.lower() == 'cala':
+            ax.set_ylabel('XY calib. const. / std. calib.')
+        else:
+            ax.set_ylabel(f'XY calib. const. / {kwargs.get("label", "custom norm")}')
+
+        ax.text(
+            0, 1,
+            f"{self.year_and_month} XY campaign summary",
+            transform=ax.transAxes,
+            ha="left",
+            va="bottom",
+            fontsize="large",
+            fontweight="bold",
+        )
+        
+        ax.set_xticklabels([], fontsize=8, rotation=90)
+        ax.set_xticks([], minor=True)
+        ax.grid(axis="y")
+        ax.grid(axis="y", which="minor", alpha=0.3)
+        ax.boxplot(data, positions=positions, labels=labels, widths=0.5,
+                   flierprops={'markersize': 2, 'alpha': 0.2}, notch=True,
+                   bootstrap=5000)
+        ax.set_xlim(0, 32)
+
+        ymin, ymax = ax.get_ylim()
+        ax.set_ylim(kwargs.get('ymin', ymin), kwargs.get('ymax', ymax))
 
 
 class Grid:
