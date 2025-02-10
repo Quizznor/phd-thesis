@@ -5,6 +5,8 @@
 # dotfiles
 .*-venv
 .venv
+.env
+.env.leave
 .expires
 .kshrc
 .lesshst

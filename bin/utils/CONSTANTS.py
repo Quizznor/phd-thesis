@@ -9,7 +9,12 @@ const_logger = create_stream_logger("const")
 path_set = True
 match hostname := os.uname()[1]:
     case "debian12":
-        raise NotImplementedError("Set up your machine!")
+        MONI_PATH: Path = Path("/home/filip/Data/monit_and_sd")
+        HIST_PATH: Path = Path("/home/filip/Data/monit_and_sd")
+        PLOT_PATH: Path = Path("/home/filip/Data/plots")
+        DATA_PATH: Path = Path("/home/filip/Data/")
+        SCAN_PATH: Path = Path("/home/filip/Public/xy-calibration")
+        OFLN_PATH: Path = Path("/home/filip/Public/offline/install/")
     case x if x.startswith("crc"):
         MONI_PATH: Path = Path("/cr/work/filip/monit_and_sd")
         HIST_PATH: Path = Path("/cr/work/filip/monit_and_sd")
