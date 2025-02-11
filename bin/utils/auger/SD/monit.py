@@ -8,6 +8,7 @@ import uproot
 import typing
 import glob
 import json
+import re
 
 
 class Monit:
@@ -71,7 +72,7 @@ class Monit:
                         f"I cannot find the monit file for {y:04}-{m:02}-{d:02} !!!"
                     )
                     raise FileNotFoundError(
-                        f"mc_{y:04}_{m:02}_{d:02}_00h00.root not found in any data path you've specified"
+                        f"mc_{y:04}_{m:02}_{d:02}_**h**.root not found in any data path you've specified"
                     )
 
         self.logger.info(f"received {len(full_file_paths)} file(s) as input")
@@ -91,7 +92,8 @@ class Monit:
         for key in temp:
             try:
                 branch, name = key.split("/")
-                self._keys[branch][name.split(".")[-1].replace("[3]", "")] = key
+                easy_name = re.sub("\[[0-9]+\]", "", name.split(".")[-1])
+                self._keys[branch][easy_name] = key
 
             except (ValueError, KeyError):
                 if key in ["fLsId", "fTime", "fCDASTime"]:
