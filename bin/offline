@@ -1,0 +1,40 @@
+#!/usr/bin/zsh
+
+if [ "$1" = "kill" ]; then
+
+    if [[ ( "${_OFFLINE_VIRTUAL_PATH:-}" != "" || "${_OFFLINE_VIRTUAL_PS1:-}" != "" ) && ( "$_OFFLINE_VIRTUAL_ENV" != "$VIRTUAL_ENV" ) ]]; then
+        echo "Refusing to kill offline, venv changed from $_OFFLINE_VIRTUAL_ENV to $VIRTUAL_ENV"
+        return
+    fi
+
+    if [ -n "${_OFFLINE_VIRTUAL_PS1:-}" ]; then
+        PS1="${_OFFLINE_VIRTUAL_PS1:-}"
+        export PS1
+        unset _OFFLINE_VIRTUAL_PS1
+    fi
+
+    if [ -n "${_OFFLINE_VIRTUAL_PATH:-}" ]; then
+        PATH="${_OFFLINE_VIRTUAL_PATH:-}"
+        export PATH
+        unset _OFFLINE_VIRTUAL_PATH
+    fi
+
+    unset AUGEROFFLINEROOT
+
+else
+    select SELECTED_OFFLINE_ENV in $(ls $OFFLINEINSTALLDIR); do
+        if [ x"$SELECTED_OFFLINE_ENV" != x"" ]; then
+            _OFFLINE_VIRTUAL_ENV="$VIRTUAL_ENV"
+            export _OFFLINE_VIRTUAL_ENV
+            _OFFLINE_VIRTUAL_PS1="${PS1:-}"
+            PS1="($SELECTED_OFFLINE_ENV) ""${PS1:-}"
+            export PS1
+            _OFFLINE_VIRTUAL_PATH="$PATH"
+            export _OFFLINE_VIRTUAL_PATH
+
+            source $OFFLINEINSTALLDIR/$SELECTED_OFFLINE_ENV/set_offline_env.sh
+            return
+        fi
+    done
+
+fi
