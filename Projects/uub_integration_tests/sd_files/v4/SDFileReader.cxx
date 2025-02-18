@@ -17,14 +17,11 @@ int main(int argc, char *argv[])
     {
       const UInt_t stationId = station.id();
       const IoSdCalib* const stationCalib = station.calib();
-      if (!stationCalib || stationCalib->Version <= 262) continue;                // ensure SSD Histograms are present
+      // if (!stationCalib || stationCalib->Version <= 262) continue;                // ensure SSD Histograms are present
     
       std::cout << stationCalib->StartSecond + gpsOffset << " " << stationId 
-                << " " << stationCalib->Peak[0]
-                << " " << stationCalib->Peak[1]
-                << " " << stationCalib->Peak[2]
-                << " " << stationCalib->Peak[3]
-                << " " << stationCalib->Rate[3]
+                << " MIP (ADC): " << stationCalib->MipPeak
+                << "; T70 rate (Hz): " << stationCalib->SsdRate
                 << std::endl;
     }
   }

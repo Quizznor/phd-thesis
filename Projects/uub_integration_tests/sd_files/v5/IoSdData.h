@@ -244,11 +244,6 @@ public:
 
   int ComputeParameters();    ///< Initialises some usefull fields
   UShort_t Version;           ///< Version of the calibration data
-  // 256+ for UUB:
-  // 256: UUB, first release, no calibration information
-  // 257: (21 Oct 2016) First calibration with histograms (charge for all 4 channels, baseline and peak for WCD only), Offsets are wrong
-  // 258: (28 Apr 2017) Added GPS timing information (sawtooth et al.)
-  // 259: (11 Sep 2017) Added SSD baseline and peak histograms, corrected Offset values
   UShort_t TubeMask;          ///< Tells which tubes are working.
   UInt_t StartSecond;         ///< Beginning of the calibration data acquisition
   UInt_t EndSecond;           ///< End of the calibration data acquisition
@@ -258,11 +253,14 @@ public:
   UShort_t NbTOTD;
   UShort_t NbMOPS;
   UShort_t NbFullBuff;
-
+  
   UShort_t NbTDA[kIoSd::NPMT];
   UShort_t Evolution[kIoSd::NPMT];
-  Float_t Rate[kIoSd::NPMT + 1];
-  Float_t Peak[kIoSd::NPMT + 1];   ///< VEM Peak in ADC counts estimated by the LS. It is the one used for local triggering
+  Float_t Rate[kIoSd::NPMT];
+  // Float_t SsdRate;
+  // Float_t MipPeak;                    ///< MIP Peak in ADC counts estimated by the LS.
+  // Float_t MipCharge;                  ///< MIP Charge estimated by the LS [[ NOT IMPLEMENTED YET! ]]
+  Float_t VemPeak[kIoSd::NPMT];       ///< VEM Peak in ADC counts estimated by the LS. It is the one used for local triggering
   Float_t VemCharge[kIoSd::NPMT];     ///< VEM Charge estimated by the LS
   Float_t Base[2 * kIoSd::NPMT];      ///< Baselines of the 6 channels
   Float_t SigmaBase[2 * kIoSd::NPMT]; ///< Standard deviation of the baselines
@@ -289,31 +287,9 @@ public:
   //
   // EA: calibration will be hand made and very basic and none of this info is available, almost
   UInt_t NEntries; ///< Number of entries in calibration histograms
-  ClassDef(IoSdCalib, 4)
+  ClassDef(IoSdCalib, 5)
 };
 
-// SmallPMT Calibration class
-class IoSdCalibSPMT {
-public:
-  IoSdCalibSPMT();
-  virtual ~ IoSdCalibSPMT() {}
-
-  UShort_t Version;         ///< Version of the SPMT calibration algorithm
-  UInt_t StartGPSSecond;    ///< Beginning of the small showers data interval used for the calibration
-  UInt_t EndGPSSecond;      ///< End of the small showers data interval used for the calibration
- 
-  Float_t Uptime;           ///< Fraction of uptime for the small showers acquisition between StartGPSSecond and EndGPSSecond
-  Float_t GoodEventsRatio;  ///< Fraction of events S_LPMTsAvg>200VEM and Q_SPMT>10 FADCcounts (SPMT turned on)
- 
-  Float_t Beta;             ///< Inter-calibration factor 
-  Float_t BetaUncertainty;  ///< Uncertainty obtained from the inter-calibration algorithm
- 
-  Float_t Beta_LPMT[kIoSd::NPMT];              ///< Inter-calibration factors obtained using separately the signals from each LPMT
-  Float_t BetaUncertainty_LPMT[kIoSd::NPMT];   ///< Uncertainties obtained from the inter-calibration algorithm
-
-  ClassDef(IoSdCalibSPMT, 1)
-};
-  
 //Surface detector PMQuality data class
 class IoSdPMQuality{
 public:
@@ -457,7 +433,6 @@ public:
   IoSdHisto *histo() const;         ///< Calib histograms
   IoSdHistoCoinc *histocoinc() const; ///< Calib histograms - WCD-SSD coincidence
   IoSdCalib *calib() const;         ///< Calibration block
-  IoSdCalibSPMT *calibSPMT() const;      ///< Return SmallPMT calibration block
   IoSdPMQuality *pmquality() const;     ///< pmquality data  block
   IoSdAntenna *antenna() const;     ///< pmquality data  block
   IoSdFadc *fadc() const;           ///< Flash ADC block
@@ -495,7 +470,6 @@ public:
   IoSdHisto *Histo;
   IoSdHistoCoinc *HistoCoinc;
   IoSdCalib *Calib;
-  IoSdCalibSPMT *CalibSPMT;
   IoSdFadc *Fadc;
   IoSdPMQuality *PMQuality;
   IoSdAntenna *Antenna;
@@ -531,7 +505,7 @@ public:
   IoUSdFadc *UFadc;
   IoUSdTrigParam *UTrigParam ;
   unsigned int Extra[32]; // for future use
-  ClassDef(IoSdStation, 9)
+  ClassDef(IoSdStation, 8)
 };
 
 /// Surface detector T3 trigger class
