@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<SDenseStationList
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="/cr/data/schmidt-d/offline/v018/build_cmake/inst-offline/share/auger-offline/config/SDenseStationList.xsd">
+
+  <!--
+    deltaPhi = polar angle measured in the shower frame
+    r        = distance from the shower core in plane perpindicular to shower axis
+    z        = height above the core position -->
+
+  <isUUB> 0 </isUUB>
+  <hasSmallPMT> 0 </hasSmallPMT>
+  <hasScintillator> 0 </hasScintillator>
+
+  <UTMInfo>
+    <ellipsoid> WGS84 </ellipsoid>
+    <zone> 19 </zone>
+    <band> H </band>
+  </UTMInfo>
+
+</SDenseStationList>
