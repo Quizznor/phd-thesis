@@ -8,7 +8,9 @@ export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#ff00ff,bold,underline"
 alias ls="ls -liS"
 alias "crc2"="LC_BYOBU=0 ssh crcws02"
 export OFFLINE="/cr/data01/filip/offline/bd0e9e/set_offline_env.sh"
+export OFFLINEINSTALLDIR="/cr/data01/filip/offline/install/"
 export PATH="$PATH:/cr/users/filip/Projects/SSDOnlineCalib/fitSDHistoFiles/python/"
+export PATH="$PATH:/cr/users/filip/bin/"
 
 # condor submitting etc.
 alias "cq"="condor_q -all --global"
