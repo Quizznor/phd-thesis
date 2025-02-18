@@ -1,1 +1,1 @@
-__all__ = ['Monit', 'SdHisto']
+__all__ = ['moni', 'histo']
