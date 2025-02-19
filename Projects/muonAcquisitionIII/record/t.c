@@ -1,0 +1,133 @@
+#include "muonAcqStore.h"
+#include <stdio.h>
+int main()
+{
+  int i;
+  struct muonAcqStore_str store;
+  struct muon_histo_complete histogram;
+
+  int pk[4];
+  int ch[4];
+  int base[4];
+  int charge_bins[4];
+  int bin_max[4];
+  uint16_t offset[4];
+  int trace[4][NBBIN];
+  struct muoncalib_traceflags traceflags;
+  int currentTime;
+  int t;
+
+
+  muonAcqStore_init(&store,100,131000,100,10000);
+
+  histogram.histo.h_type=1;
+  histogram.histo.Pk_bit_shift[0]=1;
+  histogram.histo.Pk_bit_shift[1]=2;
+  histogram.histo.Pk_bit_shift[2]=3;
+  histogram.histo.Pk_bit_shift[3]=4;
+
+  histogram.histo.Ch_bit_shift[0]=2;
+  histogram.histo.Ch_bit_shift[1]=4;
+  histogram.histo.Ch_bit_shift[2]=6;
+  histogram.histo.Ch_bit_shift[3]=8;
+
+  histogram.histo.Pk_bin[0][0]=0;
+  histogram.histo.Pk_bin[1][0]=0;
+  histogram.histo.Pk_bin[2][0]=0;
+  histogram.histo.Pk_bin[3][0]=20;
+
+  histogram.histo.Pk_bin[0][1]=60;
+  histogram.histo.Pk_bin[1][1]=60;
+  histogram.histo.Pk_bin[2][1]=60;
+  histogram.histo.Pk_bin[3][1]=42;
+
+  histogram.histo.Ch_bin[0][0]=0;
+  histogram.histo.Ch_bin[1][0]=0;
+  histogram.histo.Ch_bin[2][0]=0;
+  histogram.histo.Ch_bin[3][0]=20;
+
+  histogram.histo.Ch_bin[0][1]=60;
+  histogram.histo.Ch_bin[1][1]=60;
+  histogram.histo.Ch_bin[2][1]=60;
+  histogram.histo.Ch_bin[3][1]=42;
+
+  histogram.histo.BaseAvg[0]=1;
+  histogram.histo.BaseAvg[1]=101;
+  histogram.histo.BaseAvg[2]=201;
+  histogram.histo.BaseAvg[3]=301;
+
+  histogram.histo.Offset[0]=0;
+  histogram.histo.Offset[1]=10;
+  histogram.histo.Offset[2]=20;
+  histogram.histo.Offset[3]=30;
+
+  for(i=0;i<20;i++){
+    histogram.histo.Base[0][i]=i;
+    histogram.histo.Base[1][i]=i*2;
+    histogram.histo.Base[2][i]=i*3;
+    histogram.histo.Base[3][i]=i*4;
+  }
+
+  for(i=0;i<150;i++){
+    histogram.histo.Peak[0][i]=i;
+    histogram.histo.Peak[1][i]=2+i;
+    histogram.histo.Peak[2][i]=3+i;
+    histogram.histo.Peak[3][i]=4+i;
+  }
+  for(i=0;i<600;i++){
+    histogram.histo.Charge[0][i]=10+i;
+    histogram.histo.Charge[1][i]=20+i;
+    histogram.histo.Charge[2][i]=30+i;
+    histogram.histo.Charge[3][i]=40+i;
+  }
+
+  for(i=0;i<NBBIN;i++){
+    histogram.histo.Shape[0][i]=100+i;
+    histogram.histo.Shape[1][i]=200+i;
+    histogram.histo.Shape[2][i]=300+i;
+    histogram.histo.Shape[3][i]=400+i;
+  }
+
+  histogram.histo.StartSecond=10;
+  histogram.histo.EndSecond=20;
+  histogram.histo.NEntries=10000;
+  
+  for(i=0;i<100000;i++){
+    if(i==123){
+      muonAcqStore_addHist(&store,&histogram);
+    } else {
+      pk[0]= i    & 0xFFF ;pk[1] = (i+1) & 0xFFF;
+      pk[2]=(i+2) & 0xFFF ;pk[3] = ((i+3)&0xFF) + 1024;
+
+      ch[0]= (i & 0xFF)  ;ch[1] = (i & 0xFF) + 256;
+      ch[2]= (i & 0xFF) + 512 ;ch[3] = (i & 0xFF) + 768;
+
+      base[0]=(i+10)  & 0xFFF ;base[1] = (i+20) & 0xFFF;
+      base[2]=(i+30) & 0xFFF ;base[3]  = (i+40) & 0xFFF;
+
+      charge_bins[0]= 60 ;charge_bins[1] = 60;
+      charge_bins[2]= 60 ;charge_bins[3] = 30;
+
+      bin_max[0]=30+(i&0x3);bin_max[1]=31+(i&0x3);bin_max[2]=35+(i&0x3);
+      bin_max[3]=25+(i&0x3);
+
+      offset[0]=250;offset[1]=300;offset[2]=350;offset[3]=450;
+      for(t=0;t<NBBIN;t++){
+        trace[0][t]=t+1;
+        trace[1][t]=t+2;
+        trace[2][t]=t+3;
+        trace[3][t]=t+4;
+      }
+      currentTime=i/1032;
+      
+      traceflags.ttag=1234;
+      traceflags.trig_type=0xf;
+      traceflags.is_calib_channel=0;
+      
+      muonAcqStore_entry(&store,pk,ch,base,charge_bins,
+                         bin_max,offset,trace,traceflags.trig_type,currentTime);
+      //printf("%d %d %d\n",i,store.finish,store.nEvts);
+
+    }
+  }
+}

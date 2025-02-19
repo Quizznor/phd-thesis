@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdint.h>
+struct __attribute__((__packed__)) muon_extra_histo
+{
+  /* charge and peak for the coincidence (WCD+SSD) histograms.
+   *  It will include only WCD PMTs (index from 0 to 2)
+   *
+   */
+  uint16_t has_histo;
+
+  uint16_t mask; /* bit 0 - consider threshold in selection
+                  * bit 1 - consider peak bin position
+                  */
+  
+  uint16_t ssdTh; /* the applied threshold */
+  uint16_t peakPos[2];/* 0 - position min, 1 - position max */
+
+  uint16_t Charge[3][600];
+  uint16_t Peak[3][150];
+  
+  uint16_t dtSecond;    /* for the original histograms. */
+  uint32_t StartSecond; /* the time maybe different of the one implemented */
+};
+int main()
+{
+  struct muon_extra_histo h;
+  uint8_t *pt,*pt2;
+  pt=(uint8_t *) &h;
+  pt2=(uint8_t *) &(h.StartSecond);
+  printf("%ld %ld\n",sizeof(h),pt2-pt);
+  return(0);
+}

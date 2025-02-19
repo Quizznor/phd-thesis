@@ -1,0 +1,31 @@
+#include <stdio.h>
+
+#include "config.h"
+int main()
+{
+  CONFIG *cf;
+  if(argc<5){
+    use_as(argv[0]);
+  }
+  cf = configlib_Initialize();
+  if (cf == NULL) {
+    PrintLog(LOG_ERROR, "Can't initialize Config module.\n");
+    exit(2);
+  }
+    printf("cf=%d %d   %d %d\n",
+         cf->FeParams.V2Settings.MuCalibSSDPkmin,
+         cf->FeParams.V2Settings.MuCalibSSDPkmax,
+         cf->FeParams.V2Settings.MuCalibSSDChmin,
+         cf->FeParams.V2Settings.MuCalibSSDChmax);
+
+  printf("DAC=%d %d %d   %d %d %d\n",
+         cf->MonitParams.Dac[0],
+         cf->MonitParams.Dac[1],
+         cf->MonitParams.Dac[2],
+         cf->MonitParams.Dac[3],
+         cf->MonitParams.Dac[4],
+         cf->MonitParams.Dac[5]);
+  return(0);
+
+}
+
