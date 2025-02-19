@@ -4,15 +4,19 @@
 
 <EventFileReader
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:noNamespaceSchemaLocation='/cr/data01/filip/offline/install/ds_forced_station_triggers/install/share/auger-offline/config/EventFileReader.xsd'>
+  xsi:noNamespaceSchemaLocation='@SCHEMALOCATION@/EventFileReader.xsd'>
 
-  <ReportFilenames/>
+  <!-- file type  Offline
+                FDAS
+                CDAS
+                CORSIKA
+                AIRES
+                IoAuger -->
 
   <CORSIKA>
 
-    <!-- the list of filenames -->
     <InputFilenames>
-      /lsdf/auger/corsika/karlsruhe/e19m100prot-qgs4/th56/DAT555520.part
+      @SAMPLESHOWERS@/Pr_qII-04_17_50eV_30deg.part
     </InputFilenames>
 
     <!-- The following glob pattern is applied to the <InputFilenames>
@@ -23,9 +27,9 @@
          below. Multiple strings could be selected using multiple wild-cards
          in the glob pattern if desired. -->
     <PatternPath> *.part </PatternPath>
-    
+
     <!-- The portion of <InputFilenames> string selected via
-         the "*" wild-card in the glob pattern specified in 
+         the "*" wild-card in the glob pattern specified in
          <PatternPath> has different file extensions appended to it
          here to construct the file paths for ground particle files,
          profile data files, etc. from the same base path/name. Had
@@ -35,8 +39,8 @@
     <InputMapping>
       <GroundData> (1).part </GroundData>
       <ProfileData> (1).long </ProfileData>
-    </InputMapping>    
-    
+    </InputMapping>
+
   </CORSIKA>
 
 </EventFileReader>

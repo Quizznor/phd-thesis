@@ -17,8 +17,8 @@ def prepare_bootstrap(arguments, seed) -> bool:
     hadron_prefix = "prague" if energy < "18.5_19" else "napoli"
     photon_prefix = "prague"
     data_dirs = {
-        "photon": f"/lsdf/auger/corsika/{photon_prefix}/EPOS_LHC/photon/{energy}/",
-        "proton": f"/lsdf/auger/corsika/{hadron_prefix}/EPOS_LHC/proton/{energy}/",
+        "photon": f"/lsdf/auger/corsika/{photon_prefix}/EPOS_LHC/photon/{energy}",
+        "proton": f"/lsdf/auger/corsika/{hadron_prefix}/EPOS_LHC/proton/{energy}",
     }
 
 
@@ -30,13 +30,13 @@ def prepare_bootstrap(arguments, seed) -> bool:
     target_bootstrap = f"{target_dir}/sim/bootstrap_{seed:06}.xml"
 
     replacements = {
-        "@INPUTFILE@": f"{source_dir}/{source_file}",
-        "@NPARTICLES@": n_particles,
-        "@OUTPUTFILE@": target_file,
-        "@DETECTORSEED@": f"{DSEED:06}",
-        "@PHYSICSSEED@": f"{PSEED:06}",
-        "@PATTERNPATH@": "*.part" if source_file.endswith(".part") else "*",
-        "@GROUNDDATA@": "(1).part" if source_file.endswith(".part") else "(1)",
+        "'@INPUTFILE@'": f"{source_dir}/{source_file}".replace('"',''),
+        "'@NPARTICLES@'": n_particles,
+        "'@OUTPUTFILE@'": target_file,
+        "'@DETECTORSEED@'": f"{DSEED:06}",
+        "'@PHYSICSSEED@'": f"{PSEED:06}",
+        "'@PATTERNPATH@'": "*.part" if source_file.endswith(".part") else "*",
+        "'@GROUNDDATA@'": "(1).part" if source_file.endswith(".part") else "(1)",
     }
 
     with open(target_bootstrap, "w") as target:

@@ -2,7 +2,7 @@
 
 <SDenseStationList
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:noNamespaceSchemaLocation="/cr/data/schmidt-d/offline/v018/build_cmake/inst-offline/share/auger-offline/config/SDenseStationList.xsd">
+  xsi:noNamespaceSchemaLocation="@SCHEMALOCATION@/SDenseStationList.xsd">
 
   <!--
     deltaPhi = polar angle measured in the shower frame

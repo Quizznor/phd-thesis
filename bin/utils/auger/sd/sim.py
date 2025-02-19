@@ -9,7 +9,7 @@ import os
 class Simulation():
 
     CROFFLINE = '/cr/data01/filip/offline/install'
-    CRSRC = '/cr/users/filip/bin/utils/Auger'
+    CRSRC = '/cr/users/filip/bin/utils/auger'
     CRWORK = '/cr/work/filip/Simulations'
 
     QUEUE = "1"
@@ -28,6 +28,8 @@ class Simulation():
         self.path.mkdir(parents=True, exist_ok=True)
         self.kwargs, QUEUE = self.get_simulation_kwargs(kwargs)
         self.offline_src = f"{self.CROFFLINE}/{offline}/set_offline_env.sh"
+
+        print(self.kwargs['PRIMARY'])
 
         for dir in ['src', 'sim', 'log']:
             Path(self.path / dir).mkdir(parents=True, exist_ok=True)
@@ -53,15 +55,15 @@ class Simulation():
             sh.write("#!/bin/bash\n")
             sh.write(f"\nsource {self.offline_src}\n")
             sh.write("./userAugerOffline --bootstrap $1\n")
-            sh.write("rm -rf *.root*.dat $1")
+            sh.write("rm -rf *.root *.dat $1")
 
         sh_path.chmod(sh_path.stat().st_mode | stat.S_IEXEC)
 
         # make run  .py file
-        os.system(f"cp {self.CRSRC}/SD/run.py {self.path}")
+        os.system(f"cp {self.CRSRC}/sim/run.py {self.path}")
         
         # set up source
-        os.system(f"cp {src}/* {self.path / 'src'}")
+        os.system(f"{self.CRSRC}/sim/init.sh {self.offline_src} {src} {self.path}")
 
 
     def get_simulation_kwargs(self, kwargs: dict) -> dict:

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 
 <!DOCTYPE bootstrap [
-  <!ENTITY standardSdIdealDetConfig SYSTEM '/cr/data01/filip/offline/install/ds_forced_station_triggers/install/share/auger-offline/config/standardSdIdealDetConfig.xml'>
-  <!ENTITY standardSdSimModuleConfig SYSTEM '/cr/data01/filip/offline/install/ds_forced_station_triggers/install/share/auger-offline/config/standardSdSimModuleConfig.xml'>
-  <!ENTITY standardSdRecModuleConfig SYSTEM '/cr/data01/filip/offline/install/ds_forced_station_triggers/install/share/auger-offline/config/standardSdRecModuleConfig.xml'>
+  <!ENTITY standardSdIdealDetConfig SYSTEM '@CONFIGDIR@/standardSdIdealDetConfig.xml'>
+  <!ENTITY standardSdSimModuleConfig SYSTEM '@CONFIGDIR@/standardSdSimModuleConfig.xml'>
+  <!ENTITY standardSdRecModuleConfig SYSTEM '@CONFIGDIR@/standardSdRecModuleConfig.xml'>
 ]>
 
 
 <bootstrap
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:noNamespaceSchemaLocation='/cr/data01/filip/offline/install/ds_forced_station_triggers/install/share/auger-offline/config/bootstrap.xsd'
+  xsi:noNamespaceSchemaLocation='@SCHEMALOCATION@/bootstrap.xsd'
   xmlns:xlink="http://www.auger.org/schema/types">
 
   &standardSdIdealDetConfig;
@@ -22,6 +22,16 @@
       id         = "ModuleSequence"
       type       = "XML"
       xlink:href = "./ModuleSequence.xml"/>
+
+    <configLink
+      id         = "SDenseStationListXMLManager"
+      type       = "XML"
+      xlink:href = "./SDenseCustom.xml"/>
+
+    <configLink
+      id         = "SStationListXMLManager"
+      type       = "XML"
+      xlink:href = "@CONFIGDIR@/SIdealUpgradedStationListInfill.xml"/>
 
     <configLink
       id         = "EventFileReader"
@@ -38,19 +48,19 @@
       type       = "XML"
       xlink:href = "./EventGenerator.xml"/>
 
-   <configLink
-       id         = "SStationListXMLManager"
-       type       = "XML"
-       xlink:href = "/cr/data01/filip/offline/install/ds_forced_station_triggers/install/share/auger-offline/config/SIdealUpgradedStationListInfill.xml"/>
+    <configLink
+      id         = "LDFFinderKG"
+      type       = "XML"
+      xlink:href = "@CONFIGDIR@/LDFFinderKG_Infill.xml"/>
 
-   <configLink
-     id         = "SDenseStationListXMLManager"
-     type       = "XML"
-     xlink:href = "./SDenseCustom.xml "/>
+    <configLink
+      id         = "SdEventSelector"
+      type       = "XML"
+      xlink:href = "@CONFIGDIR@/SdEventSelector_Infill.xml"/>
 
   </centralConfig>
 
-  <parameterOverrides>
+    <parameterOverrides>
     <configLink id="CentralTriggerEventBuilder">
       <CentralTriggerEventBuilder>
         <ForceEventBuildWithoutT3> 1 </ForceEventBuildWithoutT3>
@@ -63,14 +73,14 @@
 
           <!-- the list of filenames -->
           <InputFilenames>
-            @INPUTFILE@
+            '@INPUTFILE@'
           </InputFilenames>
           <PatternPath>
-            @PATTERNPATH@
+            '@PATTERNPATH@'
           </PatternPath>
           <InputMapping>
             <GroundData>
-            @GROUNDDATA@
+              '@GROUNDDATA@'
             </GroundData>
             <ProfileData> (1).long </ProfileData>
           </InputMapping>    
@@ -83,7 +93,7 @@
         <minEnergyForTraces unit="EeV"> 0 </minEnergyForTraces>
         <rootOutput>
           <outputFileName>
-          @OUTPUTFILE@
+            '@OUTPUTFILE@'
           </outputFileName>
         </rootOutput>
       </RecDataWriter>
@@ -92,7 +102,7 @@
     <configLink id="SDenseStationListXMLManager">
       <SDenseStationList>
         <isUUB> 1 </isUUB>
-        <hasSmallPMT> 1 </hasSmallPMT>
+        <hasSmallPMT> 0 </hasSmallPMT>
         <hasScintillator> 1 </hasScintillator>
       </SDenseStationList>
     </configLink>
@@ -100,7 +110,7 @@
     <configLink id="CachedShowerRegenerator">
       <CachedShowerRegenerator>
         <WeightedStationSimulationParticleLimit> 
-        @NPARTICLES@
+          '@NPARTICLES@'
         </WeightedStationSimulationParticleLimit>
       </CachedShowerRegenerator>
     </configLink>
@@ -108,19 +118,20 @@
     <configLink id="RandomEngineRegistry">
       <RandomEngineRegistry>
         <DetectorSeed>
-        @DETECTORSEED@
+          '@DETECTORSEED@'
         </DetectorSeed>
         <PhysicsSeed>
-        @PHYSICSSEED@
+          '@PHYSICSSEED@'
         </PhysicsSeed>
       </RandomEngineRegistry>
     </configLink>
-    
-     <configLink id="TankTriggerSimulator">
+
+    <configLink id="TankTriggerSimulator">
       <TankTriggerSimulator>
         <ForceStationTrigger> 1 </ForceStationTrigger>
       </TankTriggerSimulator>
     </configLink>
+    
   </parameterOverrides>
 
 </bootstrap>
