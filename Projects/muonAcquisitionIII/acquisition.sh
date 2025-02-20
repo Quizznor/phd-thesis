@@ -19,6 +19,7 @@ while [ true ]; do
 	touch data/$count/$(date +%s)
 	echo "Sending T3"
 	T3Send 943 944 949 954
+	sleep 300
 	echo "#${count} finished, starting over in 5s..."
 	sleep 5
 
