@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BASE=/cr/data01/filip/Data/muonAcquisitionII/data/*
+BASE=/cr/data01/filip/Data/muonAcquisitionIII/data/*
 
 for dir in $BASE; do
     for file in $dir/*; do
