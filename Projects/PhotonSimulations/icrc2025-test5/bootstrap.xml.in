@@ -107,13 +107,13 @@
       </SDenseStationList>
     </configLink>
 
-    <configLink id="CachedShowerRegenerator">
+    <!-- <configLink id="CachedShowerRegenerator">
       <CachedShowerRegenerator>
         <WeightedStationSimulationParticleLimit> 
-          '@NPARTICLES@'
+          30000
         </WeightedStationSimulationParticleLimit>
       </CachedShowerRegenerator>
-    </configLink>
+    </configLink> -->
 
     <configLink id="RandomEngineRegistry">
       <RandomEngineRegistry>

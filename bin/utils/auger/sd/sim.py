@@ -6,94 +6,147 @@ import json
 import stat
 import os
 
+condor_default_dict = {
+            'max_idle': "150",              # don't insert jobs if max_idle is more than this
+            'request_memory': "1G",         # put job on hold if RAM exceeds request_memory
+            'max_materialize': "150",       # number of total active/running/idle jobs on condor
+
+            # cpu, gpu etc.
+        }
+
+python_default_dict = {
+    # TODO
+}
+
 class Simulation():
 
-    CROFFLINE = '/cr/data01/filip/offline/install'
-    CRSRC = '/cr/users/filip/bin/utils/auger'
-    CRWORK = '/cr/work/filip/Simulations'
+    CROFFLINE = f'/cr/data01/{CONSTANTS.USERNAME}/offline/install'
+    CRSRC = f'/cr/users/{CONSTANTS.USERNAME}/bin/utils/auger'
+    CRWORK = f'/cr/work/{CONSTANTS.USERNAME}/Simulations'
 
-    QUEUE = "1"
-    RETHROWS = "1"
-    MEMORY = "1G"
-    MAX_IDLE = "150"
-    PRIMARY = "proton"
-    ENERGY = "16.5_17"
-    NPARTICLES = "30000"
-    MAX_MATERIALIZE = "150"
-
-    def __init__(self, name: str, offline: str, src: str, **kwargs: dict):
+    def __init__(self, name: str, offline: str, src: str, primary: str, energy: str, model: str, **kwargs: dict):
 
         # make file system
         self.path = Path(f"{self.CRWORK}/{name}")
         self.path.mkdir(parents=True, exist_ok=True)
-        self.kwargs, QUEUE = self.get_simulation_kwargs(kwargs)
         self.offline_src = f"{self.CROFFLINE}/{offline}/set_offline_env.sh"
-
-        print(self.kwargs['PRIMARY'])
 
         for dir in ['src', 'sim', 'log']:
             Path(self.path / dir).mkdir(parents=True, exist_ok=True)
-        for dir in ['out', 'dat']:
-            Path(self.path / dir / self.kwargs['PRIMARY'] / self.kwargs['ENERGY']).mkdir(parents=True, exist_ok=True)
 
-        # make run .sub file
+        self.target_path = Path(self.path / "dat" / model / primary / energy)
+        self.target_path.mkdir(parents=True, exist_ok=True)
+        
+        # set condor/python kwargs
+        self.condor_kwargs, self.python_kwargs = self._get_simulation_kwargs(primary, energy, model, kwargs)
+
+        # make run.sub file
         sub_path = self.path / "run.sub"
         with sub_path.open("w", encoding="utf-8") as sub:
             sub.write(CONSTANTS.SIM_HEADER)
             sub.write("\n\n")
             sub.write(CONSTANTS.SIM_REQS)
             sub.write("\n\n")
-            for key, value in kwargs.items():
-                if key.isupper(): continue
+            for key, value in self.condor_kwargs.items():
                 sub.write(f"{key: <24}= {value}\n")
+            sub.write(f'\nqueue {len([1,2])}')
 
-            sub.write(f'\nqueue {QUEUE}')
-
-        # make run  .sh file
+        # make run.sh file
         sh_path = self.path / "run.sh"
         with sh_path.open("w", encoding="utf-8") as sh:
             sh.write("#!/bin/bash\n")
             sh.write(f"\nsource {self.offline_src}\n")
             sh.write("./userAugerOffline --bootstrap $1\n")
             sh.write("rm -rf *.root *.dat $1")
-
         sh_path.chmod(sh_path.stat().st_mode | stat.S_IEXEC)
 
-        # make run  .py file
-        os.system(f"cp {self.CRSRC}/sim/run.py {self.path}")
+        # make run.py file
+        py_path = self.path / "run.py"
+        with py_path.open("w", encoding="utf-8") as py:
+            py.write("#!/usr/bin/python3\n\n")
+            py.write("import os, subprocess\n\n")
+            py.write("is_corsika_file = (lambda s: s.startswith('DAT')\n")
+            py.write("\tand not s.endswith('.long')\n")
+            py.write("\tand not s.endswith('.lst')\n")
+            py.write("\tand not s.endswith('.gz'))\n\n")
+        py_path.chmod(py_path.stat().st_mode | stat.S_IEXEC)
         
         # set up source
-        os.system(f"{self.CRSRC}/sim/init.sh {self.offline_src} {src} {self.path}")
+        subprocess.run("; ".join([
+            f"source {self.offline_src}",
+            f"cd {src}",
+            f"cp Makefile.in Makefile",
+            f"make",
+            f"mv *.xml userAugerOffline {self.path}/src",
+            f"rm -rf Makefile *.o Make-depend"
+        ]), shell=True, executable='/bin/bash', stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
-    def get_simulation_kwargs(self, kwargs: dict) -> dict:
+    def _get_simulation_kwargs(self, primary: str, energy: str, model: str, kwargs: dict) -> dict:
 
-            QUEUE, args = kwargs.get("QUEUE", self.QUEUE), []
-            for arg in ["PRIMARY", "ENERGY", "RETHROWS", "NPARTICLES"]:
-                args.append(kwargs.get(arg, getattr(self, arg)))
-                kwargs[arg] = kwargs.get(arg, getattr(self, arg))
+            self.model = model
+            self.energy = energy
+            self.primary = primary
 
-            kwargs['max_idle'] = kwargs.get("max_idle", self.MAX_IDLE)
-            kwargs['max_materialize'] = kwargs.get("max_materialize", self.MAX_MATERIALIZE)
-            kwargs['request_memory'] = kwargs.get("request_memory", self.MEMORY)
+            condor_kwargs = self._get_condor_kwargs(kwargs)
 
-            # num_cores, etc...
+            # get source path of simulation files
+            target_path = Path('/lsdf/auger/corsika')
+            min_energy, _ = [float(x) for x in energy.split('_')]
+            if min_energy <= 18.5:
+                library = "prague"
+            else: library = "napoli"
+            target_path /= f"{library}/{model.upper()}/{primary.lower()}/{energy}"
 
-            kwargs['JobBatchName'] = f"{self.path.name}_{args[0]}_{args[1]}"
-            kwargs['arguments'] = kwargs.get("arguments", f'"{self.path.name} {" ".join(args)} $(Process)"')
+            if not os.path.isdir(target_path):
+                raise LookupError(f"Data dir not found for keys {model}, {primary}, {energy}")       
             
-            kwargs['executable'] = "./run.py"
-            kwargs['error'] = str(self.path / f"log/{kwargs['JobBatchName']}-$(Process).err")
-            kwargs['output'] = str(self.path / f"log/{kwargs['JobBatchName']}-$(Process).out")
-            kwargs['log'] = str(self.path / f"log/{kwargs['JobBatchName']}-$(Process).log")
+            # files = list(filter(is_corsika_file, os.listdir(target_path)))
 
-            return kwargs, QUEUE
+            # raise NotImplementedError
+
+            # todo fix python kwargs
+            # create run.py script            
+
+            return condor_kwargs, {}
+
+            # QUEUE, args = kwargs.get("QUEUE", self.QUEUE), []
+            # for arg in ["PRIMARY", "ENERGY", "RETHROWS", "NPARTICLES"]:
+            #     args.append(kwargs.get(arg, getattr(self, arg)))
+            #     kwargs[arg] = kwargs.get(arg, getattr(self, arg))
+
+            # kwargs['max_idle'] = kwargs.get("max_idle", self.MAX_IDLE)
+            # kwargs['max_materialize'] = kwargs.get("max_materialize", self.MAX_MATERIALIZE)
+            # kwargs['request_memory'] = kwargs.get("request_memory", self.MEMORY)
+
+            # # num_cores, etc...
+
+            # kwargs['JobBatchName'] = f"{self.path.name}_{args[0]}_{args[1]}"
+            # kwargs['arguments'] = kwargs.get("arguments", f'"{self.path.name} {" ".join(args)} $(Process)"')
+            
 
 
-    def process(self, executable: str= None) -> None:
+            # return kwargs, QUEUE
 
-        if executable is None:
-            executable = f"{self.CRSRC}/ADST/AdstReader"
+
+    def _get_condor_kwargs(self, kwargs) -> dict:
+            
+        condor_dict = condor_default_dict
+        job_batch_name = f"{self.path.name}_{self.model}_{self.primary}_{self.energy}"
+        condor_dict['JobBatchName'] = job_batch_name
+        condor_dict['error'] = str(self.path / f"log/{job_batch_name}-$(Process).err")
+        condor_dict['output'] = str(self.path / f"log/{job_batch_name}-$(Process).out")
+        condor_dict['log'] = str(self.path / f"log/{job_batch_name}-$(Process).log")
+
+        # overwrite defaults in condor dict
+        for key, val in kwargs.items():
+            if condor_dict.get(key, None) is not None:
+                condor_dict[key] = val
+
+        return condor_dict
+
+
+    def process(self, executable: str) -> None:
 
         data_dir = self.path / f"out/{self.kwargs['PRIMARY']}/{self.kwargs['ENERGY']}/"
         for file in ProgressBar(os.listdir(data_dir)):
@@ -129,17 +182,17 @@ class Simulation():
         print(self)
 
 
-    @staticmethod
-    def tree_view(path: str) -> None:
+    # @staticmethod
+    # def tree_view(path: str) -> None:
 
-        primaries = os.listdir(path)
-        energies = set()
-        [[energies.add(e) for e in os.listdir(path/p)] for p in primaries]
+    #     primaries = os.listdir(path)
+    #     energies = set()
+    #     [[energies.add(e) for e in os.listdir(path/p)] for p in primaries]
 
-        for p in primaries:
-            print(f"  {p}")
-            for dir in energies:
-                print(f"    {dir}: {len(os.listdir(path/p/dir)): >5} files")
+    #     for p in primaries:
+    #         print(f"  {p}")
+    #         for dir in energies:
+    #             print(f"    {dir}: {len(os.listdir(path/p/dir)): >5} files")
 
 
     @classmethod

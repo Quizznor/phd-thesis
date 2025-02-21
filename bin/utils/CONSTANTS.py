@@ -5,6 +5,8 @@ import os
 
 const_logger = create_stream_logger("const")
 
+USERNAME = "filip"
+
 # fails if run on windows, but that's on you
 path_set = True
 match hostname := os.uname()[1]:
