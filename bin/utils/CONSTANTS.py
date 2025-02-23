@@ -63,8 +63,8 @@ class UUB:
         SSD_CHARGE_EDGES[1:] + SSD_CHARGE_EDGES[:-1]
     )
 
-
-SIM_HEADER = "\
+class WORD:
+    SIM_HEADER = "\
 # ************************************************************************************************\n\
 #\
 # PRAGUE LIBRARIES - PROTONS            # NAPOLI LIBRARIES - PHOTONS\n\
@@ -86,9 +86,55 @@ SIM_HEADER = "\
 #\n\
 # ************************************************************************************************"
 
-SIM_REQS = '\
+    SIM_REQS = '\
 Requirements        	=       OpSysName == "Ubuntu"               \\\n\
                         &&  OpSysMajorVer == 22                     \\\n\
                         && TARGET.Machine != "crc2.ikp.kit.edu"     \\\n\
                         && TARGET.Machine != "crc1.ikp.kit.edu"     \\\n\
                         && TARGET.Machine != "crcds99.iap.kit.edu"'
+
+    RUN_PY_HEADER = "\
+#!/usr/bin/python3\n\
+\n\
+import os, sys\n\
+import subprocess\n\
+from pathlib import Path\n\
+\n\
+is_sim_file = (lambda s: s.startswith(\"DAT\")\n\
+                and not s.endswith(\".long\")\n\
+                and not s.endswith(\".lst\")\n\
+                and not s.endswith(\".gz\"))\n\
+\n\
+def prepare_bootstrap(name, src, out, i, r, n) -> bool:\n\
+    files = list(filter(is_sim_file, os.listdir(src)))\n\
+    f = Path(f\"{src}/{files[i]}\")\n\
+    \n\
+    replace = {\n\
+        \"'@INPUTFILE@'\": str(f),\n\
+        \"'@NPARTICLES@'\": n,\n\
+        \"'@DETECTORSEED@'\": f\"{r:06}\",\n\
+        \"'@PHYSICSSEED@'\": f\"{r+1:06}\",\n\
+        \"'@OUTPUTFILE@'\": f\"{name}/{out}/{f.name}.root\",\n\
+        \"'@PATTERNPATH@'\": \"*.part\" if f.name.endswith(\".part\") else \"*\",\n\
+        \"'@GROUNDDATA@'\": \"(1).part\" if f.name.endswith(\".part\") else \"(1)\",\n\
+    }\n\
+    \n\
+    b_src = f\"{name}/src/bootstrap.xml\"\n\
+    b_out = f\"{name}/sim/bootstrap_{r:06}.xml\"\n\
+    \n\
+    with open(b_out, \"w\") as target:\n\
+        with open(b_src, \"r\") as source:\n\
+            for line in source.readlines():\n\
+                try:\n\
+                    target.write(replace[line.strip()] + \"\\n\")\n\
+                except KeyError:\n\
+                    target.write(line)\n\
+    \n\
+    return b_out\n\n"
+
+    RUN_PY_FOOTER = "\
+i = int(sys.argv[1])\n\
+\n\
+for r in range(0, RETHROWS):\n\
+    if target_bootstrap := prepare_bootstrap(NAME, SRC, OUT, i, r, n):\n\
+        subprocess.run([f\"{NAME}/run.sh\", target_bootstrap])"
