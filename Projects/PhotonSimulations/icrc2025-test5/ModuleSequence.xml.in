@@ -29,7 +29,7 @@ files if you have questions regarding &NAME (i.e. &SdSimulation) -->
         <module> CentralTriggerEventBuilderOG </module>
         <module> EventBuilderOG </module>
 
-        &SdSimReconstruction;
+        <!-- &SdSimReconstruction; -->
 
         <!-- export the ADST -->
         <module> RecDataWriterNG </module>
