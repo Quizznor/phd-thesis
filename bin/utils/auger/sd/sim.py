@@ -98,7 +98,7 @@ class Simulation():
         ]), shell=True, executable='/bin/bash', stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
         self.logger.info("source compiled, we're done!")
-        self.status()
+        self.status(full_status=True)
 
 
     def _get_simulation_kwargs(self, primary: str, energy: str, model: str, kwargs: dict) -> dict:
@@ -176,17 +176,18 @@ class Simulation():
         return json.dumps(self.kwargs, indent=2)
 
 
-    def status(self) -> None:
+    def status(self, full_status: bool = False) -> None:
 
         print("")
         print("*****************************")
         print("* OFFLINE SIMULATION STATUS *")
         print("*****************************")
 
-        for _dict, handle in zip([self.python_kwargs, self.condor_kwargs], ["python", "condor"]):
-            for key, val in _dict.items():
-                print(f"{handle}: {key} = {val}")
-            print("")
+        if full_status:
+            for _dict, handle in zip([self.python_kwargs, self.condor_kwargs], ["python", "condor"]):
+                for key, val in _dict.items():
+                    print(f"{handle}: {key} = {val}")
+                print("")
 
         energy_bins = ["15_15.5", "15.5_16", 
                        "16_16.5", "16.5_17", 
