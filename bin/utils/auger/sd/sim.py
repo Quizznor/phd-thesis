@@ -19,14 +19,13 @@ condor_default_dict = {
         }
 
 python_default_dict = {
-    'rethrows': 1,                          # how many times shower is simulated (with other seed)
+    'rethrows': 1,                          # how many times shower is simulated (with different seed)
     'n_particles': 30_000,                  # decrease number for quick and dirty test simulation
 }
 
 class Simulation():
 
     CROFFLINE = f'/cr/data01/{CONSTANTS.USERNAME}/offline/install'
-    CRSRC = f'/cr/users/{CONSTANTS.USERNAME}/bin/utils/auger'
     CRWORK = f'/cr/work/{CONSTANTS.USERNAME}/Simulations'
 
     def __init__(self, name: str, offline: str, src: str, primary: str, energy: str, model: str, **kwargs: dict):
