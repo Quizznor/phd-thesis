@@ -19,14 +19,13 @@ condor_default_dict = {
         }
 
 python_default_dict = {
-    'rethrows': 1,                          # how many times shower is simulated (with other seed)
+    'rethrows': 1,                          # how many times shower is simulated (with different seed)
     'n_particles': 30_000,                  # decrease number for quick and dirty test simulation
 }
 
 class Simulation():
 
     CROFFLINE = f'/cr/data01/{CONSTANTS.USERNAME}/offline/install'
-    CRSRC = f'/cr/users/{CONSTANTS.USERNAME}/bin/utils/auger'
     CRWORK = f'/cr/work/{CONSTANTS.USERNAME}/Simulations'
 
     def __init__(self, name: str, offline: str, src: str, primary: str, energy: str, model: str, **kwargs: dict):
@@ -98,7 +97,7 @@ class Simulation():
         ]), shell=True, executable='/bin/bash', stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
         self.logger.info("source compiled, we're done!")
-        self.status()
+        self.status(full_status=True)
 
 
     def _get_simulation_kwargs(self, primary: str, energy: str, model: str, kwargs: dict) -> dict:
@@ -176,17 +175,18 @@ class Simulation():
         return json.dumps(self.kwargs, indent=2)
 
 
-    def status(self) -> None:
+    def status(self, full_status: bool = False) -> None:
 
         print("")
         print("*****************************")
         print("* OFFLINE SIMULATION STATUS *")
         print("*****************************")
 
-        for _dict, handle in zip([self.python_kwargs, self.condor_kwargs], ["python", "condor"]):
-            for key, val in _dict.items():
-                print(f"{handle}: {key} = {val}")
-            print("")
+        if full_status:
+            for _dict, handle in zip([self.python_kwargs, self.condor_kwargs], ["python", "condor"]):
+                for key, val in _dict.items():
+                    print(f"{handle}: {key} = {val}")
+                print("")
 
         energy_bins = ["15_15.5", "15.5_16", 
                        "16_16.5", "16.5_17", 

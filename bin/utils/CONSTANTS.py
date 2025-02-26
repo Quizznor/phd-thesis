@@ -114,13 +114,13 @@ def prepare_bootstrap(name, src, out, i, r, n) -> bool:\n\
         \"'@NPARTICLES@'\": n,\n\
         \"'@DETECTORSEED@'\": f\"{r:06}\",\n\
         \"'@PHYSICSSEED@'\": f\"{r+1:06}\",\n\
-        \"'@OUTPUTFILE@'\": f\"{name}/{out}/{f.name}.root\",\n\
+        \"'@OUTPUTFILE@'\": f\"{name}/{out}/{files[i]}_{r:02}.root\",\n\
         \"'@PATTERNPATH@'\": \"*.part\" if f.name.endswith(\".part\") else \"*\",\n\
         \"'@GROUNDDATA@'\": \"(1).part\" if f.name.endswith(\".part\") else \"(1)\",\n\
     }\n\
     \n\
     b_src = f\"{name}/src/bootstrap.xml\"\n\
-    b_out = f\"{name}/sim/bootstrap_{r:06}.xml\"\n\
+    b_out = f\"{name}/sim/bootstrap_{f.name}_{r:06}.xml\"\n\
     \n\
     with open(b_out, \"w\") as target:\n\
         with open(b_src, \"r\") as source:\n\
