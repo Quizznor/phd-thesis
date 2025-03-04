@@ -143,8 +143,7 @@ int IoSdCalib::ComputeParameters() {
     StartSecond = 999999999;
     EndSecond = 0;
     NTubesOk = 0;
-    SsdRate = 0;
-    MipPeak = 50;
+    MipPeak = 40;
     MipCharge = MipPeak * 3.7; 
     T1Rate = T2Rate = TOTRate = 0;
     for (unsigned int i = 0; i < kIoSd::NPMT; i++) {

@@ -44,7 +44,8 @@ int main(int argc, char *argv[])
       for (int i=0; i < 3; i++) std::cout << "DA" << i << " " << stationCalib->DA[i] << "\n";
       for (int i=0; i < 3; i++) std::cout << "SigmaDA" << i << " " << stationCalib->SigmaDA[i] << "\n";
       for (int i=0; i < 3; i++) std::cout << "VemCharge" << i << " " << stationCalib->VemCharge[i] << "\n";
-      std::cout << "NbTOT " << stationCalib->NbTOT << "\n";
+      std::cout << "NbTOT " << stationCalib->NbTOT << "\n\n\n\n";
+
 
 
     }
