@@ -29,6 +29,7 @@ class SdHisto:
 
         self.fit_was_run = False
 
+
     def __call__(self) -> list[uncertainties.ufloat]:
         if not self.fit_was_run:
             _ = self.fit()
@@ -43,6 +44,14 @@ class SdHisto:
 
         return peak_charge
 
+
+    def __getitem__(self, pmt: int) -> np.ndarray:
+        if pmt < 10:
+            return self.histos["peak"][pmt]
+        else:
+            return self.histos["charge"][pmt-10]
+
+
     def fit(self) -> dict:
         if self.histos["peak"] is not None:
             self.popts["peak"] = self.get_peak("peak")
@@ -52,6 +61,7 @@ class SdHisto:
         self.fit_was_run = True
 
         return self.popts
+
 
     def get_peak(self, mode: str) -> list[list[uncertainties.ufloat]]:
 
@@ -73,6 +83,7 @@ class SdHisto:
                 peaks.append(peak)
 
         return peaks
+
 
     @staticmethod
     def fit_wcd(counts: np.ndarray) -> list[uncertainties.ufloat]:
@@ -127,6 +138,7 @@ class SdHisto:
             # print(f'WCD SdHisto fit failed: {e}')
             return [uncertainties.ufloat(np.nan, np.nan) for _ in range(3)]
 
+
     @staticmethod
     def fit_ssd(counts: np.ndarray) -> list[uncertainties.ufloat]:
 
@@ -179,6 +191,7 @@ class SdHisto:
         except Exception as e:
             print(f'SSD SdHisto fit failed: {e}')
             return [uncertainties.ufloat(np.nan, np.nan) for _ in range(3)]
+
 
     def plot(self) -> plt.Figure:
 
@@ -254,6 +267,7 @@ class SdHisto:
 
         ax1.set_ylabel("Counts")
         return fig
+
 
     @staticmethod
     def parabola(x, scale, mip, y0):
