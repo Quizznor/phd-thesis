@@ -6,6 +6,7 @@ from ...binaries import np
 from ...plotting import plt
 from . import AperturePlot, PixelPlot
 import logging
+import glob
 
 from matplotlib import colors
 from collections import defaultdict
@@ -269,6 +270,24 @@ class Campaign():
 
         ymin, ymax = ax.get_ylim()
         ax.set_ylim(kwargs.get('ymin', ymin), kwargs.get('ymax', ymax))
+
+
+    def pack_files(self, out: str = None, extension: str = "") -> None:
+
+        candidate_files = set()
+        base_dir = str(CONST.SCAN_PATH / "results")
+
+        if out is None:
+            out = f"{extension if extension else 'archive'}_{self.year_and_month}.tgz"
+
+        for _id in self.data.index:
+            files = glob.glob(f"{base_dir}/{extension}*{_id}.txt")
+            for file in files:
+                candidate_files.add(file.split("/")[-1])
+
+        self.logger.info(f"Packing {len(candidate_files)} files into {out}")
+
+        subprocess.call(f"tar -caf {out} -C {base_dir} {' '.join(candidate_files)}", shell=True, executable='/bin/bash')
 
 
 class Grid:
