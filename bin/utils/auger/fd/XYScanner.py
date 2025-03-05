@@ -1,9 +1,11 @@
 from ... import CONSTANTS as CONST
 from ...binaries import uncertainties
+from ... import create_stream_logger
 from ...binaries import pd
 from ...binaries import np
 from ...plotting import plt
 from . import AperturePlot, PixelPlot
+import logging
 
 from matplotlib import colors
 from collections import defaultdict
@@ -84,6 +86,8 @@ class Campaign():
     
     def __init__(self, year: int, month: int) -> None:
 
+        self.logger = create_stream_logger("XYCampaign", loglevel=logging.INFO)
+
         self.year_and_month = f"{year}-{month:02}"
         runlist = CONST.SCAN_PATH / f"config/calib_runlists/calib_runs_{self.year_and_month}.list"
         
@@ -139,13 +143,16 @@ class Campaign():
     def _split_runlist(self, runlist: pd.DataFrame) -> dict:
 
         run_dict = {}
-        for _, info in runlist[runlist['forDB']].iterrows():
+        for _id, info in runlist[runlist['forDB']].iterrows():
             
-            run_dict[info['tel'].upper()] = XYRun(runlist[
-                (runlist['date'] == info['date'])
-                & (runlist['tel'] == info['tel'])
-                ])
-        
+            try:
+                run_dict[info['tel'].upper()] = XYRun(runlist[
+                    (runlist['date'] == info['date'])
+                    & (runlist['tel'] == info['tel'])
+                    ])
+            except FileNotFoundError:
+                self.logger.error(f"Run #{_id:<6} -- (some) files not found!") 
+
         telescopes_ordered = sorted([self._get_mirror_number(t) for t in run_dict.keys()])
         telescopes_ordered = [self._get_mirror_name(t) for t in telescopes_ordered]
         run_dict = {t : run_dict[t] for t in telescopes_ordered}
@@ -744,8 +751,6 @@ def get_run_numbers(telescope: str, date: str) -> dict:
             raise KeyError
 
     except KeyError:
-        from ... import create_stream_logger
-        import logging
 
         logger = create_stream_logger("XY-logger", logging.ERROR)
         logger.error(f"requested dataset does not exist! {telescope = }, {date = }")
