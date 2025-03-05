@@ -286,7 +286,6 @@ class Campaign():
                 candidate_files.add(file.split("/")[-1])
 
         self.logger.info(f"Packing {len(candidate_files)} files into {out}")
-
         subprocess.call(f"tar -caf {out} -C {base_dir} {' '.join(candidate_files)}", shell=True, executable='/bin/bash')
 
 
