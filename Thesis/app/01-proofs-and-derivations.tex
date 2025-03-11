@@ -4,7 +4,7 @@
 \label{app:derivation}
 
 
-\section{Approximating the Upper Limit of the UV Irradiance of an EAS}
+\section{Approximating the UV Irradiance of an EAS}
 \label{app:cr-uv-irradiance}
 
 In the following, we estimate the UV irradiance, $I_\text{UV}$, or Wattage 
@@ -14,13 +14,12 @@ observe this phenomenon, we assume fantastic to unrealistically good conditions
 for the \UV light yield and related parameters. This thus results in a very 
 optimistic upper limit to $I_\text{UV}$.
 
-Consider a cosmic ray with energy $E_0 = \SI{e18}{\eV}$ impinging almost 
-vertically ($\theta=\SI{15}{\degree}$\todo{make upright}) on the upper 
-atmosphere. We assume the behaviour of the particle cascade resulting from the 
-deeply inelastic scattering processes of the primary particle is completely 
-determined by the Heitler-Matthews model (see \todo{write this} and 
-\cite{Matthews2005, Risse2006}). We then arrive at the following value for the 
-atmospheric depth (height), at which the \EAS reaches its maximum in 
+We consider an \EAS of energy $E_0 = \SI{e18}{\eV}$ and inclination 
+$\uptheta=\SI{15}{\degree}$. We assume the behaviour of the particle cascade 
+resulting from the deeply inelastic is completely determined by the 
+Heitler-Matthews model (see \todo{write this} and 
+\cite{Matthews2005, Risse2006}). We arrive at the following value for the 
+atmospheric depth (height), at which the shower reaches its maximum in 
 multiplicity:
 
 \begin{equation}
@@ -35,36 +34,26 @@ of $\rho=\SI{0.86}{\kilogram\per\meter\cubed}$ at an altitude of
 
 At $\Xmax$, the EM component of the shower contains roughly
 $1-\left(E_0\,/\,\xi^\pi_C\right)^{\beta-1}\approx92\%$ of the primary particle 
-energy, with photons and electrons sharing the fraction to equal parts.
-Continuing, we assume that only electrons contribute meaningfully to excitations
-of air molecules. Muons in the hadronic component of the \EAS are minimally 
-ionizing and can therefore be neglected, similar arguments apply for photons in 
-the EM component.
-
-It thus follows that $E_\text{UV}=0.92\cdot0.5\cdot\SI{e18}{\electronvolt}=
+energy, with photons and electrons sharing the fraction to roughly equal parts.
+Since only electrons contribute meaningfully to excitations of air molecules, it 
+follows that $E_\text{UV}=0.92\cdot0.5\cdot\SI{e18}{\electronvolt}=
 \SI{4.6e17}{\electronvolt}$ are available a priori to create fluorescence light.
-As per \cite{Keilhauer2013}, optimistic numbers for the fluorescence light yield
-are about $\text{FY}=8\gamma\,/\,\SI{}{\mega\electronvolt}$. Most of these 
-photons stem from the 2P(0,0) transition of N$_2$ \cite{Ave2008}, which has a 
-characteristic wavelength of \SI{337.1}{\nano\meter}, and an average radiation 
-time of \SI{42}{\nano\second} \cite{Lean1989}. 
-
-Assuming that all available energy $E_\text{UV}$ is immediately converted to 
-molecular excitations of N$_2$ at $\Xmax$, and then gradually released according
-to an exponential decay, we recover an expression for the (UV) power output of 
-the air shower.
+We take an optimistic estimate of the fluorescence light yield 
+$\text{FY}\approx8\gamma\,/\,\SI{}{\mega\electronvolt}$ from \cite{Keilhauer2013}. 
+The majority of these photons will stem from the 2P(0,0) transition of 
+N$_2$ \cite{Ave2008}, which has a characteristic wavelength of 
+\SI{337.1}{\nano\meter}, and an average radiation time of \SI{42}{\nano\second} 
+\cite{Lean1989}. We assume that all available energy $E_\text{UV}$ is immediately 
+converted to molecular excitations of N$_2$ at $\Xmax$, and then gradually 
+released according to an exponential decay and recover an expression for the (UV) 
+power output of the air shower.
 
 \begin{equation}
 \label{eq:irradiance-power}
 P(t)= \text{FY}\,E_\text{UV}\,\frac{hc}{\SI{337.1}{\nano\meter}} \cdot\frac{e^{-\SI{42}{\nano\second}/t}}{t}   
 \end{equation}
 
-For the example at hand, this results in a maximum power output of 
-$P_\text{max}\approx\SI{19.4}{\watt}$. This macroscopic number might seem
-optimistic for such a microscopic process, but in reality is not surprising, as 
-the shower itself is incredibly short lived, and the output is maintained only 
-for a fraction of a moment.
-
+This results in a maximum power output of $P_\text{max}\approx\SI{19.4}{\watt}$. 
 In a last step, we convert the maximum power output to an irradiance measured on
 ground. For this, we must take into acount that the area illuminated by the 
 \UV-light grows proportional to the distance squared to the source (location of 

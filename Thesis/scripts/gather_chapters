@@ -16,6 +16,10 @@ case $HOSTNAME in
         ;;
     "debian")
 	TARGET="/home/filip/Desktop/phd-thesis/Thesis/chap/chapters.tex"
+	;;
+    "debian12")
+	TARGET="/home/filip/Public/phd-thesis/Thesis/chap/chapters.tex"
+	;;
 esac
 
 echo -e $DOCSTRING1 > "$TARGET"

@@ -23,6 +23,10 @@ case $HOSTNAME in
 		;;
 	"debian")
 		BASE="/home/filip/Desktop/phd-thesis/Thesis/include/"
+		;;
+	"debian12")
+		BASE="/home/filip/Public/phd-thesis/Thesis/include/"
+		;;
 esac
 
 TARGET="$BASE/acronyms.tex"
@@ -44,7 +48,7 @@ while read line; do
   SHORT="${FIELD[0]}"
   LONG="${FIELD[@]:1}"
 
-  echo -e \\\\"acro{$SHORT}{$LONG}" >> "$BASE/acronyms.tex"
+  echo -e \\\\"acro{$SHORT}{$LONG }" >> "$BASE/acronyms.tex"
   echo -e \\\\"newcommand{"\\\\"$SHORT}{"\\\\"ac{$SHORT}}" >> "$BASE/definitions.tex"
   echo -e \\\\"newcommand{"\\\\"$SHORT"s}{\\\\"acp{$SHORT}}" >> "$BASE/definitions.tex"
 

@@ -102,6 +102,8 @@ Projects/ONNXNetwork/
 *.bcf
 *.ptc
 *.run.xml
+*.fls
+*.fdb_latexmk
 
 # Condor
 *.err

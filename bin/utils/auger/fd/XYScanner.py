@@ -19,14 +19,14 @@ class XYRun():
     def __init__(self, runs: pd.DataFrame) -> None:
 
         self.year_and_month = runs[runs['forDB']].values[0,2].strftime("%Y-%m")
+        self.telescope = runs[runs['forDB']].values[0,0].upper()
         self.runs = self._scan_runs(runs)
-        
         self.calib_data = np.loadtxt(CONST.SCAN_PATH / f"results/outCorr_{self.runs['XY']}.txt",
                                      usecols=[3, 4], unpack=True)
     
 
     def __repr__(self):
-        return str(self.runs)
+        return f"{self.telescope}, {self.year_and_month}: " + str(self.runs)
 
     
     def __getitem__(self, key):

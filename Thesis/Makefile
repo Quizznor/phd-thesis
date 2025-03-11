@@ -3,7 +3,7 @@
 SHELL := bash
 TARGET := main
 BIBTEX := biber
-LATEX := pdflatex --shell-escape
+LATEX := latexmk -pdf
 DEPENDENCIES := $(wildcard *.tex abstract/*.tex chap/*.tex app/*.tex figures/*)
 DEPENDENCIES += $(wildcard *.sty *.bib)
 
@@ -20,7 +20,4 @@ clean:
 	scripts/gather_acronyms
 	scripts/gather_chapters
 	scripts/gather_appendices
-	$(LATEX) $*
-	$(BIBTEX) $*
-	$(LATEX) $*
 	$(LATEX) $*
