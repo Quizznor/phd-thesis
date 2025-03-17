@@ -25,6 +25,32 @@ def read_runlist(runlist_path: str) -> pd.DataFrame:
                        skipinitialspace=True, parse_dates=["date"], index_col=0, comment="#", sep=";")
 
 
+def get_mirror_name(tel: int) -> str:
+    if tel <= 6:
+        return f"LL{tel}"
+    elif tel <= 12:
+        return f"LM{tel - 6}"
+    elif tel <= 18:
+        return f"LA{tel - 12}"
+    elif tel <= 24:
+        return f"CO{tel - 18}"
+    else:
+        return f"HE{tel - 24}"
+
+def get_mirror_number(tel:str) -> int:
+    tel = tel.upper()
+    if "LL" in tel:
+        return int(tel[-1])
+    elif "LM" in tel:
+        return int(tel[-1]) + 6
+    elif "LA" in tel:
+        return int(tel[-1]) + 12
+    elif "CO" in tel:
+        return int(tel[-1]) + 18
+    elif "HE" in tel:
+        return int(tel[-1]) + 24
+
+
 class XYRun():
 
     def __init__(self, runs: pd.DataFrame) -> None:
@@ -41,11 +67,15 @@ class XYRun():
                 warn(f"{self.telescope} @ {self.year_month_day}: {run} ({run_id}) not found")
 
     
-    def get_run_id(self, key: str) -> str:
+    def __repr__(self) -> str:
+        return f"{self.telescope} @ {self.year_month_day}"
+
+    
+    def get_id(self, key: str) -> str:
         return self.run_numbers.get(key, "")
 
 
-    def get_run_data(self, key: str) -> str:
+    def get_data(self, key: str) -> str:
         return self.run_data.get(key, None)
 
 
@@ -98,8 +128,8 @@ class XYRunContainer():
             idx = list(self.runs.keys())[idx]
         elif isinstance(idx, slice):
             return list(self.runs.values())[idx]
-        else:
-            return self.runs[idx.upper()]
+
+        return self.runs[idx.upper()]
         
 
     def __repr__(self) -> str:
@@ -130,6 +160,24 @@ class XYRunContainer():
         raise NotImplementedError
 
 
+    def get_data(self, key: str) -> dict:
+
+        data_dict = {}
+        for run in self:
+            data_dict[str(run)] = run.get_data(key)
+
+        return data_dict
+
+
+    def get_id(self, key: str) -> dict:
+
+        data_dict = {}
+        for run in self:
+            data_dict[str(run)] = run.get_id(key)
+
+        return data_dict
+
+
 class Campaign(XYRunContainer):
 
     def __init__(self, year: int, month: int) -> None:
@@ -153,8 +201,8 @@ class Campaign(XYRunContainer):
                 (runlist['date'] == info['date'])
                 & (runlist['tel'] == info['tel'])])
 
-        telescopes_ordered = sorted([self._get_mirror_number(t) for t in run_dict.keys()])
-        telescopes_ordered = [self._get_mirror_name(t) for t in telescopes_ordered]
+        telescopes_ordered = sorted([get_mirror_number(t) for t in run_dict.keys()])
+        telescopes_ordered = [get_mirror_name(t) for t in telescopes_ordered]
         run_dict = {t : run_dict[t] for t in telescopes_ordered}
 
         return run_dict
@@ -166,35 +214,6 @@ class Campaign(XYRunContainer):
     #     "CO1", "CO2", "CO3", "CO4", "CO5", "CO6", 
     #     "HE1", "HE2", "HE3"
     # ]
-    
-
-    @staticmethod
-    def _get_mirror_name(tel: int) -> str:
-        if tel <= 6:
-            return f"LL{tel}"
-        elif tel <= 12:
-            return f"LM{tel - 6}"
-        elif tel <= 18:
-            return f"LA{tel - 12}"
-        elif tel <= 24:
-            return f"CO{tel - 18}"
-        else:
-            return f"HE{tel - 24}"
-    
-    
-    @staticmethod
-    def _get_mirror_number(tel:str) -> int:
-        if "LL" in tel:
-            return int(tel[-1])
-        elif "LM" in tel:
-            return int(tel[-1]) + 6
-        elif "LA" in tel:
-            return int(tel[-1]) + 12
-        elif "CO" in tel:
-            return int(tel[-1]) + 18
-        elif "HE" in tel:
-            return int(tel[-1]) + 24
-
 
     # def _sort_mirrors(self, tel1: str, tel2: str) -> bool:
     #     raise NotImplementedError("let's see if this is used anywhere")
