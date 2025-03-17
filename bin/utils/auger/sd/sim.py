@@ -28,12 +28,31 @@ class Simulation():
     CROFFLINE = f'/cr/data01/{CONSTANTS.USERNAME}/offline/install'
     CRWORK = f'/cr/work/{CONSTANTS.USERNAME}/Simulations'
 
-    def __init__(self, name: str, offline: str, src: str, primary: str, energy: str, model: str, **kwargs: dict):
-
+    def __init__(self, name: str = None, 
+                 offline: str = None, 
+                 src: str = None, 
+                 primary: str = None, 
+                 energy: str = None, 
+                 model: str = None, 
+                 **kwargs: dict):
+        
         self.logger = create_stream_logger('sim_logger')
-
-        # make file system
         self.path = Path(f"{self.CRWORK}/{name}")
+
+        # fake __init__
+        if offline is None \
+            or src is None \
+            or primary is None \
+            or energy is None \
+            or model is None:
+            
+            self.logger.info("dummy initialization!")
+            self.fake_init = True
+            return
+        else:
+            self.fake_init = False
+        
+        # make file system
         self.path.mkdir(parents=True, exist_ok=True)
         self.offline_src = f"{self.CROFFLINE}/{offline}/set_offline_env.sh"
 
@@ -48,9 +67,11 @@ class Simulation():
 
         self.logger.info("filesystem established successfully")
         
+        
         # set condor/python kwargs
         self.condor_kwargs, self.python_kwargs, queue = self._get_simulation_kwargs(primary, energy, model, kwargs)
         self.logger.info(f"Corsika dir found, {queue} files available")
+
 
         # make run.sub file
         sub_path = self.path / "condor.sub"

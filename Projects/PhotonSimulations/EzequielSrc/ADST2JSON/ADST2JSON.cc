@@ -80,13 +80,9 @@ private:
 void usage() {
 
 std::cerr <<  "\n  Usage: analysis <Index> <OutputDir> <ADSTPath1> <ADSTPath2> ... <ADSTPathN> \n"
-
 <<  "         Index is the path to a .csv file. \n"
-    
 <<  "         OutputDir is the place to dump th JSON files. \n"
-    
 <<  "         <ADSTfilePath> is the path to an ADST, e.g. ADST.root or a list of ADSTs' locations. \n" 
-
 <<  "          \n " <<std::endl;
 
 }
@@ -100,6 +96,8 @@ std::string categorizeEnergy(double number) {
         return "17.0_17.5";
     } else if (number >= 17.5 && number <= 18.) {
         return "17.5_18.0";
+    } else if (number >= 17.5 && number <= 18.) {
+        return "18_18.5";
     } else {
         return "Number is not in the specified range";
     }
