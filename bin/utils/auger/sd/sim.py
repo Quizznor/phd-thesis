@@ -148,14 +148,6 @@ class Simulation():
         return condor_dict
 
 
-    def process(self, executable: str) -> None:
-
-        data_dir = self.path / f"out/{self.kwargs['PRIMARY']}/{self.kwargs['ENERGY']}/"
-        for file in ProgressBar(os.listdir(data_dir)):
-            subprocess.run(" ".join([f". {self.offline_src} &&", executable, f"{data_dir}/{file}"]), 
-                           shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-
-
     def cleanup(self, log: bool=True, out: bool=False, dat: bool=False):
 
         raise NotImplementedError
@@ -233,3 +225,17 @@ class Simulation():
         print("\t\tn_particles          == 30000   -- for quick/dirty simulation tests")
         print("\t\tmax_materialize      == 150     -- max jobs to put into queue")
         print('"""')
+
+
+class Data():
+
+    def __init__(self, path: str) -> None:
+        raise NotImplementedError
+
+    def process(self, executable: str) -> None:
+        raise NotImplementedError
+    
+        data_dir = self.path / f"out/{self.kwargs['PRIMARY']}/{self.kwargs['ENERGY']}/"
+        for file in ProgressBar(os.listdir(data_dir)):
+            subprocess.run(" ".join([f". {self.offline_src} &&", executable, f"{data_dir}/{file}"]), 
+                           shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
