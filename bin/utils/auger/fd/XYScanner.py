@@ -24,7 +24,6 @@ def read_runlist(runlist_path: str) -> pd.DataFrame:
                        dtype=defaultdict(lambda: "str", step="int", mA="float", forDB="bool"),
                        skipinitialspace=True, parse_dates=["date"], index_col=0, comment="#", sep=";")
 
-
 def get_mirror_name(tel: int) -> str:
     if tel <= 6:
         return f"LL{tel}"
@@ -58,11 +57,32 @@ class XYRun():
         self.year_month_day = runs[runs['forDB']].values[0,2].strftime("%Y-%m-%d")
         self.telescope = runs[runs['forDB']].values[0,0].upper()
         self.run_numbers = self._scan_runs(runs)
+
+        match self.telescope:
+            case "LL1":
+                mask_file = CONST.SCAN_PATH / "config/pixel_masks/ll1.txt"
+                mask = np.loadtxt(mask_file, usecols=1, dtype=bool)
+            case "LL6":
+                mask_file = CONST.SCAN_PATH / "config/pixel_masks/ll6-xp3062.txt"
+                mask = np.loadtxt(mask_file, usecols=1, dtype=bool)
+            case _:
+                mask = np.ones(440, dtype=bool)
+
         self.run_data = {}
         for run, run_id in self.run_numbers.items():
             try:
-                file = f"results/{'outCorr' if run == 'XY' else 'out'}_{run_id}.txt"
-                self.run_data[run] = np.loadtxt(CONST.SCAN_PATH / file, usecols=3)
+                if run == "XY":
+                    file = f"results/outCorr_{run_id}.txt"
+                    std, xy = np.loadtxt(CONST.SCAN_PATH / file, usecols=[3,4], unpack=True)
+                    std[~mask], xy[~mask] = np.nan, np.nan
+                    self.run_data["CalA"] = std
+                    self.run_data["XY"] = xy
+                else:
+                    file = f"results/out_{run_id}.txt"
+                    run_data = np.loadtxt(CONST.SCAN_PATH / file, usecols=2)
+                    run_data[~mask] = np.nan
+                    self.run_data[run] = run_data
+                
             except FileNotFoundError:
                 warn(f"{self.telescope} @ {self.year_month_day}: {run} ({run_id}) not found")
 
