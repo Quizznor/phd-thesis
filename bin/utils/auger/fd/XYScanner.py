@@ -8,7 +8,10 @@ from . import AperturePlot, PixelPlot
 import logging
 import glob
 
+from datetime import datetime
 from matplotlib import colors
+from matplotlib.gridspec import GridSpec
+from matplotlib.colorbar import ColorbarBase
 from collections import defaultdict
 from tabulate import tabulate, SEPARATING_LINE
 import subprocess
@@ -18,15 +21,14 @@ class XYRun():
 
     def __init__(self, runs: pd.DataFrame) -> None:
 
-        self.year_and_month = runs[runs['forDB']].values[0,2].strftime("%Y-%m")
+        self.year_month_day = runs[runs['forDB']].values[0,2].strftime("%Y-%m-%d")
         self.telescope = runs[runs['forDB']].values[0,0].upper()
         self.runs = self._scan_runs(runs)
-        self.calib_data = np.loadtxt(CONST.SCAN_PATH / f"results/outCorr_{self.runs['XY']}.txt",
-                                     usecols=[3, 4], unpack=True)
+        self.cala, self.xy = self.calib_data = np.loadtxt(CONST.SCAN_PATH / f"results/outCorr_{self.runs['XY']}.txt",usecols=[3, 4], unpack=True)
     
 
     def __repr__(self):
-        return f"{self.telescope}, {self.year_and_month}: " + str(self.runs)
+        return f"{self.telescope}, {self.year_month_day}: " + str(self.runs)
 
     
     def __getitem__(self, key):
@@ -65,7 +67,7 @@ class XYRun():
         r = "-r" if rerun else ""
 
         move = f"cd {CONST.SCAN_PATH}"
-        run_calib = f"./run_Calib.py -i {ids} {r} -cfg {self.year_and_month}"
+        run_calib = f"./run_Calib.py -i {ids} {r} -cfg {'_'.join(self.year_month_day[:-3])}"
         source_offline = f"source {CONST.OFLN_PATH / offline_version / 'set_offline_env.sh'}"
 
         subprocess.call("; ".join([move, source_offline, run_calib]), shell=True, executable='/bin/bash')
@@ -117,7 +119,7 @@ class Campaign():
         return self.runs[tel.upper()]
 
 
-    def __repr__(self) -> True:
+    def __repr__(self) -> str:
         
         table_data = []
         last = "LLLMLACOHE"
@@ -190,6 +192,7 @@ class Campaign():
 
 
     def _sort_mirrors(self, tel1: str, tel2: str) -> bool:
+        raise NotImplementedError("let's see if this is used anywhere")
         mirror1 = self._get_mirror_number(tel1)
         mirror2 = self._get_mirror_number(tel2)
         return mirror1 < mirror2 
@@ -200,9 +203,37 @@ class Campaign():
             run.run_calib(offline_version, rerun)
 
     
-    def summary(self, normalize='none', **kwargs) -> plt.Figure:
+    def plot_summary(self, normalize='none', **kwargs) -> plt.Figure:
 
         fig, ax = plt.subplots()
+
+        if normalize == 'none':
+            ax.set_ylabel(r'calib. const. / $\left( \gamma\,/\,\mathrm{ADC} \right)$')
+        elif normalize.lower() == 'cala':
+            cala_drift = kwargs.get('cala_drift', 0)
+            drift_label = fr"($+\frac{{ {1e2*cala_drift}\% }}{{ \mathrm{{year}} }}$)" if cala_drift else ""
+            ax.set_ylabel(f'XY calib. const. / std. calib. {drift_label}')
+            time_difference_years = (datetime.strptime(self.year_and_month, "%Y-%m") - datetime(2010,6, 1)).days / 365
+            ax.fill_between([0,32], 1-0.099, 1+0.099, color='k', alpha=0.1, edgecolor='none')
+        else:
+            ax.set_ylabel(f'XY calib. const. / {kwargs.get("label", "custom norm")}')
+
+        ax.text(
+            0, 1,
+            f"{self.year_and_month} XY campaign summary",
+            transform=ax.transAxes,
+            ha="left",
+            va="bottom",
+            fontsize="large",
+            fontweight="bold",
+        )
+        
+        ax.set_xticklabels([], fontsize=8, rotation=90)
+        ax.set_xticks([], minor=True)
+        ax.grid(axis="y")
+        ax.grid(axis="y", which="minor", alpha=0.3)
+        ax.set_xlim(0, 32)
+
         data, positions, labels = [], [], []
         for pos, tel in enumerate(self.mirrors, 1):
             try:
@@ -218,7 +249,7 @@ class Campaign():
                 if normalize == 'none':
                     norm = np.ones(440)
                 elif normalize.lower() == 'cala':
-                    norm = std_calib
+                    norm = (1 + cala_drift*time_difference_years) * std_calib
                 else:
                     norm = normalize
 
@@ -242,34 +273,14 @@ class Campaign():
             except KeyError:
                 continue
 
-        if normalize == 'none':
-            ax.set_ylabel(r'calib. const. / $\left( \gamma\,/\,\mathrm{ADC} \right)$')
-        elif normalize.lower() == 'cala':
-            ax.set_ylabel('XY calib. const. / std. calib.')
-        else:
-            ax.set_ylabel(f'XY calib. const. / {kwargs.get("label", "custom norm")}')
-
-        ax.text(
-            0, 1,
-            f"{self.year_and_month} XY campaign summary",
-            transform=ax.transAxes,
-            ha="left",
-            va="bottom",
-            fontsize="large",
-            fontweight="bold",
-        )
-        
-        ax.set_xticklabels([], fontsize=8, rotation=90)
-        ax.set_xticks([], minor=True)
-        ax.grid(axis="y")
-        ax.grid(axis="y", which="minor", alpha=0.3)
         ax.boxplot(data, positions=positions, labels=labels, widths=0.5,
                    flierprops={'markersize': 2, 'alpha': 0.2}, notch=True,
                    bootstrap=5000)
-        ax.set_xlim(0, 32)
 
         ymin, ymax = ax.get_ylim()
         ax.set_ylim(kwargs.get('ymin', ymin), kwargs.get('ymax', ymax))
+
+        return fig
 
 
     def pack_files(self, out: str = None, extension: str = "") -> None:
@@ -287,6 +298,137 @@ class Campaign():
 
         self.logger.info(f"Packing {len(candidate_files)} files into {out}")
         subprocess.call(f"tar -caf {out} -C {base_dir} {' '.join(candidate_files)}", shell=True, executable='/bin/bash')
+
+
+class Telescope():
+
+    def __init__(self, telescope: str) -> None:
+
+        self.logger = create_stream_logger("XYCampaign", loglevel=logging.INFO)
+
+        self.data = pd.DataFrame()
+        for runlist in os.listdir(CONST.SCAN_PATH / f"config/calib_runlists"):
+            if "testing" in runlist or "va" in runlist: continue
+
+            this_run = pd.read_csv(CONST.SCAN_PATH / f"config/calib_runlists/{runlist}",
+                                   names=["id","tel","step","date","source","mA","forDB","jobfile","comment"],
+                                   dtype=defaultdict(lambda: "str", step="int", mA="float", forDB="bool"),
+                                   skipinitialspace=True, parse_dates=["date"], index_col=0, comment="#", sep=";")
+            
+            dropped_indices = this_run[this_run['tel'] != telescope.lower()].index
+            self.data = pd.concat([self.data, this_run.drop(dropped_indices)])
+
+        self.runs = self._split_runlist(self.data)
+        self.tel = telescope
+
+        
+    def __getitem__(self, date: str) -> XYRun:
+
+        if isinstance(date, int):
+            if date > len(self.runs): return StopIteration
+            date = list(self.runs.keys())[date]
+
+        return self.runs[date]
+    
+
+    def __repr__(self) -> str:
+        
+        table_data = []
+        for date, runs in self.runs.items():
+            
+            table_data.append(
+                [date,
+                 runs['preDAQ'],
+                 runs['preXY'],
+                 runs['XY'],
+                 runs['postXY'],
+                 runs['postDAQ']
+                 ]
+            )
+
+        return tabulate(table_data, disable_numparse=True,
+                        headers=['date', 'preDAQ', 'preXY', 'XY', 'postXY', 'postDAQ'])
+
+
+    def _split_runlist(self, runlist: pd.DataFrame) -> dict:
+
+        # telescopes_ordered = sorted([self._get_mirror_number(t) for t in run_dict.keys()])
+        # telescopes_ordered = [self._get_mirror_name(t) for t in telescopes_ordered]
+        # run_dict = {t : run_dict[t] for t in telescopes_ordered}
+
+
+        run_dict = {}
+        for _id, info in runlist[runlist['forDB']].iterrows():
+            
+            try:
+                run_dict[info['date'].strftime("%Y-%m-%d")] = XYRun(runlist[runlist['date'] == info['date']])
+            except FileNotFoundError:
+                self.logger.error(f"Run #{_id:<6} -- (some) files not found!") 
+
+        runs_ordered = sorted([d for d in run_dict.keys()])
+        run_dict = {d : run_dict[d] for d in runs_ordered}
+
+        return run_dict
+    
+
+    def plot_summary(self, normalize='none', **kwargs) -> plt.Axes:
+
+        cut = lambda x: x[np.abs(x - np.mean(x)) < np.std(x)]
+
+        fig = plt.figure()
+        gs = GridSpec(
+            2,
+            len(self.runs) + 1,
+            fig,
+            height_ratios=[0.6, 1],
+            width_ratios=[0.1] + [1 for _ in range(len(self.runs))]
+        )
+        gs.update(left=0.05, right=0.95, wspace=0.05, hspace=0.1)
+
+        pixel_plots = [fig.add_subplot(gs[0, i], aspect='equal') for i in range(1, len(self.runs) + 1)]
+        history_plot = fig.add_subplot(gs[1, :])
+        colorbar = fig.add_subplot(gs[0, 0])
+
+        vmin, vmax = np.inf, -np.inf
+        data, positions, labels = [], [], []
+        fit_y = []
+        for run, ax in zip(self.runs.values(), pixel_plots):
+            vmin, vmax = np.min([vmin, *cut(run.xy)]), np.max([vmax, *cut(run.xy)])
+            
+            if normalize == "none":
+                norm = np.ones(440)
+                colorbar_label = r"$\gamma\,/\,\mathrm{ADC}$"
+            elif normalize == "cala":
+                norm = run.cala
+                colorbar_label = "XY / std."
+                vmin, vmax = np.min(vmin/norm), np.max(vmax/norm)
+
+            PixelPlot(run.xy / norm, ax, title=run.year_month_day, vmin=vmin, vmax=vmax, lw=0.4)
+            data.append(run.xy / norm)
+            positions.append(datetime.strptime(run.year_month_day, "%Y-%m-%d").timestamp())
+            fit_y.append(np.median(run.xy / norm))
+            labels.append(run.year_month_day)
+
+        history_plot.boxplot(data, positions=positions, tick_labels=labels, widths=3600*24*10,
+                            whiskerprops={'lw': 0.3}, notch=True,
+                            bootstrap=5000, showfliers=False)
+        
+        # drift 
+        # TODO
+
+        history_plot.set_ylabel(f"{self.tel}: XY calib")
+        
+        ColorbarBase(
+                colorbar,
+                cmap=plt.cm.viridis,
+                norm=colors.Normalize(vmin, vmax),
+                orientation="vertical",
+                label=colorbar_label
+            )
+        
+        colorbar.yaxis.set_ticks_position('left')
+        colorbar.yaxis.set_label_position('left')
+
 
 
 class Grid:
