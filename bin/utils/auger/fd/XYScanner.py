@@ -56,6 +56,8 @@ class XYRun():
 
         self.year_month_day = runs[runs['forDB']].values[0,2].strftime("%Y-%m-%d")
         self.telescope = runs[runs['forDB']].values[0,0].upper()
+        self.source = runs[runs['forDB']].values[0,3].upper()
+        self.stepsize = runs[runs['forDB']].values[0,1]
         self.run_numbers = self._scan_runs(runs)
 
         match self.telescope:
@@ -159,11 +161,11 @@ class XYRunContainer():
             
             table_data.append(
                 [key,
-                 run.get_run_id('preDAQ'),
-                 run.get_run_id('preXY'),
-                 run.get_run_id('XY'),
-                 run.get_run_id('postXY'),
-                 run.get_run_id('postDAQ')
+                 run.get_id('preDAQ'),
+                 run.get_id('preXY'),
+                 run.get_id('XY'),
+                 run.get_id('postXY'),
+                 run.get_id('postDAQ')
                  ]
             )
 
@@ -399,7 +401,7 @@ class Telescope(XYRunContainer):
         data, positions, labels = [], [], []
         fit_y = []
         for run, ax in zip(self.runs.values(), pixel_plots):
-            xy = run.get_run_data('XY')
+            xy = run.get_data('XY')
             vmin, vmax = np.min([vmin, *cut(xy)]), np.max([vmax, *cut(xy)])
             
             if normalize == "none":
