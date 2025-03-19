@@ -1,7 +1,8 @@
 %! TEX root = ../thesis.tex
 
 \pagestyle{empty}
-\foreach \c in {en, es, de}{%
+% \foreach \c in {en, es, de}{%
+  \foreach \c in {en}{%
   \begin{KITtitle_\c}
 
     % \title{PhD Draft Title}
@@ -15,8 +16,8 @@
 
   \end{KITtitle_\c}
   }
+
+\include{./include/declaration.tex}
   
 \todo[inline]{use 'submitted' for hand in, use 'accepted' for final version.}
 \todo[inline]{fix page vspace formatting once you have the final title}
-\vfill
-\doclicenseThis
