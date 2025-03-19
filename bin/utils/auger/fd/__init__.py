@@ -1,6 +1,10 @@
 from ...plotting import plt
 from ...binaries import np
 
+from matplotlib.colors import Normalize
+from matplotlib.gridspec import GridSpec
+from matplotlib.cm import ScalarMappable
+
 
 def AperturePlot(ax=None, filterStructure=True) -> plt.axes:
     """Add aperture, corrector, lens structure of FD telescopes to a given axis"""
@@ -95,10 +99,11 @@ def PixelPlot(
 
     ax = ax if ax is not None else plt.gca()
     ax.set_title(title if title is not None else ax.get_title())
+    three_sigma_cut = lambda d: d[np.abs(d - np.nanmean(d))/np.nanstd(d) < 3]
 
     cmap = cmap if cmap is not None else plt.cm.viridis
-    vmin = vmin if vmin is not None else np.nanmin(pixel_data)
-    vmax = vmax if vmax is not None else np.nanmax(pixel_data)
+    vmin = vmin if vmin is not None else np.min(three_sigma_cut(pixel_data))
+    vmax = vmax if vmax is not None else np.max(three_sigma_cut(pixel_data))
     norm = norm if norm is not None else Normalize(vmin=vmin, vmax=vmax)
 
     if isinstance(cmap, str):
@@ -170,3 +175,61 @@ def get_mirror_or_telescope(mirror_or_telescope: str) -> str:
         mirror_or_telescope = f"m{n_mirror}"
 
     return mirror_or_telescope
+
+
+def pixel_grid(data: np.ndarray, **kwargs) -> plt.Figure:
+
+    cols, rows, npix = data.shape
+
+    three_sigma_cut = lambda d: d[np.abs(d - np.nanmean(d))/np.nanstd(d) < 3]
+    vmin, vmax = kwargs.get("vmin", None), kwargs.get("vmax", None)
+    match vmin:
+        case "min": vmin = np.min(three_sigma_cut(data))
+        case None: vmin = None
+        case _: pass
+    match vmax:
+        case "max": vmax = np.max(three_sigma_cut(data))
+        case None: vmax = None
+        case _: pass
+        
+    cmap = plt.get_cmap(kwargs.get("cmap", "viridis"))
+    cbar_label = kwargs.get("cbar_label", "data")
+    ylabel = kwargs.get("ylabel", [""] * rows)
+    xlabel = kwargs.get("xlabel", [""] * cols)
+
+
+    fig = plt.figure()
+    gs = GridSpec(rows, cols + 1, fig,
+                  hspace=0.01, wspace=0.01,
+                  width_ratios=[1 for _ in range(cols)] + [0.02 * cols])
+
+    for i in range(rows):
+        for j in range(cols):
+
+            ax = fig.add_subplot(gs[i, j])
+            if sum(np.isnan(data[j, i])) == 440:
+                ax.set_aspect("equal")
+                ax.axis("off")
+            else:
+                PixelPlot(data[j, i], ax, cmap=cmap, vmin=vmin, vmax=vmax, lw=0.4)
+            
+            if not j: 
+                ax.text(-0.1, 0.5,
+                        ylabel[i],
+                        horizontalalignment='center',
+                        verticalalignment='center',
+                        transform=ax.transAxes,
+                        rotation=90)
+            if not i: 
+                ax.text(0.5, 1.1,
+                    xlabel[j],
+                    horizontalalignment='center',
+                    verticalalignment='center',
+                    transform=ax.transAxes)
+
+    if vmin is not None or vmax is not None:
+        cax = fig.add_subplot(gs[:, -1])
+        mappable = ScalarMappable(Normalize(vmin, vmax, cmap.N), cmap)
+        plt.colorbar(mappable, cax=cax, label=cbar_label)
+
+    return fig

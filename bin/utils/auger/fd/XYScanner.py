@@ -79,6 +79,10 @@ class XYRun():
                     std[~mask], xy[~mask] = np.nan, np.nan
                     self.run_data["CalA"] = std
                     self.run_data["XY"] = xy
+                    mask[std == 0.] = False
+                    std[~mask], xy[~mask] = np.nan, np.nan
+                    ratio = xy / std
+                    self.run_data["ratio"] = ratio
                 else:
                     file = f"results/out_{run_id}.txt"
                     run_data = np.loadtxt(CONST.SCAN_PATH / file, usecols=2)

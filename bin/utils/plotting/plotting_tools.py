@@ -17,9 +17,10 @@ from matplotlib import dates
 
 def ridgeplot2d(data, **kwargs) -> dict:
 
+    three_sigma_cut = lambda d: d[np.abs(d - np.nanmean(d))/np.nanstd(d) < 3]
     xmin, xmax = kwargs.get("xmin", None), kwargs.get("xmax", None)
-    if xmin is None: xmin = np.nanmin(data)
-    if xmax is None: xmax = np.nanmax(data)
+    if xmin is None: xmin = np.min(three_sigma_cut(data))
+    if xmax is None: xmax = np.max(three_sigma_cut(data))
 
     cmap = plt.get_cmap(kwargs.get("cmap", "viridis"))
     labels = kwargs.get("labels", [""] * len(data))
