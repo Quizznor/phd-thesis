@@ -1,5 +1,0 @@
-%! TEX root = ../main.tex
-
-\chapter{Introduction}
-\label{chap:introduction}
-

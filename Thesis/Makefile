@@ -4,7 +4,7 @@ SHELL := bash
 TARGET := main
 BIBTEX := biber
 LATEX := latexmk -pdf
-DEPENDENCIES := $(wildcard *.tex abstract/*.tex chap/*.tex app/*.tex figures/*)
+DEPENDENCIES := $(wildcard *.tex abstract/*.tex chap/*.tex app/*.tex figures/* include/*.tex)
 DEPENDENCIES += $(wildcard *.sty *.bib)
 
 ##########################################################

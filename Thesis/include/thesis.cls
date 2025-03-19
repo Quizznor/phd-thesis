@@ -1,8 +1,8 @@
 \ProvidesClass{include/thesis}
 \LoadClass[a4paper, 11pt, twoside]{book}
 
-\usepackage[utf8]{inputenc}
-% \usepackage[T1]{fontenc}
+% \usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
 \usepackage[ngerman, english]{babel}
 \usepackage[margin=1.1in]{geometry}
 \usepackage{amsfonts, amstext, amssymb}
@@ -16,6 +16,8 @@
 \usepackage{rotating}
 \usepackage{subfig}
 \usepackage{mparhack}
+\usepackage{lipsum}
+\usepackage{authoraftertitle}
 \usepackage[printonlyused, withpage]{acronym}
 \newcommand{\word}[2]{\acro{#1}{\textit{#2}}}
 
@@ -226,37 +228,72 @@
   \ExplSyntaxOff
 
 % chapter
+% \titleformat{\chapter}
+%     [display]
+%     {}
+%     {}
+%     {0pt}
+%     {%
+%       \thispagestyle{empty}
+%       \startcontents
+%       \begin{tikzpicture}[overlay]
+%         \node[anchor=north west] at (0, 0.847cm) 
+%           {\textcolor{cyan}{\qrcode{https://github.com/Quizznor/phd-thesis/blob/main/Thesis/header/\thechapter.txt}}};
+%         \draw[line width=0.5mm](\qrlength + \titlesep, 0.847cm-3.9pt)--(\qrlength + \titlesep, -\qrlength - 4pt + 0.847cm);
+%         \node[anchor=south west] at (\qrlength + \titlesep + 1.7pt, -\qrlength - 9.8pt + 0.847cm)%
+%           {\includegraphics[height=\qrlength+3.7pt, width=\textwidth-\qrlength-1.3\titlesep]{header/\thechapter.png}};
+%         \end{tikzpicture}
+%         \hfill
+%         \begin{minipage}[t][1.3cm][b]{\textwidth-\qrlength-2.6\titlesep}
+%             \centering\fontsize{25pt}{0pt}\selectfont\Contour{\ifnum\thechapter=0\fontsize{50}{0}\selectfont\else\fi#1}
+%         \end{minipage}
+%     }
+%     [%
+%     \ifnum\thechapter=0
+%       \vspace{0.6cm}
+%     \else
+%       \vspace*{1cm}%
+%       \normalsize\normalfont
+%       \hfill\textbf{Contents}\hrule\vspace{0.1cm}
+%       \printcontents{p}{2}{\setcounter{tocdepth}{4}}
+%       \hrule\vspace{-0.6cm}
+%     \fi
+%     ]
+
+
 \titleformat{\chapter}
-    [display]
-    {}
-    {}
-    {0pt}
-    {%
-      \thispagestyle{empty}
-      \startcontents
-      \begin{tikzpicture}[overlay]
-        \node[anchor=north west] at (0, 0.847cm) 
-          {\textcolor{cyan}{\qrcode{https://github.com/Quizznor/phd-thesis/blob/main/Thesis/header/\thechapter.txt}}};
-        \draw[line width=0.5mm](\qrlength + \titlesep, 0.847cm-3.9pt)--(\qrlength + \titlesep, -\qrlength - 4pt + 0.847cm);
-        \node[anchor=south west] at (\qrlength + \titlesep + 1.7pt, -\qrlength - 9.8pt + 0.847cm)%
-          {\includegraphics[height=\qrlength+3.7pt, width=\textwidth-\qrlength-1.3\titlesep]{header/\thechapter.png}};
-        \end{tikzpicture}
-        \hfill
-        \begin{minipage}[t][1.3cm][b]{\textwidth-\qrlength-2.6\titlesep}
-            \centering\fontsize{25pt}{0pt}\selectfont\Contour{\ifnum\thechapter=0\fontsize{50}{0}\selectfont\else\fi#1}
-        \end{minipage}
-    }
-    [%
+  [display]
+  {}
+  {}
+  {0pt}
+  {%
+    \thispagestyle{empty}
+    \startcontents
     \ifnum\thechapter=0
-      \vspace{0.6cm}
+      \centering\normalfont\huge #1
+      \hrule\vspace{-1cm}
     \else
-      \vspace*{1cm}%
-      \normalsize\normalfont
-      \hfill\textbf{Contents}\hrule\vspace{0.1cm}
-      \printcontents{p}{2}{\setcounter{tocdepth}{4}}
-      \hrule\vspace{-0.6cm}
+      \raisebox{-1.5pt}{\sc{\chaptername}~\thechapter}~\titlerule\newline
+      \begin{flushright}
+        \begin{minipage}[t]{0.85\textwidth}
+          \begin{flushright}
+            \bfseries\Huge \sc{#1}
+          \end{flushright}
+        \end{minipage}
+      \end{flushright}
+      \vspace{-0.7cm}
     \fi
-    ]
+  }
+  [%
+    \ifnum\thechapter=0
+      \vspace{0.1cm}
+    \else
+      \raisebox{-1.5pt}{\sc{Contents}}~\titlerule\flushright
+      \normalsize\normalfont\vspace{5pt}
+      \printcontents{p}{2}{\setcounter{tocdepth}{4}}
+      \vspace{5pt}\titlerule
+    \fi
+  ]
   \titlecontents{chapter}
     [0.2cm]
     {\bfseries\vspace{0.85cm}\hrule\vspace{-0.55cm}}
@@ -264,7 +301,7 @@
     {}
     {\hfill\normalsize\contentspage}
     []
-\titlespacing*{\chapter} {0pt}{0pt}{40pt}
+\titlespacing*{\chapter} {0pt}{-2cm}{0.5cm}
 
 
 % sections
@@ -306,7 +343,6 @@
 }
 
 \renewcommand{\mainmatter}{%
-  \setcounter{chapter}{-1}
   \pagenumbering{arabic}
   \let\chapter=\tempchapter
   \addtocontents{toc}{\protect\contentsline {part}{Main Content}{}{}}

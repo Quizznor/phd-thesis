@@ -48,9 +48,9 @@ while read line; do
   SHORT="${FIELD[0]}"
   LONG="${FIELD[@]:1}"
 
-  echo -e \\\\"acro{$SHORT}{$LONG }" >> "$BASE/acronyms.tex"
-  echo -e \\\\"newcommand{"\\\\"$SHORT}{"\\\\"ac{$SHORT}}" >> "$BASE/definitions.tex"
-  echo -e \\\\"newcommand{"\\\\"$SHORT"s}{\\\\"acp{$SHORT}}" >> "$BASE/definitions.tex"
+  echo -e \\\\"acro{$SHORT}{$LONG}" >> "$BASE/acronyms.tex"
+  echo -e \\\\"newcommand{"\\\\"$SHORT}{"\\\\"ac{$SHORT}\\\\xspace}" >> "$BASE/definitions.tex"
+  echo -e \\\\"newcommand{"\\\\"$SHORT"s}{\\\\"acp{$SHORT}\\\\xspace}" >> "$BASE/definitions.tex"
 
 done < "$BASE/acronyms.source"
 echo -e "\\\end{acronym}\n" >> "$BASE/acronyms.tex"
