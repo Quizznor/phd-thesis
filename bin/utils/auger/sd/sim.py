@@ -209,7 +209,7 @@ class Simulation():
                        "20_20.2"]
             
         for model in os.listdir(self.path / "dat"):
-            print(f"** {model} (root / other)**")
+            print(f"** {model} (root / other) **")
             table = []
             for primary in os.listdir(self.path / f"dat/{model}"):
                 row = [primary]

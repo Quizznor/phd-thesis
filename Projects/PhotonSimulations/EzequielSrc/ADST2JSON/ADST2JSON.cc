@@ -416,7 +416,8 @@ int main(int argc, char** argv)
                 double totalSignalCalc = 0;
                 std::vector<float> stationTrace;
 
-                for (int pmt = 1; pmt <= 3; ++pmt) {
+                // get info on ssd as well!
+                for (int pmt = 1; pmt <= 4; ++pmt) {
                     
                     const std::string pmtId = "pmt_" + std::to_string(pmt);
                     const Traces& pmtData = sdRecStationVector[j].GetPMTTraces(eTotalTrace, pmt);
