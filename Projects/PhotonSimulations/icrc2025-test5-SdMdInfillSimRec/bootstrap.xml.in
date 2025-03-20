@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!DOCTYPE bootstrap [
+  <!-- Path to your own configuration files -->
+  <!ENTITY userConfigFiles '.'>
+  <!-- alias for standard Sd and Md config files -->
+    <!ENTITY standardSdIdealDetConfig SYSTEM '@CONFIGDIR@/standardSdIdealDetConfig.xml'>
+    <!ENTITY standardMdIdealDetConfig SYSTEM  '@CONFIGDIR@/standardMdIdealDetConfig.xml'>
+
+    <!ENTITY standardSdSimModuleConfig SYSTEM '@CONFIGDIR@/standardSdSimModuleConfig.xml'>
+    <!ENTITY standardMdSimModuleConfig SYSTEM '@CONFIGDIR@/standardMdSimModuleConfig.xml'>
+
+    <!ENTITY standardSdRecModuleConfig SYSTEM '@CONFIGDIR@/standardSdRecModuleConfig.xml'>
+    <!ENTITY standardMdRecModuleConfig SYSTEM '@CONFIGDIR@/standardMdRecModuleConfig.xml'>
+]>
+
+<bootstrap
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation='@SCHEMALOCATION@/bootstrap.xsd'
+  xmlns:xlink="http://www.auger.org/schema/types">
+
+  <!-- Detectors -->
+  &standardSdIdealDetConfig;
+  &standardMdIdealDetConfig;
+
+  <!-- Sim modules -->
+  &standardSdSimModuleConfig;
+  &standardMdSimModuleConfig;
+
+  <!-- Rec modules -->
+  &standardSdRecModuleConfig;
+  &standardMdRecModuleConfig;
+
+  <centralConfig>
+
+  <!-- This link points to the module sequencing file. The id is used by the
+       RunManager to look up the sequence file, so you shouldn't change it.
+       To use an alternative sequence, change the filename in xlink:href -->
+
+    <!-- =============== General ================ -->
+
+    <configLink
+      id         = "ModuleSequence"
+      type       = "XML"
+      xlink:href = "./ModuleSequence.xml"/>
+
+    <configLink
+      id         = "EventFileReader"
+      type       = "XML"
+      xlink:href = "./EventFileReader.xml"/>
+
+    <configLink
+      id         = "EventGenerator"
+      type       = "XML"
+      xlink:href = "./EventGenerator.xml"/>
+
+    <!-- =============== SD Simulation ================ -->
+    <configLink
+      id         = "SStationListXMLManager"
+      type       = "XML"
+      xlink:href = "@CONFIGDIR@/SIdealUpgradedStationListInfill.xml"/>
+
+    <configLink
+      id         = "SManagerRegister"
+      type       = "XML"
+      xlink:href = "@CONFIGDIR@/standardSdIdealSManagerRegisterConfigWithoutDenseRings.xml"/>
+
+    <!-- =============== MD Simulation ================ -->
+
+    <configLink
+      id         = "MModelsXMLManager"
+      type       = "XML"
+      xlink:href = "@CONFIGDIR@/MModelConfig.xml"/>
+
+    <configLink
+      id         = "MCounterListXMLManager"
+      type       = "XML"
+      xlink:href = "@CONFIGDIR@/MIdealCounterListInfill.xml"/>
+
+    <!-- =============== SD Reconstruction =================== -->
+
+    <configLink
+      id         = "LDFFinderKG"
+      type       = "XML"
+      xlink:href = "@CONFIGDIR@/LDFFinderKG_Infill.xml"/>
+
+    <configLink
+      id         = "SdEventSelector"
+      type       = "XML"
+      xlink:href = "@CONFIGDIR@/SdEventSelector_Infill.xml"/>
+
+  </centralConfig>
+
+  <parameterOverrides>
+      <configLink id="EventFileReader">
+        <EventFileReader>
+          <CORSIKA>
+
+            <!-- the list of filenames -->
+            <InputFilenames>
+              '@INPUTFILE@'
+            </InputFilenames>
+            <PatternPath>
+              '@PATTERNPATH@'
+            </PatternPath>
+            <InputMapping>
+              <GroundData>
+                '@GROUNDDATA@'
+              </GroundData>
+              <ProfileData> (1).long </ProfileData>
+            </InputMapping>    
+          </CORSIKA>
+        </EventFileReader>
+      </configLink>
+
+      <configLink id="RecDataWriter">
+        <RecDataWriter>
+          <minEnergyForTraces unit="EeV"> 0 </minEnergyForTraces>
+          <rootOutput>
+            <outputFileName>
+              '@OUTPUTFILE@'
+            </outputFileName>
+          </rootOutput>
+        </RecDataWriter>
+      </configLink>
+
+      <configLink id="CachedShowerRegenerator">
+        <CachedShowerRegenerator>
+          <LimitParticlesPerCycle> 1 </LimitParticlesPerCycle>
+          <UseWeightedStationSimulation> 0 </UseWeightedStationSimulation>
+          <UMD>
+            <Simulate> 1 </Simulate>
+            <TightRadius unit="m"> 12 </TightRadius>
+            <MaxRadius unit="m"> 50 </MaxRadius>
+          </UMD>
+        </CachedShowerRegenerator>
+      </configLink>
+
+      <configLink id="G4StationSimulator">
+        <G4StationSimulator>
+          <verbosity> 0 </verbosity>
+          <underGroundSim>
+            <umdFastMode> 1 </umdFastMode>
+            <umdFastProp> 1 </umdFastProp>
+            <energyLimits>
+              <muons unit="GeV"> 0.5 </muons>
+              <electrons unit="GeV"> 1 </electrons>
+              <gammas unit="GeV"> 1 </gammas>
+              <other unit="GeV"> 0.5 </other>
+            </energyLimits>
+          </underGroundSim>
+        </G4StationSimulator>
+      </configLink>
+
+      <configLink id="MdCornerClippingCorrector">
+        <MdCornerClippingCorrector>
+            <par0> 0.05 </par0>
+            <par1> 0.24 </par1>
+            <par2> 0.04 </par2>
+            <par3> 0.11 </par3>
+        </MdCornerClippingCorrector>
+      </configLink>
+
+      <configLink id="RandomEngineRegistry">
+        <RandomEngineRegistry>
+          <DetectorSeed>
+            '@DETECTORSEED@'
+          </DetectorSeed>
+          <PhysicsSeed>
+            '@PHYSICSSEED@'
+          </PhysicsSeed>
+        </RandomEngineRegistry>
+      </configLink>
+
+    </parameterOverrides>
+
+</bootstrap>

@@ -111,7 +111,7 @@ def prepare_bootstrap(name, src, out, i, r, n) -> bool:\n\
     \n\
     replace = {\n\
         \"'@INPUTFILE@'\": str(f),\n\
-        \"'@NPARTICLES@'\": n,\n\
+        \"'@NPARTICLES@'\": str(n),\n\
         \"'@DETECTORSEED@'\": f\"{r:06}\",\n\
         \"'@PHYSICSSEED@'\": f\"{r+1:06}\",\n\
         \"'@OUTPUTFILE@'\": f\"{name}/{out}/{files[i]}_{r:02}.root\",\n\
