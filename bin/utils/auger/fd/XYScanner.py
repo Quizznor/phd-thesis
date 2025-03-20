@@ -94,7 +94,7 @@ class XYRun():
 
     
     def __repr__(self) -> str:
-        return f"{self.telescope} @ {self.year_month_day}"
+        return f"{self.telescope} @ {self.year_month_day} w/ {self.source}: {self.run_numbers}"
 
     
     def get_id(self, key: str) -> str:
@@ -147,6 +147,7 @@ class XYRunContainer():
 
     def __init__(self, pd_runlist: pd.DataFrame) -> None:
         self.runs = self.split_runlist(pd_runlist)
+        self.data = pd_runlist
 
     def __getitem__(self, idx) -> XYRun:
         if isinstance(idx, int):
@@ -204,7 +205,32 @@ class XYRunContainer():
         return data_dict
 
 
+    def pack_files(self, out: str = None, extension: str = "") -> None:
+
+        candidate_files = set()
+        base_dir = str(CONST.SCAN_PATH / "results")
+
+        if out is None:
+            out = f"archive{extension}_{self.year_and_month}.tgz"
+
+        for _id in self.runs:
+            files = glob.glob(f"{base_dir}/{extension}*{_id}.txt")
+            for file in files:
+                candidate_files.add(file.split("/")[-1])
+
+        self.logger.info(f"Packing {len(candidate_files)} files into {out}")
+        subprocess.call(f"tar -caf {out} -C {base_dir} {' '.join(candidate_files)}", shell=True, executable='/bin/bash')
+
+
 class Campaign(XYRunContainer):
+
+    mirrors = [
+        "LL1", "LL2", "LL3", "LL4", "LL5", "LL6", 
+        "LM1", "LM2", "LM3", "LM4", "LM5", "LM6", 
+        "LA1", "LA2", "LA3", "LA4", "LA5", "LA6", 
+        "CO1", "CO2", "CO3", "CO4", "CO5", "CO6", 
+        "HE1", "HE2", "HE3"
+    ]
 
     def __init__(self, year: int, month: int) -> None:
         self.year, self.month = year, month
@@ -233,14 +259,6 @@ class Campaign(XYRunContainer):
 
         return run_dict
 
-    # mirrors = [
-    #     "LL1", "LL2", "LL3", "LL4", "LL5", "LL6", 
-    #     "LM1", "LM2", "LM3", "LM4", "LM5", "LM6", 
-    #     "LA1", "LA2", "LA3", "LA4", "LA5", "LA6", 
-    #     "CO1", "CO2", "CO3", "CO4", "CO5", "CO6", 
-    #     "HE1", "HE2", "HE3"
-    # ]
-
     # def _sort_mirrors(self, tel1: str, tel2: str) -> bool:
     #     raise NotImplementedError("let's see if this is used anywhere")
     #     mirror1 = self._get_mirror_number(tel1)
@@ -253,101 +271,76 @@ class Campaign(XYRunContainer):
     #         run.run_calib(offline_version, rerun)
 
     
-    # def plot_summary(self, normalize='none', **kwargs) -> plt.Figure:
+    def plot_summary(self, normalize='none', **kwargs) -> plt.Figure:
 
-    #     fig, ax = plt.subplots()
+        fig, ax = plt.subplots()
 
-    #     if normalize == 'none':
-    #         ax.set_ylabel(r'calib. const. / $\left( \gamma\,/\,\mathrm{ADC} \right)$')
-    #     elif normalize.lower() == 'cala':
-    #         cala_drift = kwargs.get('cala_drift', 0)
-    #         drift_label = fr"($+\frac{{ {1e2*cala_drift}\% }}{{ \mathrm{{year}} }}$)" if cala_drift else ""
-    #         ax.set_ylabel(f'XY calib. const. / std. calib. {drift_label}')
-    #         time_difference_years = (datetime.strptime(self.year_and_month, "%Y-%m") - datetime(2010,6, 1)).days / 365
-    #         ax.fill_between([0,32], 1-0.099, 1+0.099, color='k', alpha=0.1, edgecolor='none')
-    #     else:
-    #         ax.set_ylabel(f'XY calib. const. / {kwargs.get("label", "custom norm")}')
+        if normalize == 'none':
+            ax.set_ylabel(r'calib. const. / $\left( \gamma\,/\,\mathrm{ADC} \right)$')
+        elif normalize.lower() == 'cala':
+            cala_drift = kwargs.get('cala_drift', 0)
+            drift_label = fr"($+\frac{{ {1e2*cala_drift}\% }}{{ \mathrm{{year}} }}$)" if cala_drift else ""
+            ax.set_ylabel(f'XY calib. const. / std. calib. {drift_label}')
+            time_difference_years = (datetime(self.year, self.month) - datetime(2010,6, 1)).days / 365
+            ax.fill_between([0,32], 1-0.099, 1+0.099, color='k', alpha=0.1, edgecolor='none')
+        else:
+            ax.set_ylabel(f'XY calib. const. / {kwargs.get("label", "custom norm")}')
 
-    #     ax.text(
-    #         0, 1,
-    #         f"{self.year_and_month} XY campaign summary",
-    #         transform=ax.transAxes,
-    #         ha="left",
-    #         va="bottom",
-    #         fontsize="large",
-    #         fontweight="bold",
-    #     )
+        ax.text(
+            0, 1,
+            f"{self.year}-{self.month} XY campaign summary",
+            transform=ax.transAxes,
+            ha="left",
+            va="bottom",
+            fontsize="large",
+            fontweight="bold",
+        )
         
-    #     ax.set_xticklabels([], fontsize=8, rotation=90)
-    #     ax.set_xticks([], minor=True)
-    #     ax.grid(axis="y")
-    #     ax.grid(axis="y", which="minor", alpha=0.3)
-    #     ax.set_xlim(0, 32)
+        ax.set_xticklabels([], fontsize=8, rotation=90)
+        ax.set_xticks([], minor=True)
+        ax.grid(axis="y")
+        ax.grid(axis="y", which="minor", alpha=0.3)
+        ax.set_xlim(0, 32)
 
-    #     data, positions, labels = [], [], []
-    #     for pos, tel in enumerate(self.mirrors, 1):
-    #         try:
-    #             std_calib, xy_calib = self[tel].calib_data
-                
-    #             if tel == "LL1":
-    #                 pixel_mask = np.loadtxt(CONST.SCAN_PATH / "config/pixel_masks/ll1.txt", dtype=bool, usecols=[1])
-    #             elif tel == "LL6":
-    #                 pixel_mask = np.loadtxt(CONST.SCAN_PATH / "config/pixel_masks/ll6-xp3062.txt", dtype=bool, usecols=[1])
-    #             else:
-    #                 pixel_mask = np.ones(440, dtype=bool)
-
-    #             if normalize == 'none':
-    #                 norm = np.ones(440)
-    #             elif normalize.lower() == 'cala':
-    #                 norm = (1 + cala_drift*time_difference_years) * std_calib
-    #             else:
-    #                 norm = normalize
+        data, positions, labels = [], [], []
+        for pos, tel in enumerate(self.mirrors, 1):
+            try:
 
 
-    #             pixel_mask[np.isnan(std_calib)] = False
-    #             pixel_mask[np.isnan(xy_calib)] = False
-    #             pixel_mask[std_calib == 0] = False
+                if normalize == 'none':
+                    d = self[tel].get_data("XY")
+                    norm = np.ones(440)
+                elif normalize.lower() == 'cala':
+                    d = self[tel].get_data("ratio")
+                    norm = (1 + cala_drift*time_difference_years)
+                else:
+                    d = self[tel].get_data("XY")
+                    norm = normalize
 
-    #             ratio = xy_calib[pixel_mask] / norm[pixel_mask]
-    #             data.append(ratio)
-    #             labels.append(tel)
+                if d is None: continue
+                ratio = d / norm
+                data.append(ratio[~np.isnan(ratio)])
+                labels.append(tel)
 
-    #             match tel:
-    #                 case _ if "LL" in tel: increment = 0
-    #                 case _ if "LM" in tel: increment = 1
-    #                 case _ if "LA" in tel: increment = 2
-    #                 case _ if "CO" in tel: increment = 3
-    #                 case _ if "HE" in tel: increment = 4
-    #             positions.append(pos + increment)
+                match tel:
+                    case _ if "LL" in tel: increment = 0
+                    case _ if "LM" in tel: increment = 1
+                    case _ if "LA" in tel: increment = 2
+                    case _ if "CO" in tel: increment = 3
+                    case _ if "HE" in tel: increment = 4
+                positions.append(pos + increment)
 
-    #         except KeyError:
-    #             continue
+            except KeyError:
+                continue
 
-    #     ax.boxplot(data, positions=positions, labels=labels, widths=0.5,
-    #                flierprops={'markersize': 2, 'alpha': 0.2}, notch=True,
-    #                bootstrap=5000)
+        ax.boxplot(data, positions=positions, labels=labels, widths=0.5,
+                   flierprops={'markersize': 2, 'alpha': 0.2}, notch=True,
+                   bootstrap=5000)
 
-    #     ymin, ymax = ax.get_ylim()
-    #     ax.set_ylim(kwargs.get('ymin', ymin), kwargs.get('ymax', ymax))
+        ymin, ymax = ax.get_ylim()
+        ax.set_ylim(kwargs.get('ymin', ymin), kwargs.get('ymax', ymax))
 
-    #     return fig
-
-
-    # def pack_files(self, out: str = None, extension: str = "") -> None:
-
-        candidate_files = set()
-        base_dir = str(CONST.SCAN_PATH / "results")
-
-        if out is None:
-            out = f"{extension if extension else 'archive'}_{self.year_and_month}.tgz"
-
-        for _id in self.data.index:
-            files = glob.glob(f"{base_dir}/{extension}*{_id}.txt")
-            for file in files:
-                candidate_files.add(file.split("/")[-1])
-
-        self.logger.info(f"Packing {len(candidate_files)} files into {out}")
-        subprocess.call(f"tar -caf {out} -C {base_dir} {' '.join(candidate_files)}", shell=True, executable='/bin/bash')
+        return fig
 
 
 class Telescope(XYRunContainer):
