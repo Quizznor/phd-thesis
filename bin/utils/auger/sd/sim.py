@@ -108,14 +108,14 @@ class Simulation():
         self.logger.info("scripts have been written")
         
         # set up source
-        subprocess.run("; ".join([
+        proc = subprocess.run("; ".join([
             f"source {self.offline_src}",
             f"cd {src}",
             f"cp Makefile.in Makefile",
             f"make",
             f"mv *.xml userAugerOffline {self.path}/src",
             f"rm -rf Makefile *.o Make-depend"
-        ]), shell=True, executable='/bin/bash', stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        ]), shell=True, executable='/bin/bash', stdout=subprocess.DEVNULL)
 
         self.logger.info("source compiled, we're done!")
         self.status(full_status=True)

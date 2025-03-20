@@ -150,6 +150,8 @@ int main(int argc, char** argv)
 	
 	    // vector to store paths for ADST files
 	    std::vector<std::string> dataFilePaths;
+        // seed counter
+        std::vector<std::string> seedContainer;
 	    // event counter
 	    unsigned long nEvents(0);
         // index and outputDir paths
@@ -159,8 +161,11 @@ int main(int argc, char** argv)
 	    // store paths in vec
 	    for (int i = 3; i < argc; ++i) {
             dataFilePaths.push_back(argv[i]);
+            std::string file = std::string(argv[i]);
+            seedContainer.push_back(file.substr(file.length()-7, 2));
         }
-           // Event
+
+        // Event
 	    RecEvent* theRecEvent = new RecEvent();
 	    // Detector 
 	    DetectorGeometry* theGeometry = new DetectorGeometry();
@@ -183,6 +188,7 @@ int main(int argc, char** argv)
         std::ofstream index;
         index.open(indexPath, std::ios::app);
 
+        int seedCounter = 0;
         while (dataFile.ReadNextEvent() == RecEventFile::eSuccess){
 
             json jsonSerializer;
@@ -245,7 +251,7 @@ int main(int argc, char** argv)
             std::string eBin = categorizeEnergy(log10(sdGenShower.GetEnergy()));
             std::string oFileName = primaryName + "_" + eBin +  "_"; // energy bin
             oFileName += formatNumber(atmModel, 2) + formatNumber(showerId, 4); // shower id
-            oFileName += "_" + formatNumber(useId, 2); // use id
+            oFileName += "_" + formatNumber(useId, 2) + "_" + seedContainer[seedCounter]; // use id
                
             std::cout << std::endl;
             printWrappedString("Processing " + oFileName);
@@ -282,7 +288,7 @@ int main(int argc, char** argv)
             jsonSerializer["energy"] = sdRecShower.GetEnergy();
             jsonSerializer["zenith"] = sdRecShower.GetZenith();
             jsonSerializer["azimuth"] = sdRecShower.GetAzimuth();
-            jsonSerializer["seed_stations"] = sdRecShower.GetSeedStations(); 
+            jsonSerializer["seed_stations"] = sdRecShower.GetSeedStations();
 
             const TVector3 coreSite = sdRecShower.GetCoreSiteCS();
             const TVector3 recAxisCoreCS = sdRecShower.GetAxisCoreCS();
@@ -313,7 +319,7 @@ int main(int argc, char** argv)
             ## Station Level ##
             ###################
             */
-           
+
             const std::vector<SdRecStation>& sdRecStationVector = theSdEvent.GetStationVector();
             const int timeBins =  120;
             float vemTraceAv[timeBins];
@@ -370,8 +376,8 @@ int main(int argc, char** argv)
                     continue;
                 }
                 ++nCandidates;
+
                 //std::cout << std::endl;
-                
                 
                 // get signal registered by the station
                 double totalSignal = bLowGainSaturated == true ? sdRecStationVector[j].GetRecoveredSignal() : sdRecStationVector[j].GetTotalSignal();
@@ -408,17 +414,18 @@ int main(int argc, char** argv)
                 const int startSlot = sdRecStationVector[j].GetSignalStartSlot();
                 jsonSerializer[sdId]["startSlot"] = startSlot;
                 jsonSerializer[sdId]["endSlot"] = sdRecStationVector[j].GetSignalEndSlot();
-                
+
                 sbObs += totalSignal*pow(sdRecStationVector[j].GetSPDistance()/300, 4);
 
                 int nPMT = 0;
                 double averagePeakToCharge = 0;
                 double totalSignalCalc = 0;
                 std::vector<float> stationTrace;
-
+                
                 // get info on ssd as well!
-                for (int pmt = 1; pmt <= 4; ++pmt) {
-                    
+                for (int pmt = 1; pmt <= 5; ++pmt) {
+                    if (pmt == 4) continue;
+
                     const std::string pmtId = "pmt_" + std::to_string(pmt);
                     const Traces& pmtData = sdRecStationVector[j].GetPMTTraces(eTotalTrace, pmt);
                     const std::vector<float>& pmtTrace = pmtData.GetVEMComponent();
@@ -474,7 +481,7 @@ int main(int argc, char** argv)
                 const int nModules = mdRecCounter.GetNumberOfModules();
 
                 for (unsigned int mId = 1; mId <= nModules; ++mId) {
-                    
+
                     const double Nmu = mdRecCounter.IsSaturated() == true ? mdRecCounter.GetNumberOfMuonsLowLimit() : mdRecCounter.GetNumberOfMuons();
                     jsonSerializer[sdId]["n_estimated_muons"] = Nmu;
                     const double effArea = mdRecCounter.GetActiveArea() / std::cos(sdRecShower.GetZenith());
@@ -492,7 +499,7 @@ int main(int argc, char** argv)
                         
                         //const unsigned int moduleId = recModule.GetId();
                         //const mdet::Module& mdm = mdc.GetModule(moduleId);
-                        jsonSerializer[sdId][mId]["sat_flag"] = recModule.IsSaturated();
+                        jsonSerializer[sdId][mId]["t_flag"] = recModule.IsSaturated();
                         jsonSerializer[sdId][mId]["SP_distance"] = recModule.GetSPDistance();
                         jsonSerializer[sdId][mId]["n_estimated_muons"] = recModule.IsSaturated() ? recModule.GetNumberOfMuonsLowLimit() : recModule.GetNumberOfEstimatedMuons();
                         jsonSerializer[sdId][mId]["n_estimated_muons_uncorrected"] = recModule.GetNumberOfEstimatedMuonsUncorrected();
@@ -548,8 +555,6 @@ int main(int argc, char** argv)
                         }
                     }
                 }
-
-                //std::cout << std::endl;  
             }
             
             // finaly save M1
@@ -582,6 +587,7 @@ int main(int argc, char** argv)
                 std::cerr << "Error opening file: " << filePath << std::endl;
             }
 
+            seedCounter += 1;
         }
 
         index.close();

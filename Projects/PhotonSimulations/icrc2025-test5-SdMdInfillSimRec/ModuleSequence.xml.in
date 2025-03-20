@@ -1,0 +1,66 @@
+<!-- A sequence for a surface detector shower simulation.  -->
+
+<!-- For homogeneity in the StandardApplications, standard sequences for
+simulation, MC reconstruction, and data reconstruction have been added to
+Framework/CentralConfig/standard**Sequences.dtd. Please refer to these
+files if you have questions regarding &NAME (i.e. &SdSimulation) -->
+
+<!DOCTYPE sequenceFile [
+  <!ENTITY % sd SYSTEM "@CONFIGDIR@/standardSdSequences.dtd"> %sd;
+  <!ENTITY % md SYSTEM "@CONFIGDIR@/standardMdSequences.dtd"> %md;
+]>
+
+<sequenceFile
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation='@SCHEMALOCATION@/ModuleSequence.xsd'>
+
+  <enableTiming/>
+
+  <moduleControl>
+
+    <loop numTimes="unbounded" pushEventToStack="yes">
+
+      <module> EventFileReaderOG </module>
+
+      <!-- increase numTimes if you want to throw the shower
+           into the array more than once -->
+      <loop numTimes="1" pushEventToStack="yes">
+
+        <!-- Simulation -->
+        <module> EventGeneratorOG </module>
+
+        <!-- simulation of muon background -->
+        <module> SdAccidentalInjectorKG </module>
+        <module> G4StationSimulatorOG </module>
+
+        <!-- Sd Simulation Sequence -->
+        &SdSimulation;
+        
+        <!-- Md Simulation Sequence -->
+        &MdSimulation;
+
+        <module> ClearParticleLists              </module>
+
+        <module> CentralTriggerSimulatorXb       </module>
+        <module> CentralTriggerEventBuilderOG    </module>
+        <module> EventBuilderOG                  </module>
+        
+        <!-- Reconstruction -->
+
+        <!-- Sd Reconstruction -->
+        &SdSimReconstruction;
+
+        <!-- Md Reconstruction -->
+        &MdReconstruction;
+
+        <!-- ADST -->
+        <module> RecDataWriterNG </module>
+
+      </loop>
+
+    </loop>
+
+  </moduleControl>
+
+</sequenceFile>
+
