@@ -209,16 +209,13 @@ class XYRunContainer():
 
         candidate_files = set()
         base_dir = str(CONST.SCAN_PATH / "results")
+        if out is None: out = f"archive{extension}.tgz"
 
-        if out is None:
-            out = f"archive{extension}_{self.year_and_month}.tgz"
-
-        for _id in self.runs:
+        for _id in self.data.index:
             files = glob.glob(f"{base_dir}/{extension}*{_id}.txt")
             for file in files:
                 candidate_files.add(file.split("/")[-1])
 
-        self.logger.info(f"Packing {len(candidate_files)} files into {out}")
         subprocess.call(f"tar -caf {out} -C {base_dir} {' '.join(candidate_files)}", shell=True, executable='/bin/bash')
 
 
