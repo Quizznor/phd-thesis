@@ -21,9 +21,6 @@
 
 #include <SdRecShower.h>
 #include <SdRecStation.h>
-#include <FdRecShower.h>
-#include <FdRecStation.h>
-#include <RdRecShower.h>
 
 #include <GenShower.h>
 #include <Traces.h>
@@ -47,11 +44,7 @@ namespace fs = boost::filesystem;
 
 void ExtractDataFromAdstFiles(fs::path pathToAdst)
 {
-  const auto energyDir = pathToAdst.parent_path();
-  const auto primaryDir = energyDir.parent_path();
-  const auto dataPath = primaryDir.parent_path();
-
-  const auto csvTraceFile = dataPath.parent_path() / "dat" / primaryDir.filename() / energyDir.filename() / pathToAdst.filename().replace_extension("csv");
+  const auto csvTraceFile = pathToAdst.parent_path() / pathToAdst.filename().replace_extension("csv");
 
   // (2) start main loop
   RecEventFile     recEventFile(pathToAdst.string());
@@ -118,7 +111,11 @@ void ExtractDataFromAdstFiles(fs::path pathToAdst)
 
 int main(int argc, char** argv) 
 {
-  ExtractDataFromAdstFiles(argv[1]);
+  for (int i=1; i <= argc; i++)
+  {
+    std::cout << "Processing " << argv[i] << "\n";
+    ExtractDataFromAdstFiles(argv[i]);
+  }
   return 0;
 
 }

@@ -1,6 +1,8 @@
 from ...binaries.binary_tools import ProgressBar
 from ... import CONSTANTS, create_stream_logger
 from tabulate import tabulate
+from typing import Iterator
+from ...binaries import np
 from pathlib import Path
 import subprocess
 import json
@@ -258,15 +260,73 @@ class Simulation():
         print('"""')
 
 
-class Data():
+class SimData():
 
-    def __init__(self, path: str) -> None:
-        raise NotImplementedError
+    def __init__(self, name: str, model: str, primary: str) -> None:
 
-    def process(self, executable: str) -> None:
-        raise NotImplementedError
+        self.name = name
+        self.model = model
+        self.primary = primary
+        path = Path(f'/cr/work/{CONSTANTS.USERNAME}/Simulations/{name}/dat/{model}/{primary}')
+
+        self.files = []
+        for energy in os.listdir(path):
+            files = os.listdir(path / energy)
+            is_candidate = lambda p: p.endswith("csv")
+            self.files += [path / f"{energy}/{f}" for f in filter(is_candidate, files)]
+
     
-        data_dir = self.path / f"out/{self.kwargs['PRIMARY']}/{self.kwargs['ENERGY']}/"
-        for file in ProgressBar(os.listdir(data_dir)):
-            subprocess.run(" ".join([f". {self.offline_src} &&", executable, f"{data_dir}/{file}"]), 
-                           shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    def __len__(self) -> int:
+        return len(self.files)
+
+    
+    def __iter__(self) -> Iterator[np.ndarray]:
+
+        iteration_index = 0
+        while iteration_index < len(self):
+            yield Shower(np.loadtxt(self.files[iteration_index]))
+            iteration_index += 1
+          
+        return StopIteration
+
+
+class Shower():
+
+    def __init__(self, event_data: list[np.ndarray]) -> None:
+
+        energy = set(event_data[:, 0])
+        zenith = set(event_data[:, 1])
+        assert len(energy) == len(zenith) == 1, "Malformed shower data"
+
+        self.energy = energy.pop()
+        self.zenith = zenith.pop()
+        self.stations = []
+
+        for station_data in np.split(event_data[:, 2:], len(event_data) // 4):
+            self.stations.append(Station(station_data))
+
+    
+    def __repr__(self) -> str:
+        return f"Shower w/ log10(E/eV) = {np.log10(self.energy)} and {len(self.stations)} stations"
+
+    
+    def __getitem__(self, idx: int) -> "Station":
+        return self.stations[idx]
+
+
+class Station():
+
+    def __init__(self, station_data) -> None:
+        ids = set(station_data[:, 0])
+        spd = set(station_data[:, 1])
+        assert len(ids) == len(spd) == 1, "Malformed station data"
+
+        self.id = int(ids.pop())
+        self.spd = spd.pop()
+
+        self.wcd = station_data[:-1, 2:]
+        self.ssd = station_data[-1, 2:]
+
+    
+    def __repr__(self) -> str:
+        return f"Station {self.id} @ {self.spd}m from core"
