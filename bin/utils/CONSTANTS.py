@@ -120,7 +120,7 @@ def prepare_bootstrap(name, src, out, i, r, n) -> bool:\n\
     }\n\
     \n\
     b_src = f\"{name}/src/bootstrap.xml\"\n\
-    b_out = f\"{name}/sim/bootstrap_{f.name}_{r:06}.xml\"\n\
+    b_out = f\"{name}/sim/bootstrap_{out[4:].replace('/','_')}_{f.name}_{r:06}.xml\"\n\
     \n\
     with open(b_out, \"w\") as target:\n\
         with open(b_src, \"r\") as source:\n\
@@ -137,4 +137,4 @@ i = int(sys.argv[1])\n\
 \n\
 for r in range(0, RETHROWS):\n\
     if target_bootstrap := prepare_bootstrap(NAME, SRC, OUT, i, r, n):\n\
-        subprocess.run([f\"{NAME}/run.sh\", target_bootstrap])"
+        subprocess.run([f\"{NAME}/work/{OUT[4:].replace('/','_')}/run.sh\", target_bootstrap])"

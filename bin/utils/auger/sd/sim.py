@@ -72,9 +72,19 @@ class Simulation():
         self.condor_kwargs, self.python_kwargs, queue = self._get_simulation_kwargs(primary, energy, model, kwargs)
         self.logger.info(f"Corsika dir found, {queue} files available")
 
+        self.work_path = self.path / f"work/{model}_{primary}_{energy}"
+        self.work_path.mkdir(parents=True, exist_ok=True)
+
+        # make send file
+        send_path = self.path / "send.sh"
+        with send_path.open("w", encoding="utf-8") as send:
+            send.write("#!/bin/sh\n")
+            send.write("cd work/$1_$2_$3\n")
+            send.write(f"condor_submit condor.sub")
+        send_path.chmod(send_path.stat().st_mode | stat.S_IEXEC)
 
         # make run.sub file
-        sub_path = self.path / "condor.sub"
+        sub_path = self.work_path / "condor.sub"
         with sub_path.open("w", encoding="utf-8") as sub:
             sub.write(CONSTANTS.WORD.SIM_HEADER)
             sub.write("\n\n")
@@ -85,7 +95,7 @@ class Simulation():
             sub.write(f'\nqueue {queue}')
 
         # make run.sh file
-        sh_path = self.path / "run.sh"
+        sh_path = self.work_path / "run.sh"
         with sh_path.open("w", encoding="utf-8") as sh:
             sh.write("#!/bin/bash\n")
             sh.write(f"\nsource {self.offline_src}\n")
@@ -94,7 +104,7 @@ class Simulation():
         sh_path.chmod(sh_path.stat().st_mode | stat.S_IEXEC)
 
         # make run.py file
-        py_path = self.path / "run.py"
+        py_path = self.work_path / "run.py"
         with py_path.open("w", encoding="utf-8") as py:
             py.write(CONSTANTS.WORD.RUN_PY_HEADER)
             py.write(f"NAME = \"{self.python_kwargs['name']}\"\n")
@@ -181,7 +191,7 @@ class Simulation():
 
 
     def run(self, proc_no: int) -> int:
-        return subprocess.run([f"cd {self.path}; ./run.py {proc_no}"], shell=True)
+        return subprocess.run([f"cd {self.work_path}; ./run.py {proc_no}"], shell=True)
 
 
     def __str__(self) -> str:
