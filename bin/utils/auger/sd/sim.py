@@ -307,12 +307,21 @@ class Shower():
 
     
     def __repr__(self) -> str:
-        return f"Shower w/ log10(E/eV) = {np.log10(self.energy)} and {len(self.stations)} stations"
+        return f"Shower w/ log10(E/eV) = {np.log10(self.energy):.2f} and {len(self.stations)} stations"
 
     
     def __getitem__(self, idx: int) -> "Station":
         return self.stations[idx]
 
+    
+    def trigger(self, fctn: callable) -> list[bool]:
+        stations, triggers = [], []
+        for station in self:
+            triggers.append(station.trigger(fctn))
+            stations.append(station.id)
+
+        return stations, triggers
+    
 
 class Station():
 
@@ -330,3 +339,7 @@ class Station():
     
     def __repr__(self) -> str:
         return f"Station {self.id} @ {self.spd}m from core"
+
+
+    def trigger(self, fctn: callable) -> bool:
+        return fctn(self.wcd, self.ssd)
